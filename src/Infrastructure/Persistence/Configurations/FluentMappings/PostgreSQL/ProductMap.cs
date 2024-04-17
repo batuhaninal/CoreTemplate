@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Domain.Entities.Identities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Persistence.Configurations.FluentMappings.PostgreSQL
@@ -10,6 +11,9 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
             builder.Entity<Product>(p =>
             {
                 p.HasKey(x => x.Id);
+
+                p.ToTable("products");
+
                 p.Property(x => x.Id).HasColumnName("id").ValueGeneratedOnAdd();
 
 

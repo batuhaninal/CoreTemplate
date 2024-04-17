@@ -15,6 +15,9 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
             builder.Entity<Category>(c =>
             {
                 c.HasKey(x => x.Id);
+
+                c.ToTable("categories");
+
                 c.Property(x => x.Id).HasColumnName("id").ValueGeneratedOnAdd();
 
 
