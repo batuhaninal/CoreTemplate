@@ -12,8 +12,8 @@ namespace Application.Abstractions.Repositories.Commons
         where T : BaseEntity, new()
     {
         IQueryable<T> GetWhere(Expression<Func<T, bool>> expression, bool tracking = false);
-        Task<T> FindByConditionAsync(Expression<Func<T, bool>> expression, bool tracking = false);
-        Task<T> GetByIdAsync(string id, bool tracking = false);
+        Task<T?> FindByConditionAsync(Expression<Func<T, bool>> expression, bool tracking = false);
+        Task<T?> GetByIdAsync(string id, bool tracking = false);
         Task<List<T>> ListAsync(bool tracking = false);
     }
 }

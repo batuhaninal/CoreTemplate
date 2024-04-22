@@ -1,9 +1,11 @@
-﻿using Domain.Entities.Identities;
+﻿using Application.Abstractions.Repositories.Categories;
+using Domain.Entities.Identities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence.Contexts;
+using Persistence.Repositories.Categories;
 
 namespace Persistence
 {
@@ -21,6 +23,9 @@ namespace Persistence
                 options.Password.RequireLowercase = false;
                 options.Password.RequireUppercase = false;
             });
+
+            services.AddScoped<ICategoryReadRepository, CategoryReadRepository>();
+            services.AddScoped<ICategoryWriteRepository, CategoryWriteRepository>();
         }
     }
 }
