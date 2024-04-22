@@ -23,6 +23,14 @@ namespace Persistence.Repositories.Commons
 
         public DbSet<T> Table => _context.Set<T>();
 
+        public async Task<bool> AnyAsync(Expression<Func<T, bool>> expression) => 
+            await Table.AnyAsync(expression);
+
+        public async Task<int> CountAsync(Expression<Func<T, bool>>? expression) => 
+            expression != null ?
+            await Table.CountAsync(expression) :
+            await Table.CountAsync();
+
         public async Task<T?> FindByConditionAsync(Expression<Func<T, bool>> expression, bool tracking = false) =>
             tracking ?
             await Table.AsTracking().FirstOrDefaultAsync(expression) :

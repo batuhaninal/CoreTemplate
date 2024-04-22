@@ -17,5 +17,6 @@ namespace Application.Abstractions.Repositories.Commons
         void RemoveRange(List<T> datas);
         T Update(T entity);
         Task<int> SaveAsync();
+        IDatabaseTransaction BeginTransaction();
     }
 }

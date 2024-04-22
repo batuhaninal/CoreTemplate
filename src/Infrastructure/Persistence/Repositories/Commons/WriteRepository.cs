@@ -26,6 +26,9 @@ namespace Persistence.Repositories.Commons
         public async Task AddRangeAsync(List<T> entities) => 
             await Table.AddRangeAsync(entities);
 
+        public IDatabaseTransaction BeginTransaction() =>
+            new DatabaseTransaction(_context);
+
         public async Task<T> CreateAsync(T entity)
         {
             EntityEntry<T> entityEntry = await Table.AddAsync(entity);
