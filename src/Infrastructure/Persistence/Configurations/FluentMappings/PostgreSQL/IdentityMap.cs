@@ -1,11 +1,6 @@
 ﻿using Domain.Entities.Identities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Persistence.Configurations.FluentMappings.PostgreSQL
 {
@@ -24,6 +19,21 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
 
                 // Maps to the AspNetUsers table
                 b.ToTable("asp_net_users");
+
+                b.Property(u=> u.Id).HasColumnName("id");
+                b.Property(u=> u.FirstName).HasColumnName("first_name").HasMaxLength(100).IsRequired();
+                b.Property(u=> u.LastName).HasColumnName("last_name").HasMaxLength(120).IsRequired();
+                b.Property(u=> u.PhoneNumber).HasColumnName("phone_number").IsRequired();
+                b.Property(u=> u.PhoneNumberConfirmed).HasColumnName("phone_number_confirmed").IsRequired();
+                b.Property(u=> u.RefreshToken).HasColumnName("refresh_token").HasMaxLength(256).IsRequired(false);
+
+                b.Property(u=> u.EmailConfirmed).HasColumnName("email_confirmed");
+                b.Property(u=> u.PasswordHash).HasColumnName("password_hash");
+                b.Property(u=> u.SecurityStamp).HasColumnName("security_stamp");
+                b.Property(u=> u.TwoFactorEnabled).HasColumnName("two_factor_enabled");
+                b.Property(u=> u.LockoutEnd).HasColumnName("lockout_end");
+                b.Property(u=> u.LockoutEnabled).HasColumnName("lockout_enabled");
+                b.Property(u=> u.AccessFailedCount).HasColumnName("access_failed_count");
 
                 // A concurrency token for use with the optimistic concurrency checking
                 b.Property(u => u.ConcurrencyStamp).HasColumnName("concurrency_stamp").IsConcurrencyToken();
@@ -89,6 +99,14 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
             {
                 // Primary key
                 b.HasKey(uc => uc.Id);
+                
+                b.Property(u=> u.Id).HasColumnName("id");
+
+                b.Property(u=> u.UserId).HasColumnName("user_id");
+
+                b.Property(u=> u.ClaimType).HasColumnName("claim_type");
+
+                b.Property(u=> u.ClaimValue).HasColumnName("claim_value");
 
                 // Maps to the AspNetUserClaims table
                 b.ToTable("asp_net_user_claims");
@@ -104,8 +122,19 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
                 b.HasKey(l => new { l.LoginProvider, l.ProviderKey });
 
                 // Limit the size of the composite key columns due to common DB restrictions
-                b.Property(l => l.LoginProvider).HasMaxLength(128);
-                b.Property(l => l.ProviderKey).HasMaxLength(128);
+                b.Property(l => l.LoginProvider)
+                    .HasColumnName("login_provider")
+                    .HasMaxLength(128);
+
+                b.Property(l => l.ProviderKey)
+                    .HasColumnName("provider_key")
+                    .HasMaxLength(128);
+
+                b.Property(l => l.ProviderDisplayName)
+                    .HasColumnName("provider_display_name");
+
+                b.Property(l => l.UserId)
+                   .HasColumnName("user_id");
 
                 // Maps to the AspNetUserLogins table
                 b.ToTable("asp_net_user_logins");
@@ -120,8 +149,19 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
                 b.HasKey(t => new { t.UserId, t.LoginProvider, t.Name });
 
                 // Limit the size of the composite key columns due to common DB restrictions
-                b.Property(t => t.LoginProvider).HasMaxLength(256);
-                b.Property(t => t.Name).HasMaxLength(256);
+                b.Property(t => t.LoginProvider)
+                    .HasColumnName("login_provider")
+                    .HasMaxLength(256);
+
+                b.Property(t => t.Name)
+                    .HasColumnName("name")
+                    .HasMaxLength(256);
+
+                b.Property(t=> t.UserId)
+                    .HasColumnName("user_id");
+
+                b.Property(t=> t.Value)
+                    .HasColumnName("value");
 
                 // Maps to the AspNetUserTokens table
                 b.ToTable("asp_net_user_tokens");
@@ -135,6 +175,8 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
                 // Primary key
                 b.HasKey(r => r.Id);
 
+                b.Property(r => r.Id).HasColumnName("id");
+
                 // Index for "normalized" role name to allow efficient lookups
                 b.HasIndex(r => r.NormalizedName).HasName("RoleNameIndex").IsUnique();
 
@@ -144,9 +186,14 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
                 // A concurrency token for use with the optimistic concurrency checking
                 b.Property(r => r.ConcurrencyStamp).IsConcurrencyToken();
 
+                b.Property(r => r.ConcurrencyStamp).HasColumnName("concurrency_stamp");
+
                 // Limit the size of columns to use efficient database types
-                b.Property(u => u.Name).HasMaxLength(256);
-                b.Property(u => u.NormalizedName).HasMaxLength(256);
+                b.Property(u => u.Name)
+                    .HasColumnName("name")
+                    .HasMaxLength(256);
+
+                b.Property(u => u.NormalizedName).HasColumnName("normalized_name").HasMaxLength(256);
 
                 // The relationships between Role and other entity types
                 // Note that these relationships are configured with no navigation properties
@@ -183,6 +230,14 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
                 // Primary key
                 b.HasKey(rc => rc.Id);
 
+                b.Property(r => r.Id).HasColumnName("id");
+
+                b.Property(r => r.RoleId).HasColumnName("role_id");
+
+                b.Property(r => r.ClaimType).HasColumnName("claim_type");
+
+                b.Property(r => r.ClaimValue).HasColumnName("claim_value");
+
                 // Maps to the AspNetRoleClaims table
                 b.ToTable("asp_net_role_claims");
             });
@@ -210,7 +265,7 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
                     },
                     new UserRole()
                     {
-                        RoleId = Guid.Parse("b6c11f5c-0b65-4872-aa89-3a1c54b101be"),
+                        RoleId = Guid.Parse("14d485aa-b9e9-45d6-81ed-d9db14197775"),
                         UserId = Guid.Parse("3d8c4bc4-2ee2-4e32-a71d-b7608dfd2cc1")
                     }
                 );
