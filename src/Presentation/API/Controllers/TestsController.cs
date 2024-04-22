@@ -1,5 +1,5 @@
 ﻿using Application.Abstractions.Repositories.Categories;
-using Microsoft.AspNetCore.Http;
+using Application.Abstractions.Repositories.Commons;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,17 +9,17 @@ namespace API.Controllers
     [ApiController]
     public class TestsController : ControllerBase
     {
-        private readonly ICategoryReadRepository _categoryReadRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public TestsController(ICategoryReadRepository categoryReadRepository)
+        public TestsController(IUnitOfWork unitOfWork)
         {
-            _categoryReadRepository = categoryReadRepository;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllCategories()
         {
-            return Ok(await _categoryReadRepository.Table.ToListAsync());
+            return Ok(await _unitOfWork.CategoryReadRepository.Table.ToListAsync());
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions.Repositories.Categories;
+using Application.Abstractions.Repositories.Commons;
 using Domain.Entities.Identities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -6,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence.Contexts;
 using Persistence.Repositories.Categories;
+using Persistence.Repositories.Commons;
 
 namespace Persistence
 {
@@ -24,8 +26,11 @@ namespace Persistence
                 options.Password.RequireUppercase = false;
             });
 
-            services.AddScoped<ICategoryReadRepository, CategoryReadRepository>();
-            services.AddScoped<ICategoryWriteRepository, CategoryWriteRepository>();
+            // Unit of Work design pattern oncesi
+            //services.AddScoped<ICategoryReadRepository, CategoryReadRepository>();
+            //services.AddScoped<ICategoryWriteRepository, CategoryWriteRepository>();
+
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
         }
     }
 }
