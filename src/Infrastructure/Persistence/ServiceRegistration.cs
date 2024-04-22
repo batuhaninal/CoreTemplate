@@ -1,12 +1,9 @@
-﻿using Application.Abstractions.Repositories.Categories;
-using Application.Abstractions.Repositories.Commons;
-using Domain.Entities.Identities;
+﻿using Application.Abstractions.Repositories.Commons;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence.Contexts;
-using Persistence.Repositories.Categories;
 using Persistence.Repositories.Commons;
 
 namespace Persistence
