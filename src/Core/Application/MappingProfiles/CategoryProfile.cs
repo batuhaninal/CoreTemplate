@@ -12,6 +12,11 @@ namespace Application.MappingProfiles
 
             CreateMap<UpdateCategoryDto, Category>()
                 .ForMember(dest => dest.Id, src => src.MapFrom(x => x.CategoryId));
+
+            //CreateMap<Category, CategoryItemDto>();
+
+            CreateMap<Category, CategoryItemDto>()
+                .ConstructUsing(x=> new CategoryItemDto(x.Id.ToString(), x.Title));
         }
     }
 }

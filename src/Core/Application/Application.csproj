@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <Folder Include="Abstractions\Repositories\Products\" />
-    <Folder Include="Abstractions\Services\Categories\" />
     <Folder Include="Abstractions\Services\Auths\" />
     <Folder Include="Abstractions\Services\Users\" />
     <Folder Include="Abstractions\Services\Products\" />

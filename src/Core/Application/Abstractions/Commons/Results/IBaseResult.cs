@@ -4,6 +4,6 @@
     {
         int StatusCode { get; }
         bool Success { get; }
-        string Message { get; }
+        string? Message { get; }
     }
 }

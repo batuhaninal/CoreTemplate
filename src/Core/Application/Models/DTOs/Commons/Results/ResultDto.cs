@@ -19,6 +19,6 @@ namespace Application.Models.DTOs.Commons.Results
 
         public bool Success { get; }
 
-        public string Message { get; }
+        public string? Message { get; }
     }
 }

@@ -1,10 +1,12 @@
 ﻿using Application.Abstractions.Repositories.Commons;
+using Application.Abstractions.Services.Categories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence.Contexts;
 using Persistence.Repositories.Commons;
+using Persistence.Services.Categories;
 
 namespace Persistence
 {
@@ -28,6 +30,8 @@ namespace Persistence
             //services.AddScoped<ICategoryWriteRepository, CategoryWriteRepository>();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            services.AddScoped<ICategoryService, CategoryService>();
         }
     }
 }

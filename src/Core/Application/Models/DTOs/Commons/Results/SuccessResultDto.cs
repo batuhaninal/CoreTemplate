@@ -12,6 +12,11 @@
 
         }
 
+        public SuccessResultDto(int statusCode) : base(statusCode, true)
+        {
+
+        }
+
         public SuccessResultDto() : base(200, true)
         {
 

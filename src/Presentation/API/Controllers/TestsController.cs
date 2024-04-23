@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions.Repositories.Categories;
 using Application.Abstractions.Repositories.Commons;
+using Application.Abstractions.Services.Categories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,17 +10,17 @@ namespace API.Controllers
     [ApiController]
     public class TestsController : ControllerBase
     {
-        private readonly IUnitOfWork _unitOfWork;
+        private readonly ICategoryService _categoryService;
 
-        public TestsController(IUnitOfWork unitOfWork)
+        public TestsController(ICategoryService categoryService)
         {
-            _unitOfWork = unitOfWork;
+            _categoryService = categoryService;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllCategories()
+        public async Task<IActionResult> GetAllCategories([FromQuery] int pageIndex, [FromQuery] int pageSize)
         {
-            return Ok(await _unitOfWork.CategoryReadRepository.Table.ToListAsync());
+            return Ok(await _categoryService.GetAllAsync(pageIndex, pageSize));
         }
     }
 }

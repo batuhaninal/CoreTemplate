@@ -5,7 +5,7 @@ namespace Application.Abstractions.Repositories.Commons
     public interface IWriteRepository<T> : IRepository<T>
         where T : BaseEntity, new()
     {
-        Task<T> CreateAsync(T entity);
+        Task<Guid> CreateAsync(T entity);
         Task AddRangeAsync(List<T> entities);
         Task RemoveAsync(string id);
         bool Remove(T? model);
