@@ -1,3 +1,4 @@
+using API.Middlewares;
 using Application;
 using Application.Utilities.FluentValidations.Categories;
 using FluentValidation.AspNetCore;
@@ -24,6 +25,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<CustomExceptionMiddleware>();
 
 app.UseHttpsRedirection();
 

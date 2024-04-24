@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions.Repositories.Categories;
 using Application.Abstractions.Repositories.Commons;
+using Application.Utilities.Exceptions.Commons;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,14 +21,14 @@ namespace Persistence.Services.Categories
         {
             bool result = await _categoryReadRepository.AnyAsync(x=> x.Id == Guid.Parse(categoryId));
             if (!result)
-                throw new Exception("Kategori bulunamadi!");
+                throw new NotFoundException("Category");
         }
 
         public async Task CheckTitleDuplicate(string title)
         {
             bool result = await _categoryReadRepository.AnyAsync(x=> x.Title.ToLower() == title.ToLower());
             if (result)
-                throw new Exception($"{title} baslikli kategori bulunmaktadir!");
+                throw new DuplicateException("Title", title);
         }
     }
 }
