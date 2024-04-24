@@ -20,25 +20,31 @@ namespace API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllCategories([FromQuery] int pageIndex, [FromQuery] int pageSize)
         {
-            return CreateResponse<IPaginatedDataResult<CategoryItemDto>>(await _categoryService.GetAllAsync(pageIndex, pageSize));
+            return CreateResponse(await _categoryService.GetAllAsync(pageIndex, pageSize));
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateCategories([FromBody] CreateCategoryDto createCategoryDto)
         {
-            return CreateResponse<IBaseResult>(await _categoryService.CreateAsync(createCategoryDto));
+            return CreateResponse(await _categoryService.CreateAsync(createCategoryDto));
         }
 
         [HttpGet("{categoryId}")]
         public async Task<IActionResult> GetById([FromRoute(Name = "categoryId")] string categoryId)
         {
-            return CreateResponse<IDataResult<CategoryItemDto>>(await _categoryService.GetByIdAsync(categoryId));
+            return CreateResponse(await _categoryService.GetByIdAsync(categoryId));
         }
 
         [HttpDelete("{categoryId}")]
         public async Task<IActionResult> RemoveCategory([FromRoute(Name = "categoryId")] string categoryId) 
         {
-            return CreateResponse<IBaseResult>(await _categoryService.RemoveAsync(categoryId));
+            return CreateResponse(await _categoryService.RemoveAsync(categoryId));
+        }
+
+        [HttpPut("{categoryId}")]
+        public async Task<IActionResult> UpdateCategory([FromRoute(Name="categoryId")] string categoryId, [FromBody] UpdateCategoryDto updateCategoryDto)
+        {
+            return CreateResponse(await _categoryService.UpdateAsync(categoryId, updateCategoryDto));
         }
     }
 }

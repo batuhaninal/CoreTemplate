@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Domain.Entities.Commons;
 using Domain.Entities.Identities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -37,6 +38,24 @@ namespace Persistence.Contexts
 
             builder.ConfigureCategoryMap();
             builder.ConfigureProductMap();
+        }
+
+        // Dto mapping isleminde de handle edilebilir state durumlari
+        public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+        {
+            var data = ChangeTracker.Entries<BaseEntity>();
+
+            foreach (var entity in data)
+            {
+                _ = entity.State switch
+                {
+                    EntityState.Added => entity.Entity.CreatedDate = DateTime.UtcNow,
+                    EntityState.Modified => entity.Entity.UpdatedDate = DateTime.UtcNow,
+                    _ => DateTime.UtcNow,
+                };
+            }
+
+            return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
         }
     }
 }

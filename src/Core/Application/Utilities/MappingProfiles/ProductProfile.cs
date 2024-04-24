@@ -2,7 +2,7 @@
 using AutoMapper;
 using Domain.Entities;
 
-namespace Application.MappingProfiles
+namespace Application.Utilities.MappingProfiles
 {
     public class ProductProfile : Profile
     {

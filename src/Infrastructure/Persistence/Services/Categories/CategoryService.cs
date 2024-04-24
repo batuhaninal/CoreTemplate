@@ -63,9 +63,19 @@ namespace Persistence.Services.Categories
             return new SuccessResultDto(204);
         }
 
-        public Task<IBaseResult> UpdateAsync(UpdateCategoryDto updateCategoryDto)
+        public async Task<IBaseResult> UpdateAsync(string categoryId, UpdateCategoryDto updateCategoryDto)
         {
-            throw new NotImplementedException();
+            if (!categoryId.Equals(updateCategoryDto.CategoryId))
+                throw new Exception("Category Id degerleri eslesmemektedir!");
+
+            await _businessRules.CheckCategoryExist(updateCategoryDto.CategoryId);
+
+            var oldCategory = await _unitOfWork.CategoryReadRepository.GetByIdAsync(updateCategoryDto.CategoryId, true);
+
+            _mapper.Map(updateCategoryDto, oldCategory);
+            await _unitOfWork.SaveChangesAsync();
+
+            return new SuccessResultDto(204);
         }
     }
 }
