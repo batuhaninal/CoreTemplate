@@ -1,6 +1,4 @@
-﻿using Application.Utilities.FluentValidations.Categories;
-using Application.Utilities.MappingProfiles;
-using FluentValidation;
+﻿using Application.Utilities.MappingProfiles;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 

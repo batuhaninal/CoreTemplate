@@ -7,10 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Abstractions\Repositories\Products\" />
     <Folder Include="Abstractions\Services\Auths\" />
-    <Folder Include="Abstractions\Services\Users\" />
     <Folder Include="Abstractions\Services\Products\" />
+    <Folder Include="Utilities\FluentValidations\Products\" />
   </ItemGroup>
 
   <ItemGroup>

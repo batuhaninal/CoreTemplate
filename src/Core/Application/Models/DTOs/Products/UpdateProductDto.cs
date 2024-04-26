@@ -2,7 +2,7 @@
 {
     public record UpdateProductDto
     {
-        public Guid ProductId { get; init; }
+        public string ProductId { get; init; } = null!;
         public string? Title { get; init; }
         public decimal Price { get; init; }
     }

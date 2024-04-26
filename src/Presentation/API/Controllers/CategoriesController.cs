@@ -1,7 +1,5 @@
-﻿using Application.Abstractions.Commons.Results;
-using Application.Abstractions.Services.Categories;
+﻿using Application.Abstractions.Services.Categories;
 using Application.Models.DTOs.Categories;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -24,13 +22,13 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateCategories([FromBody] CreateCategoryDto createCategoryDto)
+        public async Task<IActionResult> CreateCategory([FromBody] CreateCategoryDto createCategoryDto)
         {
             return CreateResponse(await _categoryService.CreateAsync(createCategoryDto));
         }
 
         [HttpGet("{categoryId}")]
-        public async Task<IActionResult> GetById([FromRoute(Name = "categoryId")] string categoryId)
+        public async Task<IActionResult> GetCategoryById([FromRoute(Name = "categoryId")] string categoryId)
         {
             return CreateResponse(await _categoryService.GetByIdAsync(categoryId));
         }

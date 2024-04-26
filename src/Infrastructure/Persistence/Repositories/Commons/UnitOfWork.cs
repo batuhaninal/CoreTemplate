@@ -1,7 +1,9 @@
 ﻿using Application.Abstractions.Repositories.Categories;
 using Application.Abstractions.Repositories.Commons;
+using Application.Abstractions.Repositories.Products;
 using Persistence.Contexts;
 using Persistence.Repositories.Categories;
+using Persistence.Repositories.Products;
 
 namespace Persistence.Repositories.Commons
 {
@@ -10,6 +12,8 @@ namespace Persistence.Repositories.Commons
         private readonly TemplateContext _context;
         private CategoryReadRepository _categoryReadRepository;
         private CategoryWriteRepository _categoryWriteRepository;
+        private ProductReadRepository _productReadRepository;
+        private ProductWriteRepository _productWriteRepository;
 
         public UnitOfWork(TemplateContext templateContext)
         {
@@ -19,6 +23,10 @@ namespace Persistence.Repositories.Commons
         public ICategoryReadRepository CategoryReadRepository => _categoryReadRepository ?? new CategoryReadRepository(_context);
 
         public ICategoryWriteRepository CategoryWriteRepository => _categoryWriteRepository ?? new CategoryWriteRepository(_context);
+
+        public IProductReadRepository ProductReadRepository => _productReadRepository ?? new ProductReadRepository(_context);
+
+        public IProductWriteRepository ProductWriteRepository => _productWriteRepository ?? new ProductWriteRepository(_context);
 
         public IDatabaseTransaction BeginTransaction() => 
             new DatabaseTransaction(_context);

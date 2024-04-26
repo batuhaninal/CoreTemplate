@@ -1,11 +1,6 @@
 ﻿using Application.Abstractions.Repositories.Categories;
 using Application.Abstractions.Repositories.Commons;
 using Application.Utilities.Exceptions.Commons;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Persistence.Services.Categories
 {
