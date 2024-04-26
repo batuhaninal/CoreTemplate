@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace Application.Models.DTOs.Categories
 {
-    public record CategoryItemDto(string Id, string Title);
+    public record CategoryItemDto(string Id, string Title, DateTime CreatedDate);
 }

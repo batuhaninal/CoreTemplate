@@ -8,6 +8,6 @@ namespace Application.Models.DTOs.Products
         public string Title { get; init; } = null!;
         public decimal Price { get; init; }
         public CategoryItemDto Category { get; init; } = null!;
-        public DateTime CreatedTime { get; init; }
+        public DateTime CreatedDate { get; init; }
     }
 }

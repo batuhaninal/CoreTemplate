@@ -1,5 +1,6 @@
 ﻿using Application.Models.DTOs.Products;
 using Application.Models.Messages;
+using Application.Utilities.Helpers;
 using FluentValidation;
 using System;
 using System.Collections.Generic;
@@ -21,7 +22,9 @@ namespace Application.Utilities.FluentValidations.Products
                 .MinimumLength(2)
                     .WithMessage(CommonMessage.Validation.MinLength("Title", 2))
                 .MaximumLength(100)
-                    .WithMessage(CommonMessage.Validation.MaxLength("Title", 100));
+                    .WithMessage(CommonMessage.Validation.MaxLength("Title", 100))
+                .Must(RegexHelper.CheckWhiteSpaceDuplicate)
+                    .WithMessage(CommonMessage.RegexErr.DuplicateWhiteSpace("Title"));
 
             RuleFor(x => x.Price)
                 .GreaterThanOrEqualTo(1)

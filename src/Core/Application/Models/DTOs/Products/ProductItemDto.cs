@@ -6,6 +6,6 @@
         public string Title { get; init; } = null!;
         public decimal Price { get; init; }
         public string CategoryId { get; init; } = null!;
-        public DateTime CreatedTime { get; init; }
+        public DateTime CreatedDate { get; init; }
     }
 }
