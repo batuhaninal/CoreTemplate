@@ -5,5 +5,6 @@
         public string ProductId { get; init; } = null!;
         public string? Title { get; init; }
         public decimal Price { get; init; }
+        public string CategoryId { get; init; } = null!;
     }
 }

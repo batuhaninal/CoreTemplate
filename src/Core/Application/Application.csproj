@@ -9,7 +9,6 @@
   <ItemGroup>
     <Folder Include="Abstractions\Services\Auths\" />
     <Folder Include="Abstractions\Services\Products\" />
-    <Folder Include="Utilities\FluentValidations\Products\" />
   </ItemGroup>
 
   <ItemGroup>

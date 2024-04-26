@@ -11,6 +11,7 @@ namespace Application.Utilities.FluentValidations.Categories
         {
             RuleFor(x => x.CategoryId)
                 .NotEmpty()
+                    .WithMessage(CommonMessage.Validation.NotNull("Category Id"))
                 .NotNull()
                     .WithMessage(CommonMessage.Validation.NotNull("Category Id"))
                 .MaximumLength(50)
@@ -18,6 +19,7 @@ namespace Application.Utilities.FluentValidations.Categories
 
             RuleFor(x => x.Title)
                 .NotEmpty()
+                    .WithMessage(CommonMessage.Validation.NotNull("Title"))
                 .NotNull()
                     .WithMessage(CommonMessage.Validation.NotNull("Title"))
                 .MaximumLength(75)
