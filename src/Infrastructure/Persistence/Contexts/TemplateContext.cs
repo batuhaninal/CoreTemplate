@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Application.Abstractions.Commons.Security;
+using Domain.Entities;
 using Domain.Entities.Commons;
 using Domain.Entities.Identities;
 using Microsoft.AspNetCore.Identity;
@@ -10,8 +11,10 @@ namespace Persistence.Contexts
 {
     public class TemplateContext : DbContext
     {
-        public TemplateContext(DbContextOptions options) : base(options)
+        private readonly IHashingService _hashingService;
+        public TemplateContext(DbContextOptions options, IHashingService hashingService) : base(options)
         {
+            _hashingService = hashingService;
         }
 
         public DbSet<User> Users { get; set; }
@@ -35,7 +38,7 @@ namespace Persistence.Contexts
             //builder.ConfigureIdttRoleClaimMap();
             //builder.ConfigureIdttUserRoleMap();
 
-            builder.ConfigureUserMap();
+            builder.ConfigureUserMap(_hashingService);
             builder.ConfigureRoleMap();
             builder.ConfigureUserRoleMap();
 
