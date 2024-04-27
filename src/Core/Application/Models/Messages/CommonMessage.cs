@@ -25,6 +25,7 @@ namespace Application.Models.Messages
             public static string GreaterThanOrEqual(string fieldName, int minSize) => $"{fieldName} field must be greater than or equal to {minSize}!";
             public static string LessThanOrEqual(string fieldName, int maxSize) => $"{fieldName} field must be less than or equal to {maxSize}!";
             public const string Email = "Please enter a valid email!";
+            public const string PasswordsNotMatches = "Passwords do not match!";
         }
 
         public static class RegexErr
