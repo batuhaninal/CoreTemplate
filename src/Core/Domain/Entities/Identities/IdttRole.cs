@@ -2,7 +2,7 @@
 
 namespace Domain.Entities.Identities
 {
-    public class Role : IdentityRole<Guid>
+    public class IdttRole : IdentityRole<Guid>
     {
     }
 }

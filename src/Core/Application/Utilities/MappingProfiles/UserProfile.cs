@@ -8,7 +8,7 @@ namespace Application.Utilities.MappingProfiles
     {
         public UserProfile()
         {
-            CreateMap<UpdateUserDto, User>()
+            CreateMap<UpdateUserDto, IdttUser>()
                 .ForMember(dest => dest.Id, src => src.MapFrom(x => x.UserId));
         }
     }

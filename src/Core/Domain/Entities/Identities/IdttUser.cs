@@ -2,7 +2,7 @@
 
 namespace Domain.Entities.Identities
 {
-    public class User : IdentityUser<Guid>
+    public class IdttUser : IdentityUser<Guid>
     {
         public string FirstName { get; set; } = null!;
         public string LastName { get; set; } = null!;

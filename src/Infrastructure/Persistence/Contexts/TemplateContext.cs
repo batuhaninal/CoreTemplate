@@ -8,7 +8,7 @@ using Persistence.Configurations.FluentMappings.PostgreSQL;
 
 namespace Persistence.Contexts
 {
-    public class TemplateContext : IdentityDbContext<User, Role, Guid, UserClaim, UserRole, UserLogin, RoleClaim, UserToken>
+    public class TemplateContext : IdentityDbContext<IdttUser, IdttRole, Guid, IdttUserClaim, IdttUserRole, IdttUserLogin, IdttRoleClaim, IdttUserToken>
     {
         public TemplateContext(DbContextOptions options) : base(options)
         {
@@ -21,7 +21,7 @@ namespace Persistence.Contexts
         {
             base.OnModelCreating(builder);
 
-            var hasher = new PasswordHasher<User>();
+            var hasher = new PasswordHasher<IdttUser>();
 
             builder.ConfigureUserMap(hasher);
             builder.ConfigureUserClaimMap();

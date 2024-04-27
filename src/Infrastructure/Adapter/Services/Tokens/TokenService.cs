@@ -23,7 +23,7 @@ namespace Adapter.Services.Tokens
             _configuration = configuration;
         }
 
-        public JwtToken CreateAccessToken(User user, string role, int minutes)
+        public JwtToken CreateAccessToken(IdttUser user, string role, int minutes)
         {
             JwtToken token = new();
 

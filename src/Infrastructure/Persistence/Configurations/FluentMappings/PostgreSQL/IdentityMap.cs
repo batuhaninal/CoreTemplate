@@ -6,9 +6,9 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
 {
     public static class IdentityMap
     {
-        public static void ConfigureUserMap(this ModelBuilder builder, PasswordHasher<User> hasher)
+        public static void ConfigureUserMap(this ModelBuilder builder, PasswordHasher<IdttUser> hasher)
         {
-            builder.Entity<User>(b =>
+            builder.Entity<IdttUser>(b =>
             {
                 // Primary key
                 b.HasKey(u => u.Id);
@@ -48,20 +48,20 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
                 // Note that these relationships are configured with no navigation properties
 
                 // Each User can have many UserClaims
-                b.HasMany<UserClaim>().WithOne().HasForeignKey(uc => uc.UserId).IsRequired();
+                b.HasMany<IdttUserClaim>().WithOne().HasForeignKey(uc => uc.UserId).IsRequired();
 
                 // Each User can have many UserLogins
-                b.HasMany<UserLogin>().WithOne().HasForeignKey(ul => ul.UserId).IsRequired();
+                b.HasMany<IdttUserLogin>().WithOne().HasForeignKey(ul => ul.UserId).IsRequired();
 
                 // Each User can have many UserTokens
-                b.HasMany<UserToken>().WithOne().HasForeignKey(ut => ut.UserId).IsRequired();
+                b.HasMany<IdttUserToken>().WithOne().HasForeignKey(ut => ut.UserId).IsRequired();
 
                 // Each User can have many entries in the UserRole join table
-                b.HasMany<UserRole>().WithOne().HasForeignKey(ur => ur.UserId).IsRequired();
+                b.HasMany<IdttUserRole>().WithOne().HasForeignKey(ur => ur.UserId).IsRequired();
             });
 
-            builder.Entity<User>().HasData(
-                new User
+            builder.Entity<IdttUser>().HasData(
+                new IdttUser
                 {
                     Id = Guid.Parse("3d8c4bc4-2ee2-4e32-a71d-b7608dfd2cc1"),
                     Email = "batuhan@inal.com",
@@ -76,7 +76,7 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
                     EmailConfirmed = true,
                     PhoneNumberConfirmed = true,
                 },
-                new User
+                new IdttUser
                 {
                     Id = Guid.Parse("bbb45ad0-9430-4424-b2ce-a16c0af61356"),
                     Email = "admin@admin.com",
@@ -95,7 +95,7 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
 
         public static void ConfigureUserClaimMap(this ModelBuilder builder)
         {
-            builder.Entity<UserClaim>(b =>
+            builder.Entity<IdttUserClaim>(b =>
             {
                 // Primary key
                 b.HasKey(uc => uc.Id);
@@ -115,7 +115,7 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
 
         public static void ConfigureUserLoginMap(this ModelBuilder builder)
         {
-            builder.Entity<UserLogin>(b =>
+            builder.Entity<IdttUserLogin>(b =>
             {
                 // Composite primary key consisting of the LoginProvider and the key to use
                 // with that provider
@@ -143,7 +143,7 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
 
         public static void ConfigureUserTokenMap(this ModelBuilder builder)
         {
-            builder.Entity<UserToken>(b =>
+            builder.Entity<IdttUserToken>(b =>
             {
                 // Composite primary key consisting of the UserId, LoginProvider and Name
                 b.HasKey(t => new { t.UserId, t.LoginProvider, t.Name });
@@ -170,7 +170,7 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
 
         public static void ConfigureRoleMap(this ModelBuilder builder)
         {
-            builder.Entity<Role>(b =>
+            builder.Entity<IdttRole>(b =>
             {
                 // Primary key
                 b.HasKey(r => r.Id);
@@ -199,21 +199,21 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
                 // Note that these relationships are configured with no navigation properties
 
                 // Each Role can have many entries in the UserRole join table
-                b.HasMany<UserRole>().WithOne().HasForeignKey(ur => ur.RoleId).IsRequired();
+                b.HasMany<IdttUserRole>().WithOne().HasForeignKey(ur => ur.RoleId).IsRequired();
 
                 // Each Role can have many associated RoleClaims
-                b.HasMany<RoleClaim>().WithOne().HasForeignKey(rc => rc.RoleId).IsRequired();
+                b.HasMany<IdttRoleClaim>().WithOne().HasForeignKey(rc => rc.RoleId).IsRequired();
             });
 
-            builder.Entity<Role>().HasData(
-                    new Role()
+            builder.Entity<IdttRole>().HasData(
+                    new IdttRole()
                     {
                         Id = Guid.Parse("4e7d13b4-57a9-4775-b849-fddadc2e0ccd"),
                         Name = "Admin",
                         NormalizedName = "ADMIN",
                         ConcurrencyStamp = new Guid().ToString(),
                     },
-                    new Role()
+                    new IdttRole()
                     {
                         Id = Guid.Parse("14d485aa-b9e9-45d6-81ed-d9db14197775"),
                         Name = "User",
@@ -225,7 +225,7 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
 
         public static void ConfigureRoleClaimMap(this ModelBuilder builder)
         {
-            builder.Entity<RoleClaim>(b =>
+            builder.Entity<IdttRoleClaim>(b =>
             {
                 // Primary key
                 b.HasKey(rc => rc.Id);
@@ -245,7 +245,7 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
 
         public static void ConfigureUserRoleMap(this ModelBuilder builder)
         {
-            builder.Entity<UserRole>(b =>
+            builder.Entity<IdttUserRole>(b =>
             {
                 // Primary key
                 b.HasKey(r => new { r.UserId, r.RoleId });
@@ -257,13 +257,13 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
                 b.ToTable("asp_net_user_roles");
             });
 
-            builder.Entity<UserRole>().HasData(
-                    new UserRole()
+            builder.Entity<IdttUserRole>().HasData(
+                    new IdttUserRole()
                     {
                         RoleId = Guid.Parse("4e7d13b4-57a9-4775-b849-fddadc2e0ccd"),
                         UserId = Guid.Parse("bbb45ad0-9430-4424-b2ce-a16c0af61356")
                     },
-                    new UserRole()
+                    new IdttUserRole()
                     {
                         RoleId = Guid.Parse("14d485aa-b9e9-45d6-81ed-d9db14197775"),
                         UserId = Guid.Parse("3d8c4bc4-2ee2-4e32-a71d-b7608dfd2cc1")
