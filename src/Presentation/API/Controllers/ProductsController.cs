@@ -1,12 +1,15 @@
 ﻿using Application.Abstractions.Services.Products;
+using Application.Models.Constants.Options;
 using Application.Models.DTOs.Products;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace API.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [EnableRateLimiting(AppOption.RateLimiting)]
     public class ProductsController : BaseController
     {
         private readonly IProductService _productService;

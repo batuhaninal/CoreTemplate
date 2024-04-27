@@ -20,6 +20,9 @@ builder.Services.AddControllers()
     .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<UpdateCategoryDtoValidator>());
 
 
+builder.Services.ConfigureRateLimiting();
+
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 //builder.Services.AddSwaggerGen();
@@ -44,6 +47,8 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 
 app.UseAuthorization();
+
+app.UseRateLimiter();
 
 app.MapControllers();
 

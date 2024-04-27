@@ -1,12 +1,15 @@
 ﻿using Application.Abstractions.Services.Categories;
+using Application.Models.Constants.Options;
 using Application.Models.DTOs.Categories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace API.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [EnableRateLimiting(AppOption.RateLimiting)]
     public class CategoriesController : BaseController
     {
         private readonly ICategoryService _categoryService;
