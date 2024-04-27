@@ -1,6 +1,6 @@
 ﻿using Application.Abstractions.Repositories.Commons;
 using Application.Abstractions.Services.Categories;
-using Application.Abstractions.Services.Users;
+using Application.Abstractions.Services.Products;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;

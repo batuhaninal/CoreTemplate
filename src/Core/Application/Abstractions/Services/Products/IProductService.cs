@@ -1,12 +1,7 @@
 ﻿using Application.Abstractions.Commons.Results;
 using Application.Models.DTOs.Products;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Application.Abstractions.Services.Users
+namespace Application.Abstractions.Services.Products
 {
     public interface IProductService
     {

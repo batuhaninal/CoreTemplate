@@ -1,12 +1,13 @@
 ﻿using Application.Abstractions.Commons.Results;
 using Application.Abstractions.Repositories.Commons;
-using Application.Abstractions.Services.Users;
+using Application.Abstractions.Services.Products;
 using Application.Models.DTOs.Commons.Results;
 using Application.Models.DTOs.Products;
 using Application.Utilities.Exceptions.Commons;
 using Application.Utilities.Pagination;
 using AutoMapper;
 using Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 using Persistence.Services.Commons;
 using System;
 using System.Collections.Generic;
@@ -53,8 +54,13 @@ namespace Persistence.Services.Products
         {
             await _businessRule.CheckProductExist(productId);
 
-            Product product = (await UnitOfWork.ProductReadRepository.GetByIdAsync(productId, false))!;
-            return new SuccessDataResultDto<ProductInfoDto>(Mapper.Map<ProductInfoDto>(product));
+            Product? product = await UnitOfWork.ProductReadRepository
+                .Table
+                .Where(x=> x.Id == Guid.Parse(productId))
+                .Include(x=> x.Category)
+                //.Select(p=> Mapper.Map<ProductInfoDto>(p))
+                .FirstOrDefaultAsync();
+            return new SuccessDataResultDto<ProductInfoDto>(Mapper.Map<ProductInfoDto>(product!));
         }
 
         public async Task<IBaseResult> UpdateAsync(string productId, UpdateProductDto updateProductDto)

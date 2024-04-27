@@ -18,6 +18,9 @@ namespace Application.Utilities.MappingProfiles
 
             CreateMap<Category, CategoryItemDto>()
                 .ConstructUsing(x => new CategoryItemDto(x.Id.ToString(), x.Title, x.CreatedDate));
+
+            CreateMap<Category, CategoryInfoDto>()
+                .ConstructUsing(x=> new CategoryInfoDto(x.Id.ToString(), x.Title));
         }
     }
 }

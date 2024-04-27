@@ -1,11 +1,10 @@
-﻿using Application.Abstractions.Services.Users;
+﻿using Application.Abstractions.Services.Products;
 using Application.Models.DTOs.Products;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class ProductsController : BaseController
     {
