@@ -6,7 +6,7 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
 {
     public static class IdentityMap
     {
-        public static void ConfigureUserMap(this ModelBuilder builder, PasswordHasher<IdttUser> hasher)
+        public static void ConfigureIdttUserMap(this ModelBuilder builder, PasswordHasher<IdttUser> hasher)
         {
             builder.Entity<IdttUser>(b =>
             {
@@ -93,7 +93,7 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
                 });
         }
 
-        public static void ConfigureUserClaimMap(this ModelBuilder builder)
+        public static void ConfigureIdttUserClaimMap(this ModelBuilder builder)
         {
             builder.Entity<IdttUserClaim>(b =>
             {
@@ -113,7 +113,7 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
             });
         }
 
-        public static void ConfigureUserLoginMap(this ModelBuilder builder)
+        public static void ConfigureIdttUserLoginMap(this ModelBuilder builder)
         {
             builder.Entity<IdttUserLogin>(b =>
             {
@@ -141,7 +141,7 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
             });
         }
 
-        public static void ConfigureUserTokenMap(this ModelBuilder builder)
+        public static void ConfigureIdttUserTokenMap(this ModelBuilder builder)
         {
             builder.Entity<IdttUserToken>(b =>
             {
@@ -168,7 +168,7 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
             });
         }
 
-        public static void ConfigureRoleMap(this ModelBuilder builder)
+        public static void ConfigureIdttRoleMap(this ModelBuilder builder)
         {
             builder.Entity<IdttRole>(b =>
             {
@@ -223,7 +223,7 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
                 );
         }
 
-        public static void ConfigureRoleClaimMap(this ModelBuilder builder)
+        public static void ConfigureIdttRoleClaimMap(this ModelBuilder builder)
         {
             builder.Entity<IdttRoleClaim>(b =>
             {
@@ -243,7 +243,7 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
             });
         }
 
-        public static void ConfigureUserRoleMap(this ModelBuilder builder)
+        public static void ConfigureIdttUserRoleMap(this ModelBuilder builder)
         {
             builder.Entity<IdttUserRole>(b =>
             {

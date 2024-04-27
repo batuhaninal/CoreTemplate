@@ -23,13 +23,13 @@ namespace Persistence.Contexts
 
             var hasher = new PasswordHasher<IdttUser>();
 
-            builder.ConfigureUserMap(hasher);
-            builder.ConfigureUserClaimMap();
-            builder.ConfigureUserLoginMap();
-            builder.ConfigureUserTokenMap();
-            builder.ConfigureRoleMap();
-            builder.ConfigureRoleClaimMap();
-            builder.ConfigureUserRoleMap();
+            builder.ConfigureIdttUserMap(hasher);
+            builder.ConfigureIdttUserClaimMap();
+            builder.ConfigureIdttUserLoginMap();
+            builder.ConfigureIdttUserTokenMap();
+            builder.ConfigureIdttRoleMap();
+            builder.ConfigureIdttRoleClaimMap();
+            builder.ConfigureIdttUserRoleMap();
 
             builder.ConfigureCategoryMap();
             builder.ConfigureProductMap();
