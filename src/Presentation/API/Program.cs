@@ -1,3 +1,4 @@
+using Adapter;
 using API.Middlewares;
 using Application;
 using Application.Utilities.FluentValidations.Categories;
@@ -8,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.BindApplicationServices(builder.Configuration);
+builder.Services.BindAdapterServices(builder.Configuration);
 builder.Services.BindPersistenceServices(builder.Configuration);
 
 builder.Services.AddControllers()

@@ -37,7 +37,7 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
             {
                 new Role()
                 {
-                    Id = Guid.Parse("f219d021-5d29-4e63-8250-4aa1e514d8dc"),
+                    Id = Guid.Parse("cf2a3f8d-88bc-4c0c-a5e7-b5f9dd20658b"),
                     CreatedDate = DateTime.UtcNow,
                     UpdatedDate = DateTime.UtcNow,
                     IsActive = true,

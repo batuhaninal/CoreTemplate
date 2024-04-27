@@ -39,7 +39,7 @@ namespace Adapter.Services.Tokens
                 expires: token.Expiration,
                 notBefore: DateTime.UtcNow,
                 signingCredentials: signingCredentials,
-                claims: new List<Claim> 
+                claims: new List<Claim>
                 {
                     new Claim("sub", user.Id.ToString()),
                     new Claim(ClaimTypes.Email, user.Email!),
