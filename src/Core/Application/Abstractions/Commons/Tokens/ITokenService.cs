@@ -1,11 +1,11 @@
 ﻿using Application.Models.Tokens;
-using Domain.Entities.Identities;
+using Domain.Entities;
 
 namespace Application.Abstractions.Commons.Tokens
 {
     public interface ITokenService
     {
-        JwtToken CreateAccessToken(IdttUser user, string role, int minutes);
+        JwtToken CreateAccessToken(User user, int minutes);
         string CreateRefreshToken();
     }
 }

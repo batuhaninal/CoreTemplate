@@ -1,16 +1,12 @@
 ﻿using Application.Abstractions.Commons.Tokens;
 using Application.Models.Tokens;
-using Domain.Entities.Identities;
+using Domain.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Adapter.Services.Tokens
 {
@@ -23,7 +19,7 @@ namespace Adapter.Services.Tokens
             _configuration = configuration;
         }
 
-        public JwtToken CreateAccessToken(IdttUser user, string role, int minutes)
+        public JwtToken CreateAccessToken(User user, int minutes)
         {
             JwtToken token = new();
 
@@ -43,8 +39,8 @@ namespace Adapter.Services.Tokens
                 {
                     new Claim("sub", user.Id.ToString()),
                     new Claim(ClaimTypes.Email, user.Email!),
-                    new Claim(ClaimTypes.Name, user.UserName!),
-                    new Claim(ClaimTypes.Role, role)
+                    new Claim(ClaimTypes.Name, user.FirstName + " " + user.LastName),
+                    new Claim(ClaimTypes.Role, user.UserRoles!.FirstOrDefault()!.Role!.Name)
                 });
 
             JwtSecurityTokenHandler tokenHandler = new();
