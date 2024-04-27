@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Application.Models.Constants.Roles;
+using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -37,7 +38,7 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
             {
                 new Role()
                 {
-                    Id = Guid.Parse("cf2a3f8d-88bc-4c0c-a5e7-b5f9dd20658b"),
+                    Id = Guid.Parse(AppRoles.Admin),
                     CreatedDate = DateTime.UtcNow,
                     UpdatedDate = DateTime.UtcNow,
                     IsActive = true,
@@ -45,7 +46,7 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
                 },
                 new Role()
                 {
-                    Id = Guid.Parse("1e9d831e-fb57-4c7a-b8d5-8a4a0fb1f7b2"),
+                    Id = Guid.Parse(AppRoles.User),
                     CreatedDate = DateTime.UtcNow,
                     UpdatedDate = DateTime.UtcNow,
                     IsActive = true,
@@ -53,7 +54,7 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
                 },
                 new Role()
                 {
-                    Id = Guid.Parse("83e5c9f0-7e6d-4a08-a515-2e8889f3b140"),
+                    Id = Guid.Parse(AppRoles.Seller),
                     CreatedDate = DateTime.UtcNow,
                     UpdatedDate = DateTime.UtcNow,
                     IsActive = true,

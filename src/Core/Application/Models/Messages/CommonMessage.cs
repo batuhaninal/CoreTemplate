@@ -8,6 +8,11 @@ namespace Application.Models.Messages
 {
     public static class CommonMessage
     {
+        public static class BusinessMessages
+        {
+            public const string WrongPassword = "Wrong password or email";
+        }
+        
         public static class Validation
         {
             public static string NotNull(string fieldName) => $"{fieldName} field cannot be empty!";

@@ -1,12 +1,13 @@
 ﻿using Application.Abstractions.Repositories.Commons;
+using Application.Abstractions.Services.Auths;
 using Application.Abstractions.Services.Categories;
 using Application.Abstractions.Services.Products;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence.Contexts;
 using Persistence.Repositories.Commons;
+using Persistence.Services.Auths;
 using Persistence.Services.Categories;
 using Persistence.Services.Products;
 
@@ -32,6 +33,8 @@ namespace Persistence
             //services.AddScoped<ICategoryWriteRepository, CategoryWriteRepository>();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            services.AddScoped<IAuthService, AuthService>();
 
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IProductService, ProductService>();

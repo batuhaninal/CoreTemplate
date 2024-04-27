@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Abstractions\Services\Auths\" />
     <Folder Include="Abstractions\Services\Users\" />
   </ItemGroup>
 
