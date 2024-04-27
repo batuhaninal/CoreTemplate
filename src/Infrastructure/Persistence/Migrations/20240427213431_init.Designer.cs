@@ -12,7 +12,7 @@ using Persistence.Contexts;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(TemplateContext))]
-    [Migration("20240427201524_init")]
+    [Migration("20240427213431_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -58,18 +58,18 @@ namespace Persistence.Migrations
                         new
                         {
                             Id = new Guid("24fe2676-c6b0-4f15-b045-edd9a84a7ca7"),
-                            CreatedDate = new DateTime(2024, 4, 27, 20, 15, 23, 802, DateTimeKind.Utc).AddTicks(1266),
+                            CreatedDate = new DateTime(2024, 4, 27, 21, 34, 31, 327, DateTimeKind.Utc).AddTicks(6023),
                             IsActive = true,
                             Title = "Teknoloji",
-                            UpdatedDate = new DateTime(2024, 4, 27, 20, 15, 23, 802, DateTimeKind.Utc).AddTicks(1266)
+                            UpdatedDate = new DateTime(2024, 4, 27, 21, 34, 31, 327, DateTimeKind.Utc).AddTicks(6024)
                         },
                         new
                         {
                             Id = new Guid("1fe6dbd9-048f-45cf-b1ea-d46210a87d96"),
-                            CreatedDate = new DateTime(2024, 4, 27, 20, 15, 23, 802, DateTimeKind.Utc).AddTicks(1269),
+                            CreatedDate = new DateTime(2024, 4, 27, 21, 34, 31, 327, DateTimeKind.Utc).AddTicks(6026),
                             IsActive = true,
                             Title = "Giyim",
-                            UpdatedDate = new DateTime(2024, 4, 27, 20, 15, 23, 802, DateTimeKind.Utc).AddTicks(1269)
+                            UpdatedDate = new DateTime(2024, 4, 27, 21, 34, 31, 327, DateTimeKind.Utc).AddTicks(6027)
                         });
                 });
 
@@ -117,41 +117,41 @@ namespace Persistence.Migrations
                         {
                             Id = new Guid("29e2d55d-fbd2-4f0c-b71e-357d2b7ffe88"),
                             CategoryId = new Guid("24fe2676-c6b0-4f15-b045-edd9a84a7ca7"),
-                            CreatedDate = new DateTime(2024, 4, 27, 20, 15, 23, 802, DateTimeKind.Utc).AddTicks(2616),
+                            CreatedDate = new DateTime(2024, 4, 27, 21, 34, 31, 327, DateTimeKind.Utc).AddTicks(7470),
                             IsActive = true,
                             Price = 120m,
                             Title = "Klavye",
-                            UpdatedDate = new DateTime(2024, 4, 27, 20, 15, 23, 802, DateTimeKind.Utc).AddTicks(2617)
+                            UpdatedDate = new DateTime(2024, 4, 27, 21, 34, 31, 327, DateTimeKind.Utc).AddTicks(7470)
                         },
                         new
                         {
                             Id = new Guid("5d11e4f2-1db7-4667-9a90-87918dd73569"),
                             CategoryId = new Guid("1fe6dbd9-048f-45cf-b1ea-d46210a87d96"),
-                            CreatedDate = new DateTime(2024, 4, 27, 20, 15, 23, 802, DateTimeKind.Utc).AddTicks(2621),
+                            CreatedDate = new DateTime(2024, 4, 27, 21, 34, 31, 327, DateTimeKind.Utc).AddTicks(7476),
                             IsActive = false,
                             Price = 250m,
                             Title = "Tyler Durden Poları",
-                            UpdatedDate = new DateTime(2024, 4, 27, 20, 15, 23, 802, DateTimeKind.Utc).AddTicks(2622)
+                            UpdatedDate = new DateTime(2024, 4, 27, 21, 34, 31, 327, DateTimeKind.Utc).AddTicks(7476)
                         },
                         new
                         {
                             Id = new Guid("f4edf481-d457-4e3e-a670-0b52635744df"),
                             CategoryId = new Guid("1fe6dbd9-048f-45cf-b1ea-d46210a87d96"),
-                            CreatedDate = new DateTime(2024, 4, 27, 20, 15, 23, 802, DateTimeKind.Utc).AddTicks(2624),
+                            CreatedDate = new DateTime(2024, 4, 27, 21, 34, 31, 327, DateTimeKind.Utc).AddTicks(7478),
                             IsActive = true,
                             Price = 300m,
                             Title = "Zen",
-                            UpdatedDate = new DateTime(2024, 4, 27, 20, 15, 23, 802, DateTimeKind.Utc).AddTicks(2624)
+                            UpdatedDate = new DateTime(2024, 4, 27, 21, 34, 31, 327, DateTimeKind.Utc).AddTicks(7479)
                         },
                         new
                         {
                             Id = new Guid("5836c09f-c947-4222-9cfb-5f665b83f755"),
                             CategoryId = new Guid("24fe2676-c6b0-4f15-b045-edd9a84a7ca7"),
-                            CreatedDate = new DateTime(2024, 4, 27, 20, 15, 23, 802, DateTimeKind.Utc).AddTicks(2626),
+                            CreatedDate = new DateTime(2024, 4, 27, 21, 34, 31, 327, DateTimeKind.Utc).AddTicks(7480),
                             IsActive = false,
                             Price = 400m,
                             Title = "Klavye",
-                            UpdatedDate = new DateTime(2024, 4, 27, 20, 15, 23, 802, DateTimeKind.Utc).AddTicks(2627)
+                            UpdatedDate = new DateTime(2024, 4, 27, 21, 34, 31, 327, DateTimeKind.Utc).AddTicks(7481)
                         });
                 });
 
@@ -188,26 +188,26 @@ namespace Persistence.Migrations
                         new
                         {
                             Id = new Guid("cf2a3f8d-88bc-4c0c-a5e7-b5f9dd20658b"),
-                            CreatedDate = new DateTime(2024, 4, 27, 20, 15, 23, 801, DateTimeKind.Utc).AddTicks(8347),
+                            CreatedDate = new DateTime(2024, 4, 27, 21, 34, 31, 327, DateTimeKind.Utc).AddTicks(3018),
                             IsActive = true,
-                            Name = "Admin",
-                            UpdatedDate = new DateTime(2024, 4, 27, 20, 15, 23, 801, DateTimeKind.Utc).AddTicks(8348)
+                            Name = "admin",
+                            UpdatedDate = new DateTime(2024, 4, 27, 21, 34, 31, 327, DateTimeKind.Utc).AddTicks(3018)
                         },
                         new
                         {
                             Id = new Guid("1e9d831e-fb57-4c7a-b8d5-8a4a0fb1f7b2"),
-                            CreatedDate = new DateTime(2024, 4, 27, 20, 15, 23, 801, DateTimeKind.Utc).AddTicks(8353),
+                            CreatedDate = new DateTime(2024, 4, 27, 21, 34, 31, 327, DateTimeKind.Utc).AddTicks(3024),
                             IsActive = true,
-                            Name = "User",
-                            UpdatedDate = new DateTime(2024, 4, 27, 20, 15, 23, 801, DateTimeKind.Utc).AddTicks(8354)
+                            Name = "user",
+                            UpdatedDate = new DateTime(2024, 4, 27, 21, 34, 31, 327, DateTimeKind.Utc).AddTicks(3024)
                         },
                         new
                         {
                             Id = new Guid("83e5c9f0-7e6d-4a08-a515-2e8889f3b140"),
-                            CreatedDate = new DateTime(2024, 4, 27, 20, 15, 23, 801, DateTimeKind.Utc).AddTicks(8355),
+                            CreatedDate = new DateTime(2024, 4, 27, 21, 34, 31, 327, DateTimeKind.Utc).AddTicks(3026),
                             IsActive = true,
-                            Name = "Seller",
-                            UpdatedDate = new DateTime(2024, 4, 27, 20, 15, 23, 801, DateTimeKind.Utc).AddTicks(8355)
+                            Name = "seller",
+                            UpdatedDate = new DateTime(2024, 4, 27, 21, 34, 31, 327, DateTimeKind.Utc).AddTicks(3026)
                         });
                 });
 
@@ -266,38 +266,38 @@ namespace Persistence.Migrations
                         new
                         {
                             Id = new Guid("f219d021-5d29-4e63-8250-4aa1e514d8dc"),
-                            CreatedDate = new DateTime(2024, 4, 27, 20, 15, 23, 801, DateTimeKind.Utc).AddTicks(5093),
+                            CreatedDate = new DateTime(2024, 4, 27, 21, 34, 31, 327, DateTimeKind.Utc).AddTicks(1163),
                             Email = "batuhan@inal.com",
                             FirstName = "Batuhan",
                             IsActive = true,
                             LastName = "Inal",
-                            PasswordHash = new byte[] { 190, 199, 185, 17, 119, 46, 199, 9, 254, 220, 221, 69, 79, 102, 159, 84, 125, 144, 15, 76, 45, 167, 227, 20, 159, 93, 93, 34, 96, 146, 164, 182 },
-                            PasswordSalt = new byte[] { 220, 112, 255, 109, 86, 153, 122, 219, 191, 47, 188, 185, 149, 84, 133, 164, 149, 219, 3, 105, 37, 69, 141, 178, 160, 135, 80, 40, 84, 218, 66, 208, 139, 209, 112, 244, 71, 104, 129, 212, 162, 91, 142, 252, 176, 37, 96, 246, 97, 229, 8, 35, 124, 136, 142, 143, 148, 212, 99, 189, 150, 53, 30, 137 },
-                            UpdatedDate = new DateTime(2024, 4, 27, 20, 15, 23, 801, DateTimeKind.Utc).AddTicks(5096)
+                            PasswordHash = new byte[] { 25, 109, 130, 62, 198, 37, 178, 81, 57, 207, 121, 118, 24, 41, 92, 78, 109, 115, 193, 144, 186, 37, 139, 220, 149, 219, 38, 208, 197, 42, 189, 48 },
+                            PasswordSalt = new byte[] { 43, 73, 152, 7, 96, 233, 22, 14, 173, 178, 65, 33, 205, 55, 200, 120, 4, 71, 102, 119, 235, 69, 155, 151, 253, 125, 240, 126, 87, 234, 52, 117, 95, 159, 194, 231, 39, 106, 74, 79, 172, 35, 65, 87, 8, 254, 198, 59, 201, 245, 192, 160, 85, 179, 59, 148, 252, 90, 83, 46, 48, 225, 88, 60 },
+                            UpdatedDate = new DateTime(2024, 4, 27, 21, 34, 31, 327, DateTimeKind.Utc).AddTicks(1165)
                         },
                         new
                         {
                             Id = new Guid("ca9a97c7-6149-4e89-a5c3-61928510c2b9"),
-                            CreatedDate = new DateTime(2024, 4, 27, 20, 15, 23, 801, DateTimeKind.Utc).AddTicks(5106),
+                            CreatedDate = new DateTime(2024, 4, 27, 21, 34, 31, 327, DateTimeKind.Utc).AddTicks(1177),
                             Email = "user@user.com",
                             FirstName = "User",
                             IsActive = true,
                             LastName = "User",
-                            PasswordHash = new byte[] { 190, 199, 185, 17, 119, 46, 199, 9, 254, 220, 221, 69, 79, 102, 159, 84, 125, 144, 15, 76, 45, 167, 227, 20, 159, 93, 93, 34, 96, 146, 164, 182 },
-                            PasswordSalt = new byte[] { 220, 112, 255, 109, 86, 153, 122, 219, 191, 47, 188, 185, 149, 84, 133, 164, 149, 219, 3, 105, 37, 69, 141, 178, 160, 135, 80, 40, 84, 218, 66, 208, 139, 209, 112, 244, 71, 104, 129, 212, 162, 91, 142, 252, 176, 37, 96, 246, 97, 229, 8, 35, 124, 136, 142, 143, 148, 212, 99, 189, 150, 53, 30, 137 },
-                            UpdatedDate = new DateTime(2024, 4, 27, 20, 15, 23, 801, DateTimeKind.Utc).AddTicks(5107)
+                            PasswordHash = new byte[] { 25, 109, 130, 62, 198, 37, 178, 81, 57, 207, 121, 118, 24, 41, 92, 78, 109, 115, 193, 144, 186, 37, 139, 220, 149, 219, 38, 208, 197, 42, 189, 48 },
+                            PasswordSalt = new byte[] { 43, 73, 152, 7, 96, 233, 22, 14, 173, 178, 65, 33, 205, 55, 200, 120, 4, 71, 102, 119, 235, 69, 155, 151, 253, 125, 240, 126, 87, 234, 52, 117, 95, 159, 194, 231, 39, 106, 74, 79, 172, 35, 65, 87, 8, 254, 198, 59, 201, 245, 192, 160, 85, 179, 59, 148, 252, 90, 83, 46, 48, 225, 88, 60 },
+                            UpdatedDate = new DateTime(2024, 4, 27, 21, 34, 31, 327, DateTimeKind.Utc).AddTicks(1177)
                         },
                         new
                         {
                             Id = new Guid("f3c72d95-d69b-478b-a186-7934a9bf87a4"),
-                            CreatedDate = new DateTime(2024, 4, 27, 20, 15, 23, 801, DateTimeKind.Utc).AddTicks(5109),
+                            CreatedDate = new DateTime(2024, 4, 27, 21, 34, 31, 327, DateTimeKind.Utc).AddTicks(1179),
                             Email = "seller@seller.com",
                             FirstName = "Seller",
                             IsActive = true,
                             LastName = "Seller",
-                            PasswordHash = new byte[] { 190, 199, 185, 17, 119, 46, 199, 9, 254, 220, 221, 69, 79, 102, 159, 84, 125, 144, 15, 76, 45, 167, 227, 20, 159, 93, 93, 34, 96, 146, 164, 182 },
-                            PasswordSalt = new byte[] { 220, 112, 255, 109, 86, 153, 122, 219, 191, 47, 188, 185, 149, 84, 133, 164, 149, 219, 3, 105, 37, 69, 141, 178, 160, 135, 80, 40, 84, 218, 66, 208, 139, 209, 112, 244, 71, 104, 129, 212, 162, 91, 142, 252, 176, 37, 96, 246, 97, 229, 8, 35, 124, 136, 142, 143, 148, 212, 99, 189, 150, 53, 30, 137 },
-                            UpdatedDate = new DateTime(2024, 4, 27, 20, 15, 23, 801, DateTimeKind.Utc).AddTicks(5110)
+                            PasswordHash = new byte[] { 25, 109, 130, 62, 198, 37, 178, 81, 57, 207, 121, 118, 24, 41, 92, 78, 109, 115, 193, 144, 186, 37, 139, 220, 149, 219, 38, 208, 197, 42, 189, 48 },
+                            PasswordSalt = new byte[] { 43, 73, 152, 7, 96, 233, 22, 14, 173, 178, 65, 33, 205, 55, 200, 120, 4, 71, 102, 119, 235, 69, 155, 151, 253, 125, 240, 126, 87, 234, 52, 117, 95, 159, 194, 231, 39, 106, 74, 79, 172, 35, 65, 87, 8, 254, 198, 59, 201, 245, 192, 160, 85, 179, 59, 148, 252, 90, 83, 46, 48, 225, 88, 60 },
+                            UpdatedDate = new DateTime(2024, 4, 27, 21, 34, 31, 327, DateTimeKind.Utc).AddTicks(1180)
                         });
                 });
 
@@ -340,28 +340,28 @@ namespace Persistence.Migrations
                         new
                         {
                             Id = new Guid("0e398d5d-c49e-4b68-8da1-9616a0145a6d"),
-                            CreatedDate = new DateTime(2024, 4, 27, 20, 15, 23, 801, DateTimeKind.Utc).AddTicks(9798),
+                            CreatedDate = new DateTime(2024, 4, 27, 21, 34, 31, 327, DateTimeKind.Utc).AddTicks(4275),
                             IsActive = true,
                             RoleId = new Guid("cf2a3f8d-88bc-4c0c-a5e7-b5f9dd20658b"),
-                            UpdatedDate = new DateTime(2024, 4, 27, 20, 15, 23, 801, DateTimeKind.Utc).AddTicks(9798),
+                            UpdatedDate = new DateTime(2024, 4, 27, 21, 34, 31, 327, DateTimeKind.Utc).AddTicks(4276),
                             UserId = new Guid("f219d021-5d29-4e63-8250-4aa1e514d8dc")
                         },
                         new
                         {
                             Id = new Guid("8c056215-aa82-4ed8-bf86-b150a3e0fcf7"),
-                            CreatedDate = new DateTime(2024, 4, 27, 20, 15, 23, 801, DateTimeKind.Utc).AddTicks(9802),
+                            CreatedDate = new DateTime(2024, 4, 27, 21, 34, 31, 327, DateTimeKind.Utc).AddTicks(4282),
                             IsActive = true,
                             RoleId = new Guid("1e9d831e-fb57-4c7a-b8d5-8a4a0fb1f7b2"),
-                            UpdatedDate = new DateTime(2024, 4, 27, 20, 15, 23, 801, DateTimeKind.Utc).AddTicks(9803),
+                            UpdatedDate = new DateTime(2024, 4, 27, 21, 34, 31, 327, DateTimeKind.Utc).AddTicks(4282),
                             UserId = new Guid("ca9a97c7-6149-4e89-a5c3-61928510c2b9")
                         },
                         new
                         {
                             Id = new Guid("1fca6ef1-27de-4fe4-9b8b-faebc2150d43"),
-                            CreatedDate = new DateTime(2024, 4, 27, 20, 15, 23, 801, DateTimeKind.Utc).AddTicks(9805),
+                            CreatedDate = new DateTime(2024, 4, 27, 21, 34, 31, 327, DateTimeKind.Utc).AddTicks(4285),
                             IsActive = true,
                             RoleId = new Guid("83e5c9f0-7e6d-4a08-a515-2e8889f3b140"),
-                            UpdatedDate = new DateTime(2024, 4, 27, 20, 15, 23, 801, DateTimeKind.Utc).AddTicks(9806),
+                            UpdatedDate = new DateTime(2024, 4, 27, 21, 34, 31, 327, DateTimeKind.Utc).AddTicks(4285),
                             UserId = new Guid("f3c72d95-d69b-478b-a186-7934a9bf87a4")
                         });
                 });

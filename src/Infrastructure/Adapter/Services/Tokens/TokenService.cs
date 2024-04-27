@@ -38,8 +38,7 @@ namespace Adapter.Services.Tokens
                 claims: new List<Claim>
                 {
                     new Claim("sub", user.Id.ToString()),
-                    new Claim(ClaimTypes.Email, user.Email!),
-                    new Claim(ClaimTypes.Name, user.FirstName + " " + user.LastName),
+                    new Claim(ClaimTypes.Name, user.Email),
                     new Claim(ClaimTypes.Role, user.UserRoles!.FirstOrDefault()!.Role!.Name)
                 });
 

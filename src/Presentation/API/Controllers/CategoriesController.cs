@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions.Services.Categories;
 using Application.Models.DTOs.Categories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -22,6 +23,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> CreateCategory([FromBody] CreateCategoryDto createCategoryDto)
         {
             return CreateResponse(await _categoryService.CreateAsync(createCategoryDto));
@@ -34,12 +36,14 @@ namespace API.Controllers
         }
 
         [HttpDelete("{categoryId}")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> RemoveCategory([FromRoute(Name = "categoryId")] string categoryId) 
         {
             return CreateResponse(await _categoryService.RemoveAsync(categoryId));
         }
 
         [HttpPut("{categoryId}")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> UpdateCategory([FromRoute(Name="categoryId")] string categoryId, [FromBody] UpdateCategoryDto updateCategoryDto)
         {
             return CreateResponse(await _categoryService.UpdateAsync(categoryId, updateCategoryDto));

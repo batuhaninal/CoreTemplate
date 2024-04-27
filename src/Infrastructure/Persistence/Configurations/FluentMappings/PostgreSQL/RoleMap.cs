@@ -1,11 +1,6 @@
 ﻿using Application.Models.Constants.Roles;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Persistence.Configurations.FluentMappings.PostgreSQL
 {
@@ -42,7 +37,7 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
                     CreatedDate = DateTime.UtcNow,
                     UpdatedDate = DateTime.UtcNow,
                     IsActive = true,
-                    Name = "Admin"
+                    Name = "admin"
                 },
                 new Role()
                 {
@@ -50,7 +45,7 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
                     CreatedDate = DateTime.UtcNow,
                     UpdatedDate = DateTime.UtcNow,
                     IsActive = true,
-                    Name = "User"
+                    Name = "user"
                 },
                 new Role()
                 {
@@ -58,7 +53,7 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
                     CreatedDate = DateTime.UtcNow,
                     UpdatedDate = DateTime.UtcNow,
                     IsActive = true,
-                    Name = "Seller"
+                    Name = "seller"
                 }
             });
         }

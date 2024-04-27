@@ -1,5 +1,4 @@
 ﻿using Domain.Entities;
-using Domain.Entities.Identities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Persistence.Configurations.FluentMappings.PostgreSQL

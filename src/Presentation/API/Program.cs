@@ -1,8 +1,12 @@
 using Adapter;
+using API.Extensions;
 using API.Middlewares;
 using Application;
 using Application.Utilities.FluentValidations.Categories;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
 using Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,9 +19,14 @@ builder.Services.BindPersistenceServices(builder.Configuration);
 builder.Services.AddControllers()
     .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<UpdateCategoryDtoValidator>());
 
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+//builder.Services.AddSwaggerGen();
+
+builder.Services.ConfigureSwagger();
+
+builder.Services.ConfigureJwtAuth(builder.Configuration);
 
 var app = builder.Build();
 
@@ -31,6 +40,8 @@ if (app.Environment.IsDevelopment())
 app.UseMiddleware<CustomExceptionMiddleware>();
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

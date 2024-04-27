@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions.Services.Products;
 using Application.Models.DTOs.Products;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -24,14 +25,17 @@ namespace API.Controllers
             CreateResponse(await _productService.GetByIdAsync(productId));
 
         [HttpPost]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> CreateProduct([FromBody] CreateProductDto createProductDto) =>
             CreateResponse(await _productService.CreateAsync(createProductDto));
 
         [HttpPut("{productId}")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> UpdateProduct([FromRoute(Name = "productId")] string productId, [FromBody] UpdateProductDto updateProductDto) =>
             CreateResponse(await _productService.UpdateAsync(productId, updateProductDto));
 
         [HttpDelete("{productId}")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> RemoveProduct([FromRoute(Name = "productId")] string productId) =>
             CreateResponse(await _productService.RemoveAsync(productId));
     }
