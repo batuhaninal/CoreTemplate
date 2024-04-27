@@ -8,11 +8,15 @@ using Persistence.Configurations.FluentMappings.PostgreSQL;
 
 namespace Persistence.Contexts
 {
-    public class TemplateContext : IdentityDbContext<IdttUser, IdttRole, Guid, IdttUserClaim, IdttUserRole, IdttUserLogin, IdttRoleClaim, IdttUserToken>
+    public class TemplateContext : DbContext
     {
         public TemplateContext(DbContextOptions options) : base(options)
         {
         }
+
+        public DbSet<User> Users { get; set; }
+        public DbSet<Role> Roles { get; set; }
+        public DbSet<UserRole> UserRoles { get; set; }
 
         public DbSet<Category> Categories { get; set; }
         public DbSet<Product> Products { get; set; }
@@ -21,15 +25,19 @@ namespace Persistence.Contexts
         {
             base.OnModelCreating(builder);
 
-            var hasher = new PasswordHasher<IdttUser>();
+            //var hasher = new PasswordHasher<IdttUser>();
 
-            builder.ConfigureIdttUserMap(hasher);
-            builder.ConfigureIdttUserClaimMap();
-            builder.ConfigureIdttUserLoginMap();
-            builder.ConfigureIdttUserTokenMap();
-            builder.ConfigureIdttRoleMap();
-            builder.ConfigureIdttRoleClaimMap();
-            builder.ConfigureIdttUserRoleMap();
+            //builder.ConfigureIdttUserMap(hasher);
+            //builder.ConfigureIdttUserClaimMap();
+            //builder.ConfigureIdttUserLoginMap();
+            //builder.ConfigureIdttUserTokenMap();
+            //builder.ConfigureIdttRoleMap();
+            //builder.ConfigureIdttRoleClaimMap();
+            //builder.ConfigureIdttUserRoleMap();
+
+            builder.ConfigureUserMap();
+            builder.ConfigureRoleMap();
+            builder.ConfigureUserRoleMap();
 
             builder.ConfigureCategoryMap();
             builder.ConfigureProductMap();
