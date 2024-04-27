@@ -5,7 +5,7 @@ using Persistence.Repositories.Commons;
 
 namespace Persistence.Repositories.UserRoles
 {
-    public class UserRoleReadRepository : ReadRepository<UserRole>, IUserRolesReadRepository
+    public class UserRoleReadRepository : ReadRepository<UserRole>, IUserRoleReadRepository
     {
         public UserRoleReadRepository(TemplateContext context) : base(context)
         {

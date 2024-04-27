@@ -3,7 +3,7 @@ using Domain.Entities;
 
 namespace Application.Abstractions.Repositories.UserRoles
 {
-    public interface IUserRolesWriteRepository : IWriteRepository<UserRole>
+    public interface IUserRoleWriteRepository : IWriteRepository<UserRole>
     {
     }
 }
