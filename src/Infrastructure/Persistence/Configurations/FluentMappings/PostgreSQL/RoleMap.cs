@@ -30,7 +30,7 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
                     .IsRequired()
                     .HasMaxLength(75);
 
-                c.HasMany<UserRole>().WithOne().HasForeignKey(ur => ur.RoleId).IsRequired();
+                c.HasMany(x=> x.UserRoles);
             });
 
             builder.Entity<Role>().HasData(new List<Role>()

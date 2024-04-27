@@ -33,6 +33,9 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
                 c.Property(x => x.RoleId)
                     .HasColumnName("role_id")
                     .IsRequired();
+
+                c.HasOne(x => x.User);
+                c.HasOne(x => x.Role);
             });
         }
     }

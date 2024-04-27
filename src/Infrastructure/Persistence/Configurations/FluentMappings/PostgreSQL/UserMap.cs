@@ -48,7 +48,7 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
                     .HasColumnName("password_salt")
                     .IsRequired();
 
-                c.HasMany<UserRole>().WithOne().HasForeignKey(ur=> ur.UserId).IsRequired();
+                c.HasMany(x=> x.UserRoles);
             });
         }
     }

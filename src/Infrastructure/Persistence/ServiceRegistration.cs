@@ -18,14 +18,14 @@ namespace Persistence
         {
             services.AddDbContext<TemplateContext>(options => options.UseNpgsql(configuration.GetConnectionString("PgSQL")));
 
-            services.Configure<IdentityOptions>(options =>
-            {
-                options.Password.RequiredLength = 3;
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequireDigit = false;
-                options.Password.RequireLowercase = false;
-                options.Password.RequireUppercase = false;
-            });
+            //services.Configure<IdentityOptions>(options =>
+            //{
+            //    options.Password.RequiredLength = 3;
+            //    options.Password.RequireNonAlphanumeric = false;
+            //    options.Password.RequireDigit = false;
+            //    options.Password.RequireLowercase = false;
+            //    options.Password.RequireUppercase = false;
+            //});
 
             // Unit of Work design pattern oncesi repository bagimliliklari icin servis kaydik yapmamiz gerekli!
             //services.AddScoped<ICategoryReadRepository, CategoryReadRepository>();
