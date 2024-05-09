@@ -29,6 +29,8 @@ namespace Persistence.Services.Articles
             await UnitOfWork.ArticleWriteRepository.CreateAsync(Mapper.Map<Article>(createArticleDto)!);
             await UnitOfWork.SaveChangesAsync();
 
+            await Cache.DeleteAllWithPrefixAsync(CachePrefix.Articles.All);
+
             return new SuccessResultDto(201);
         }
 
@@ -39,6 +41,8 @@ namespace Persistence.Services.Articles
             await UnitOfWork.ArticleWriteRepository.RemoveAsync(articleId);
 
             await UnitOfWork.SaveChangesAsync();
+
+            await Cache.DeleteAllWithPrefixAsync(CachePrefix.Articles.All);
 
             return new SuccessResultDto(204);
         }
@@ -88,6 +92,8 @@ namespace Persistence.Services.Articles
             Mapper.Map(updateArticleDto, oldArticle);
 
             await UnitOfWork.SaveChangesAsync();
+
+            await Cache.DeleteAllWithPrefixAsync(CachePrefix.Articles.All);
 
             return new SuccessResultDto(204);
         }
