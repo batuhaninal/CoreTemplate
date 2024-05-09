@@ -20,7 +20,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllArticles([FromQuery] int pageIndex, [FromQuery] int pageSize) =>
+        public async Task<IActionResult> GetAllArticles([FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 20) =>
             CreateResponse(await _articleService.GetAllAsync(pageIndex, pageSize));
 
         [HttpGet("{articleId}")]
