@@ -1,12 +1,12 @@
-﻿using Application.Abstractions.Repositories.Categories;
+﻿using Application.Abstractions.Repositories.Articles;
+using Application.Abstractions.Repositories.Categories;
 using Application.Abstractions.Repositories.Commons;
-using Application.Abstractions.Repositories.Products;
 using Application.Abstractions.Repositories.Roles;
 using Application.Abstractions.Repositories.UserRoles;
 using Application.Abstractions.Repositories.Users;
 using Persistence.Contexts;
+using Persistence.Repositories.Articles;
 using Persistence.Repositories.Categories;
-using Persistence.Repositories.Products;
 using Persistence.Repositories.Roles;
 using Persistence.Repositories.UserRoles;
 using Persistence.Repositories.Users;
@@ -18,8 +18,8 @@ namespace Persistence.Repositories.Commons
         private readonly TemplateContext _context;
         private readonly CategoryReadRepository _categoryReadRepository;
         private readonly CategoryWriteRepository _categoryWriteRepository;
-        private readonly ProductReadRepository _productReadRepository;
-        private readonly ProductWriteRepository _productWriteRepository;
+        private readonly ArticleReadRepository _articleReadRepository;
+        private readonly ArticleWriteRepository _articleWriteRepository;
         private readonly UserWriteRepository _userWriteRepository;
         private readonly UserReadRepository _userReadRepository;
         private readonly RoleReadRepository _roleReadRepository;
@@ -35,9 +35,9 @@ namespace Persistence.Repositories.Commons
 
         public ICategoryWriteRepository CategoryWriteRepository => _categoryWriteRepository ?? new CategoryWriteRepository(_context);
 
-        public IProductReadRepository ProductReadRepository => _productReadRepository ?? new ProductReadRepository(_context);
+        public IArticleReadRepository ArticleReadRepository => _articleReadRepository ?? new ArticleReadRepository(_context);
 
-        public IProductWriteRepository ProductWriteRepository => _productWriteRepository ?? new ProductWriteRepository(_context);
+        public IArticleWriteRepository ArticleWriteRepository => _articleWriteRepository ?? new ArticleWriteRepository(_context);
 
         public IUserReadRepository UserReadRepository => _userReadRepository ?? new UserReadRepository(_context);
 

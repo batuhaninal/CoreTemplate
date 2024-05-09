@@ -1,17 +1,11 @@
 ﻿using Domain.Entities.Commons;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
-    public class Product : BaseEntity
+    public class Article : BaseEntity
     {
         public string Title { get; set; } = null!;
-        public decimal Price { get; set; }
-
+        public string Content { get; set; } = null!;
 
         // 1-n eklenmesi gerekmektedir
         public Guid CategoryId { get; set; }

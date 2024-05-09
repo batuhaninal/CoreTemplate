@@ -8,6 +8,6 @@ namespace Domain.Entities
 
 
         // n-1 Istege bagli eklenmeyebilir
-        public virtual ICollection<Product>? Products { get; set; }
+        public virtual ICollection<Article>? Articles { get; set; }
     }
 }

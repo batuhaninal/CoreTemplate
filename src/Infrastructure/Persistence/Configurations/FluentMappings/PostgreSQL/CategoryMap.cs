@@ -25,7 +25,7 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
                     .IsRequired()
                     .HasMaxLength(100);
 
-                c.HasMany(m => m.Products);
+                c.HasMany(m => m.Articles);
             });
 
             Category[] categories =
@@ -41,7 +41,7 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
                 new()
                 {
                     Id = Guid.Parse("1fe6dbd9-048f-45cf-b1ea-d46210a87d96"),
-                    Title = "Giyim",
+                    Title = "Yazılım",
                     IsActive = true,
                     CreatedDate = DateTime.UtcNow,
                     UpdatedDate = DateTime.UtcNow

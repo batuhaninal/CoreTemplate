@@ -19,7 +19,7 @@ namespace Persistence.Contexts
         public DbSet<UserRole> UserRoles { get; set; }
 
         public DbSet<Category> Categories { get; set; }
-        public DbSet<Product> Products { get; set; }
+        public DbSet<Article> Articles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -40,7 +40,7 @@ namespace Persistence.Contexts
             builder.ConfigureUserRoleMap();
 
             builder.ConfigureCategoryMap();
-            builder.ConfigureProductMap();
+            builder.ConfigureArticleMap();
         }
 
         // Dto mapping isleminde de handle edilebilir state durumlari

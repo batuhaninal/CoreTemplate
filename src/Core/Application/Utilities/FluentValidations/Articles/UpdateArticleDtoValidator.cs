@@ -1,21 +1,21 @@
-﻿using Application.Models.DTOs.Products;
+﻿using Application.Models.DTOs.Articles;
 using Application.Models.Messages;
 using Application.Utilities.Helpers;
 using FluentValidation;
 
 namespace Application.Utilities.FluentValidations.Products
 {
-    public class UpdateProductDtoValidator : AbstractValidator<UpdateProductDto>
+    public class UpdateArticleDtoValidator : AbstractValidator<UpdateArticleDto>
     {
-        public UpdateProductDtoValidator()
+        public UpdateArticleDtoValidator()
         {
-            RuleFor(x => x.ProductId)
+            RuleFor(x => x.ArticleId)
                 .NotEmpty()
-                    .WithMessage(CommonMessage.Validation.NotNull("Product Id"))
+                    .WithMessage(CommonMessage.Validation.NotNull("Article Id"))
                 .NotNull()
-                    .WithMessage(CommonMessage.Validation.NotNull("Product Id"))
+                    .WithMessage(CommonMessage.Validation.NotNull("Article Id"))
                 .MaximumLength(50)
-                    .WithMessage(CommonMessage.Validation.MaxLength("Product Id", 50));
+                    .WithMessage(CommonMessage.Validation.MaxLength("Article Id", 50));
 
             RuleFor(x => x.Title)
                 .NotEmpty()
@@ -29,9 +29,15 @@ namespace Application.Utilities.FluentValidations.Products
                 .Must(RegexHelper.CheckWhiteSpaceDuplicate)
                     .WithMessage(CommonMessage.RegexErr.DuplicateWhiteSpace("Title"));
 
-            RuleFor(x => x.Price)
-                .GreaterThanOrEqualTo(1)
-                    .WithMessage(CommonMessage.Validation.GreaterThanOrEqual("Price", 1));
+            RuleFor(x => x.Content)
+                .NotEmpty()
+                    .WithMessage(CommonMessage.Validation.NotNull("Content"))
+                .NotNull()
+                    .WithMessage(CommonMessage.Validation.NotNull("Content"))
+                .MinimumLength(2)
+                    .WithMessage(CommonMessage.Validation.MinLength("Content", 2))
+                .MaximumLength(5000)
+                    .WithMessage(CommonMessage.Validation.MaxLength("Content", 5000));
 
 
             RuleFor(x => x.CategoryId)

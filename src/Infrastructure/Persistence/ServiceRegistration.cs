@@ -1,15 +1,15 @@
 ﻿using Application.Abstractions.Repositories.Commons;
+using Application.Abstractions.Services.Articles;
 using Application.Abstractions.Services.Auths;
 using Application.Abstractions.Services.Categories;
-using Application.Abstractions.Services.Products;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence.Contexts;
 using Persistence.Repositories.Commons;
+using Persistence.Services.Articles;
 using Persistence.Services.Auths;
 using Persistence.Services.Categories;
-using Persistence.Services.Products;
 
 namespace Persistence
 {
@@ -37,7 +37,7 @@ namespace Persistence
             services.AddScoped<IAuthService, AuthService>();
 
             services.AddScoped<ICategoryService, CategoryService>();
-            services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IArticleService, ArticleService>();
         }
     }
 }

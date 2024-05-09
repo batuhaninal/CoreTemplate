@@ -1,5 +1,5 @@
-﻿using Application.Abstractions.Repositories.Categories;
-using Application.Abstractions.Repositories.Products;
+﻿using Application.Abstractions.Repositories.Articles;
+using Application.Abstractions.Repositories.Categories;
 using Application.Abstractions.Repositories.Roles;
 using Application.Abstractions.Repositories.UserRoles;
 using Application.Abstractions.Repositories.Users;
@@ -10,8 +10,8 @@ namespace Application.Abstractions.Repositories.Commons
     {
         ICategoryReadRepository CategoryReadRepository { get; }
         ICategoryWriteRepository CategoryWriteRepository { get; }
-        IProductReadRepository ProductReadRepository { get; }
-        IProductWriteRepository ProductWriteRepository { get; }
+        IArticleReadRepository ArticleReadRepository { get; }
+        IArticleWriteRepository ArticleWriteRepository { get; }
         IUserReadRepository UserReadRepository { get; }
         IUserWriteRepository UserWriteRepository { get; }
         IRoleReadRepository RoleReadRepository { get; }
