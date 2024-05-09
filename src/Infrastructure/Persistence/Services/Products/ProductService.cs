@@ -1,4 +1,5 @@
-﻿using Application.Abstractions.Commons.Results;
+﻿using Application.Abstractions.Commons.Caching;
+using Application.Abstractions.Commons.Results;
 using Application.Abstractions.Repositories.Commons;
 using Application.Abstractions.Services.Products;
 using Application.Models.DTOs.Commons.Results;
@@ -9,18 +10,14 @@ using AutoMapper;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Services.Commons;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Persistence.Services.Products
 {
     public class ProductService : BaseService, IProductService
     {
         private readonly ProductBusinessRule _businessRule;
-        public ProductService(IUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper)
+
+        public ProductService(IUnitOfWork unitOfWork, IMapper mapper, ICacheService cache) : base(unitOfWork, mapper, cache)
         {
             _businessRule = new ProductBusinessRule(unitOfWork.ProductReadRepository);
         }

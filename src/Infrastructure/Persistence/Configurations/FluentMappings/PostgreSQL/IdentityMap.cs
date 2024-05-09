@@ -14,8 +14,8 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
                 b.HasKey(u => u.Id);
 
                 // Indexes for "normalized" username and email, to allow efficient lookups
-                b.HasIndex(u => u.NormalizedUserName).HasName("user_name_index").IsUnique();
-                b.HasIndex(u => u.NormalizedEmail).HasName("email_index");
+                b.HasIndex(u => u.NormalizedUserName).HasName("normalized_user_name_index").IsUnique();
+                b.HasIndex(u => u.NormalizedEmail).HasName("normalized_email_index");
 
                 // Maps to the AspNetUsers table
                 b.ToTable("asp_net_users");
@@ -178,7 +178,7 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
                 b.Property(r => r.Id).HasColumnName("id");
 
                 // Index for "normalized" role name to allow efficient lookups
-                b.HasIndex(r => r.NormalizedName).HasName("RoleNameIndex").IsUnique();
+                b.HasIndex(r => r.NormalizedName).HasName("normalized_role_name_index").IsUnique();
 
                 // Maps to the AspNetRoles table
                 b.ToTable("asp_net_roles");

@@ -1,11 +1,17 @@
 ﻿using Application.Abstractions.Commons.Results;
 using Application.Models.Constants.Settings;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 namespace Application.Models.DTOs.Commons.Results
 {
     public class PaginatedListDto<T> : ResultDto, IPaginatedDataResult<T>
     {
+        [JsonConstructor]
+        public PaginatedListDto() : base(200, true)
+        {
+            
+        }
         public PaginatedListDto(List<T> data, int count, int pageIndex, int pageSize, int statusCode, bool isSuccess, string message) : 
             base(statusCode, isSuccess, message)
         {
@@ -27,21 +33,21 @@ namespace Application.Models.DTOs.Commons.Results
             ItemsCount = data.Count;
             Data = data;
         }
-        public int TotalCount { get; }
+        public int TotalCount { get; set; }
 
-        public int ItemsCount { get; }
+        public int ItemsCount { get; set; }
 
-        public int PageIndex { get; }
+        public int PageIndex { get; set; }
 
-        public int PageSize { get; }
+        public int PageSize { get; set; }
 
-        public int TotalPages { get; }
+        public int TotalPages { get; set; }
 
-        public bool HasPreviousPage { get => PageIndex > 1; }
+        public bool HasPreviousPage { get => PageIndex > 1; set { } }
 
-        public bool HasNextPage { get => PageIndex < TotalPages; }
+        public bool HasNextPage { get => PageIndex < TotalPages; set { } }
 
-        public IEnumerable<T> Data { get; }
+        public IEnumerable<T> Data { get; set; }
 
         public static async Task<PaginatedListDto<T>> CreateAsync(IQueryable<T> query, int pageIndex, int pageSize, int statusCode, bool isSuccess, string message)
         {

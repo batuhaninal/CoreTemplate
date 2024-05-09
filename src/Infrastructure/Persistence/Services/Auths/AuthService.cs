@@ -1,4 +1,5 @@
-﻿using Application.Abstractions.Commons.Results;
+﻿using Application.Abstractions.Commons.Caching;
+using Application.Abstractions.Commons.Results;
 using Application.Abstractions.Commons.Security;
 using Application.Abstractions.Commons.Tokens;
 using Application.Abstractions.Repositories.Commons;
@@ -23,7 +24,7 @@ namespace Persistence.Services.Auths
         private readonly IHashingService _hashingService;
         private readonly UserBusinessRules _userBusinessRules;
 
-        public AuthService(IUnitOfWork unitOfWork, IMapper mapper, IHashingService hashingService, ITokenService tokenService) : base(unitOfWork, mapper)
+        public AuthService(IUnitOfWork unitOfWork, IMapper mapper, ICacheService cache, ITokenService tokenService, IHashingService hashingService) : base(unitOfWork, mapper, cache)
         {
             _hashingService = hashingService;
             _tokenService = tokenService;

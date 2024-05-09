@@ -4,9 +4,6 @@ using API.Middlewares;
 using Application;
 using Application.Utilities.FluentValidations.Categories;
 using FluentValidation.AspNetCore;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
 using Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -40,7 +37,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseMiddleware<CustomExceptionMiddleware>();
+//app.UseMiddleware<CustomExceptionMiddleware>();
 
 app.UseHttpsRedirection();
 

@@ -1,19 +1,23 @@
-﻿using Application.Abstractions.Commons.Results;
+﻿using Application.Abstractions.Commons.Caching;
+using Application.Abstractions.Commons.Results;
 using Application.Abstractions.Repositories.Commons;
 using Application.Abstractions.Services.Categories;
+using Application.Models.Constants.CachePrefixes;
 using Application.Models.DTOs.Categories;
 using Application.Models.DTOs.Commons.Results;
 using Application.Utilities.Pagination;
 using AutoMapper;
 using Domain.Entities;
 using Persistence.Services.Commons;
+using System.Text.Json;
 
 namespace Persistence.Services.Categories
 {
     public class CategoryService : BaseService,ICategoryService
     {
         private readonly CategoryBusinessRules _businessRules;
-        public CategoryService(IUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper)
+
+        public CategoryService(IUnitOfWork unitOfWork, IMapper mapper, ICacheService cache) : base(unitOfWork, mapper, cache)
         {
             _businessRules = new CategoryBusinessRules(unitOfWork);
         }
@@ -26,13 +30,30 @@ namespace Persistence.Services.Categories
 
             await UnitOfWork.SaveChangesAsync();
 
+            await Cache.DeleteAllWithPrefixAsync(CachePrefix.Categories.All);
+
             return new SuccessResultDto(201);
         }
 
-        public async Task<IPaginatedDataResult<CategoryItemDto>> GetAllAsync(int pageIndex = 1, int pageSize = 20) =>
-            await UnitOfWork.CategoryReadRepository.Table
+        public async Task<IPaginatedDataResult<CategoryItemDto>> GetAllAsync(int pageIndex = 1, int pageSize = 20)
+        {
+            if(pageIndex < 5 && pageSize == 20)
+            {
+                string? cacheData = await Cache.GetAsync(CachePrefix.Categories.GetAllWithPagination(pageIndex, pageSize));
+                if (!string.IsNullOrEmpty(cacheData))
+                    return JsonSerializer.Deserialize<PaginatedListDto<CategoryItemDto>>(cacheData)!;
+            }
+
+            PaginatedListDto<CategoryItemDto> data = await UnitOfWork.CategoryReadRepository.Table
             .Select(x => Mapper.Map<CategoryItemDto>(x))
             .ToPaginatedListDtoAsync(pageIndex, pageSize, 200);
+
+            if (pageIndex < 5 && pageSize == 20)
+                await Cache.AddAsync(CachePrefix.Categories.GetAllWithPagination(pageIndex, pageSize), data);
+
+            return data;
+        }
+            
 
         public async Task<IDataResult<CategoryItemDto>> GetByIdAsync(string id)
         {
@@ -51,6 +72,8 @@ namespace Persistence.Services.Categories
 
             await UnitOfWork.SaveChangesAsync();
 
+            await Cache.DeleteAllWithPrefixAsync(CachePrefix.Categories.All);
+
             return new SuccessResultDto(204);
         }
 
@@ -65,6 +88,8 @@ namespace Persistence.Services.Categories
 
             Mapper.Map(updateCategoryDto, oldCategory);
             await UnitOfWork.SaveChangesAsync();
+
+            await Cache.DeleteAllWithPrefixAsync(CachePrefix.Categories.All);
 
             return new SuccessResultDto(204);
         }

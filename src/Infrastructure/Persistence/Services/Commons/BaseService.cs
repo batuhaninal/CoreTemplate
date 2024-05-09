@@ -1,10 +1,6 @@
-﻿using Application.Abstractions.Repositories.Commons;
+﻿using Application.Abstractions.Commons.Caching;
+using Application.Abstractions.Repositories.Commons;
 using AutoMapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Persistence.Services.Commons
 {
@@ -12,11 +8,13 @@ namespace Persistence.Services.Commons
     {
         public IUnitOfWork UnitOfWork { get; }
         public IMapper Mapper { get; }
+        public ICacheService Cache { get; }
 
-        public BaseService(IUnitOfWork unitOfWork, IMapper mapper)
+        public BaseService(IUnitOfWork unitOfWork, IMapper mapper, ICacheService cache)
         {
             UnitOfWork = unitOfWork;
             Mapper = mapper;
+            Cache = cache;
         }
     }
 }

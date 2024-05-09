@@ -15,6 +15,20 @@ services:
     networks:
       - app-network
 
+  redisdb:
+    image: redis:6.2-alpine
+    restart: always
+    container_name: redisdb
+    environment:
+        REDIS_PASSWORD: Unravel!
+    command: redis-server --save 20 1 --loglevel warning --requirepass Unravel!
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./myredis/conf:/usr/local/etc/redis
+    networks:
+      - app-network
+
 
 networks:
   app-network:

@@ -1,9 +1,6 @@
 ﻿using Application.Abstractions.Commons.Security;
 using Domain.Entities;
 using Domain.Entities.Commons;
-using Domain.Entities.Identities;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Configurations.FluentMappings.PostgreSQL;
 

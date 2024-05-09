@@ -16,16 +16,16 @@ namespace Persistence.Repositories.Commons
     public class UnitOfWork : IUnitOfWork
     {
         private readonly TemplateContext _context;
-        private CategoryReadRepository _categoryReadRepository;
-        private CategoryWriteRepository _categoryWriteRepository;
-        private ProductReadRepository _productReadRepository;
-        private ProductWriteRepository _productWriteRepository;
-        private UserWriteRepository _userWriteRepository;
-        private UserReadRepository _userReadRepository;
-        private RoleReadRepository _roleReadRepository;
-        private RoleWriteRepository _roleWriteRepository;
-        private UserRoleReadRepository _userRoleReadRepository;
-        private UserRoleWriteRepository _userRoleWriteRepository;
+        private readonly CategoryReadRepository _categoryReadRepository;
+        private readonly CategoryWriteRepository _categoryWriteRepository;
+        private readonly ProductReadRepository _productReadRepository;
+        private readonly ProductWriteRepository _productWriteRepository;
+        private readonly UserWriteRepository _userWriteRepository;
+        private readonly UserReadRepository _userReadRepository;
+        private readonly RoleReadRepository _roleReadRepository;
+        private readonly RoleWriteRepository _roleWriteRepository;
+        private readonly UserRoleReadRepository _userRoleReadRepository;
+        private readonly UserRoleWriteRepository _userRoleWriteRepository;
         public UnitOfWork(TemplateContext templateContext)
         {
             _context = templateContext;
