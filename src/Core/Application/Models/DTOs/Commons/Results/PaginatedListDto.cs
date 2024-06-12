@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions.Commons.Results;
 using Application.Models.Constants.Settings;
+using Application.Models.RequestParameters.Commons;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 
@@ -80,5 +81,12 @@ namespace Application.Models.DTOs.Commons.Results
 
             return new PaginatedListDto<T>(data, count, pageIndex, pageSize, statusCode, isSuccess);
         }
+
+        public static async Task<PaginatedListDto<T>> CreateAsync(IQueryable<T> query, BasePaginationRequestParameter pagination, int statusCode, bool isSuccess, string message) =>
+            await CreateAsync(query, pagination.PageIndex, pagination.PageSize, statusCode, isSuccess, message);
+
+        public static async Task<PaginatedListDto<T>> CreateAsync(IQueryable<T> query, BasePaginationRequestParameter pagination, int statusCode, bool isSuccess) =>
+            await CreateAsync(query, pagination.PageIndex, pagination.PageSize, statusCode, isSuccess);
+ 
     }
 } 

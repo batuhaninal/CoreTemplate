@@ -23,7 +23,7 @@ namespace API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllCategories([FromQuery] PaginationRequestParameter parameter)
         {
-            return CreateResponse(await _categoryService.GetAllAsync(parameter.PageIndex, parameter.PageSize));
+            return CreateResponse(await _categoryService.GetAllAsync(parameter));
         }
 
         [HttpPost]

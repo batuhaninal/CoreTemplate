@@ -5,6 +5,7 @@ using Application.Abstractions.Services.Categories;
 using Application.Models.Constants.CachePrefixes;
 using Application.Models.DTOs.Categories;
 using Application.Models.DTOs.Commons.Results;
+using Application.Models.RequestParameters.Commons;
 using Application.Utilities.Pagination;
 using AutoMapper;
 using Domain.Entities;
@@ -13,7 +14,7 @@ using System.Text.Json;
 
 namespace Persistence.Services.Categories
 {
-    public class CategoryService : BaseService,ICategoryService
+    public class CategoryService : BaseService, ICategoryService
     {
         private readonly CategoryBusinessRules _businessRules;
 
@@ -53,7 +54,9 @@ namespace Persistence.Services.Categories
 
             return data;
         }
-            
+
+        public async Task<IPaginatedDataResult<CategoryItemDto>> GetAllAsync(BasePaginationRequestParameter pagination) => 
+            await GetAllAsync(pagination.PageIndex, pagination.PageSize);
 
         public async Task<IDataResult<CategoryItemDto>> GetByIdAsync(string id)
         {

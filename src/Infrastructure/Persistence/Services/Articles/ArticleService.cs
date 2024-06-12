@@ -5,6 +5,7 @@ using Application.Abstractions.Services.Articles;
 using Application.Models.Constants.CachePrefixes;
 using Application.Models.DTOs.Articles;
 using Application.Models.DTOs.Commons.Results;
+using Application.Models.RequestParameters.Commons;
 using Application.Utilities.Exceptions.Commons;
 using Application.Utilities.Pagination;
 using AutoMapper;
@@ -97,5 +98,8 @@ namespace Persistence.Services.Articles
 
             return new SuccessResultDto(204);
         }
+
+        public async Task<IPaginatedDataResult<ArticleItemDto>> GetAllAsync(BasePaginationRequestParameter pagination) => 
+            await GetAllAsync(pagination.PageIndex, pagination.PageSize);
     }
 }
