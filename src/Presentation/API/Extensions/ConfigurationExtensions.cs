@@ -1,8 +1,10 @@
 ﻿using Application.Models.DTOs.Commons.Results;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Persistence.Contexts;
 using System.Net.Mime;
 using System.Security.Claims;
 using System.Text;
@@ -101,6 +103,13 @@ namespace API.Extensions
                     cfgOptions.Window = TimeSpan.FromMinutes(1);
                 });
             });
+        }
+
+        public static async Task ConfigureMigrationAsync(this WebApplication app)
+        {
+            using var scope = app.Services.CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<TemplateContext>();
+            await context.Database.MigrateAsync();
         }
     }
 }

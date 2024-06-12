@@ -39,6 +39,9 @@ if (app.Environment.IsDevelopment())
 
 //app.UseMiddleware<CustomExceptionMiddleware>();
 
+// Auto migration
+await app.ConfigureMigrationAsync();
+
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
