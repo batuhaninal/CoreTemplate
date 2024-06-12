@@ -1,6 +1,7 @@
 ﻿using Application.Abstractions.Services.Categories;
 using Application.Models.Constants.Options;
 using Application.Models.DTOs.Categories;
+using Application.Models.RequestParameters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
@@ -20,9 +21,9 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllCategories([FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 20)
+        public async Task<IActionResult> GetAllCategories([FromQuery] PaginationRequestParameter parameter)
         {
-            return CreateResponse(await _categoryService.GetAllAsync(pageIndex, pageSize));
+            return CreateResponse(await _categoryService.GetAllAsync(parameter.PageIndex, parameter.PageSize));
         }
 
         [HttpPost]

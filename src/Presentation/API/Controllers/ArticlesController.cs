@@ -1,6 +1,7 @@
 ﻿using Application.Abstractions.Services.Articles;
 using Application.Models.Constants.Options;
 using Application.Models.DTOs.Articles;
+using Application.Models.RequestParameters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
@@ -20,8 +21,8 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllArticles([FromQuery] int pageIndex = 1, [FromQuery] int pageSize = 20) =>
-            CreateResponse(await _articleService.GetAllAsync(pageIndex, pageSize));
+        public async Task<IActionResult> GetAllArticles([FromQuery] RichPaginationRequestParameter parameter) =>
+            CreateResponse(await _articleService.GetAllAsync(parameter.PageIndex, parameter.PageSize));
 
         [HttpGet("{articleId}")]
         public async Task<IActionResult> GetArticleById([FromRoute(Name = "articleId")] string articleId) => 
