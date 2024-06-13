@@ -1,8 +1,8 @@
 ﻿namespace Application.Models.MessageBrokers.Events
 {
-    public record CacheRemoveEvent
+    public record CacheRemovedEvent
     {
-        public CacheRemoveEvent(string cachePrefix)
+        public CacheRemovedEvent(string cachePrefix)
         {
             CachePrefix = cachePrefix;
         }

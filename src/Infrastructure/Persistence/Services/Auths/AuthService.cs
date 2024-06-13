@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions.Commons.Caching;
+using Application.Abstractions.Commons.MessageBrokers.Publishers;
 using Application.Abstractions.Commons.Results;
 using Application.Abstractions.Commons.Security;
 using Application.Abstractions.Commons.Tokens;
@@ -24,7 +25,7 @@ namespace Persistence.Services.Auths
         private readonly IHashingService _hashingService;
         private readonly UserBusinessRules _userBusinessRules;
 
-        public AuthService(IUnitOfWork unitOfWork, IMapper mapper, ICacheService cache, ITokenService tokenService, IHashingService hashingService) : base(unitOfWork, mapper, cache)
+        public AuthService(IUnitOfWork unitOfWork, IMapper mapper, ICacheService cache, IRabbitMQPublisherService rabbitMQPublisherService, ITokenService tokenService, IHashingService hashingService) : base(unitOfWork, mapper, cache, rabbitMQPublisherService)
         {
             _hashingService = hashingService;
             _tokenService = tokenService;

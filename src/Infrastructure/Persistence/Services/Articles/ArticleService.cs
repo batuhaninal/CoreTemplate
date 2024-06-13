@@ -1,10 +1,13 @@
 ﻿using Application.Abstractions.Commons.Caching;
+using Application.Abstractions.Commons.MessageBrokers.Publishers;
 using Application.Abstractions.Commons.Results;
 using Application.Abstractions.Repositories.Commons;
 using Application.Abstractions.Services.Articles;
 using Application.Models.Constants.CachePrefixes;
+using Application.Models.Constants.MessageBrokers;
 using Application.Models.DTOs.Articles;
 using Application.Models.DTOs.Commons.Results;
+using Application.Models.MessageBrokers.Events;
 using Application.Models.RequestParameters.Commons;
 using Application.Utilities.Exceptions.Commons;
 using Application.Utilities.Pagination;
@@ -20,7 +23,7 @@ namespace Persistence.Services.Articles
     {
         private readonly ArticleBusinessRule _businessRule;
 
-        public ArticleService(IUnitOfWork unitOfWork, IMapper mapper, ICacheService cache) : base(unitOfWork, mapper, cache)
+        public ArticleService(IUnitOfWork unitOfWork, IMapper mapper, ICacheService cache, IRabbitMQPublisherService rabbitMQPublisherService) : base(unitOfWork, mapper, cache, rabbitMQPublisherService)
         {
             _businessRule = new ArticleBusinessRule(unitOfWork.ArticleReadRepository);
         }
@@ -30,7 +33,10 @@ namespace Persistence.Services.Articles
             await UnitOfWork.ArticleWriteRepository.CreateAsync(Mapper.Map<Article>(createArticleDto)!);
             await UnitOfWork.SaveChangesAsync();
 
-            await Cache.DeleteAllWithPrefixAsync(CachePrefix.Articles.All);
+            // Eski cache sistemi
+            //await Cache.DeleteAllWithPrefixAsync(CachePrefix.Articles.All);
+
+            Publisher.Publish(QueueNames.Cache, ExchangeNames.Cache, new CacheRemovedEvent(CachePrefix.Articles.Prefix));
 
             return new SuccessResultDto(201);
         }
@@ -43,7 +49,7 @@ namespace Persistence.Services.Articles
 
             await UnitOfWork.SaveChangesAsync();
 
-            await Cache.DeleteAllWithPrefixAsync(CachePrefix.Articles.All);
+            Publisher.Publish(QueueNames.Cache, ExchangeNames.Cache, new CacheRemovedEvent(CachePrefix.Articles.Prefix));
 
             return new SuccessResultDto(204);
         }
@@ -94,7 +100,7 @@ namespace Persistence.Services.Articles
 
             await UnitOfWork.SaveChangesAsync();
 
-            await Cache.DeleteAllWithPrefixAsync(CachePrefix.Articles.All);
+            Publisher.Publish(QueueNames.Cache, ExchangeNames.Cache, new CacheRemovedEvent(CachePrefix.Articles.Prefix));
 
             return new SuccessResultDto(204);
         }

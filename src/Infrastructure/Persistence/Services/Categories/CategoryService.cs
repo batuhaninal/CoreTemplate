@@ -1,10 +1,13 @@
 ﻿using Application.Abstractions.Commons.Caching;
+using Application.Abstractions.Commons.MessageBrokers.Publishers;
 using Application.Abstractions.Commons.Results;
 using Application.Abstractions.Repositories.Commons;
 using Application.Abstractions.Services.Categories;
 using Application.Models.Constants.CachePrefixes;
+using Application.Models.Constants.MessageBrokers;
 using Application.Models.DTOs.Categories;
 using Application.Models.DTOs.Commons.Results;
+using Application.Models.MessageBrokers.Events;
 using Application.Models.RequestParameters.Commons;
 using Application.Utilities.Pagination;
 using AutoMapper;
@@ -17,8 +20,7 @@ namespace Persistence.Services.Categories
     public class CategoryService : BaseService, ICategoryService
     {
         private readonly CategoryBusinessRules _businessRules;
-
-        public CategoryService(IUnitOfWork unitOfWork, IMapper mapper, ICacheService cache) : base(unitOfWork, mapper, cache)
+        public CategoryService(IUnitOfWork unitOfWork, IMapper mapper, ICacheService cache, IRabbitMQPublisherService rabbitMQPublisherService) : base(unitOfWork, mapper, cache, rabbitMQPublisherService)
         {
             _businessRules = new CategoryBusinessRules(unitOfWork);
         }
@@ -31,7 +33,10 @@ namespace Persistence.Services.Categories
 
             await UnitOfWork.SaveChangesAsync();
 
-            await Cache.DeleteAllWithPrefixAsync(CachePrefix.Categories.All);
+            // Eski cache sistemi
+            //await Cache.DeleteAllWithPrefixAsync(CachePrefix.Categories.All);
+
+            Publisher.Publish(QueueNames.Cache, ExchangeNames.Cache, new CacheRemovedEvent(CachePrefix.Categories.Prefix));
 
             return new SuccessResultDto(201);
         }
@@ -75,7 +80,7 @@ namespace Persistence.Services.Categories
 
             await UnitOfWork.SaveChangesAsync();
 
-            await Cache.DeleteAllWithPrefixAsync(CachePrefix.Categories.All);
+            Publisher.Publish(QueueNames.Cache, ExchangeNames.Cache, new CacheRemovedEvent(CachePrefix.Categories.Prefix));
 
             return new SuccessResultDto(204);
         }
@@ -92,7 +97,7 @@ namespace Persistence.Services.Categories
             Mapper.Map(updateCategoryDto, oldCategory);
             await UnitOfWork.SaveChangesAsync();
 
-            await Cache.DeleteAllWithPrefixAsync(CachePrefix.Categories.All);
+            Publisher.Publish(QueueNames.Cache, ExchangeNames.Cache, new CacheRemovedEvent(CachePrefix.Categories.Prefix));
 
             return new SuccessResultDto(204);
         }

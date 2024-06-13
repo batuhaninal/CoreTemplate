@@ -1,7 +1,12 @@
 ﻿using Adapter.Services.Caching;
+using Adapter.Services.MessageBrokers;
+using Adapter.Services.MessageBrokers.Consumers;
+using Adapter.Services.MessageBrokers.Publishers;
 using Adapter.Services.Security;
 using Adapter.Services.Tokens;
 using Application.Abstractions.Commons.Caching;
+using Application.Abstractions.Commons.MessageBrokers;
+using Application.Abstractions.Commons.MessageBrokers.Publishers;
 using Application.Abstractions.Commons.Security;
 using Application.Abstractions.Commons.Tokens;
 using Microsoft.Extensions.Caching.StackExchangeRedis;
@@ -32,6 +37,12 @@ namespace Adapter
 
                 return new CacheService(redisOptions.ConfigurationOptions);
             });
+
+            services.AddSingleton<IRabbitMQService, RabbitMQService>();
+
+            services.AddSingleton<IRabbitMQPublisherService, RabbitMQPublisherService>();
+
+            services.AddHostedService<CacheRemovedEventConsumer>();
         }
     }
 }

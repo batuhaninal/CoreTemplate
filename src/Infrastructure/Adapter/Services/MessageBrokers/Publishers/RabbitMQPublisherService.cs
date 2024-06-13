@@ -1,8 +1,10 @@
 ﻿using Application.Abstractions.Commons.MessageBrokers;
 using Application.Abstractions.Commons.MessageBrokers.Publishers;
+using Application.Models.Constants.MessageBrokers;
 using RabbitMQ.Client;
 using System.Text;
 using System.Text.Json;
+using System.Threading.Channels;
 
 namespace Adapter.Services.MessageBrokers.Publishers
 {
@@ -22,12 +24,10 @@ namespace Adapter.Services.MessageBrokers.Publishers
             using (var channel = connection.CreateModel())
             {
                 var properties = channel.CreateBasicProperties();
-
                 properties.Persistent = true;
 
-                channel.ExchangeDeclare(exchangeName, exchangeType);
-
-                channel.QueueDeclare(queueName, false, false, false, null);
+                channel.ExchangeDeclare(exchangeName, exchangeType, true, false);
+                channel.QueueDeclare(queueName, true, false, false);
 
                 channel.BasicPublish(exchangeName, queueName, true, properties, new ReadOnlyMemory<byte>(message));
             }

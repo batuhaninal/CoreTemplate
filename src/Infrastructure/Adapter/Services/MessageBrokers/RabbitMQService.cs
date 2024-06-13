@@ -8,15 +8,15 @@ namespace Adapter.Services.MessageBrokers
     public class RabbitMQService : IRabbitMQService
     {
         private readonly RabbitMQOptions _rabbitmqOptions;
-        public RabbitMQService(IOptionsSnapshot<RabbitMQOptions> options)
+        public RabbitMQService(IOptionsMonitor<RabbitMQOptions> options)
         {
-            _rabbitmqOptions = options.Value;
+            _rabbitmqOptions = options.CurrentValue;
         }
         public IConnection GetRabbitMQConnection()
         {
             ConnectionFactory factory = new ConnectionFactory()
             {
-                HostName = _rabbitmqOptions.HostName,
+                HostName = _rabbitmqOptions.Host,
                 Port = _rabbitmqOptions.Port,
                 UserName = _rabbitmqOptions.UserName,
                 Password = _rabbitmqOptions.Password,
