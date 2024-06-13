@@ -29,6 +29,21 @@ services:
     networks:
       - app-network
 
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: core-message-broker
+    environment:
+        - RABBITMQ_DEFAULT_USER=Unravel
+        - RABBITMQ_DEFAULT_PASS=Unr4vel!
+    restart: on-failure
+    ports:
+        - "5672:5672"
+        - "15672:15672"
+    networks:
+        - app-network
+    volumes:
+        - "rabbitmq-volume:/etc/rabbitmq/rabbitmq-volume"
+
 
 networks:
   app-network:
@@ -36,3 +51,4 @@ networks:
 
 volumes:
   postgres-template-data:
+  rabbitmq-volume:  
