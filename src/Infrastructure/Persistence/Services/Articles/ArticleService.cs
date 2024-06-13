@@ -36,7 +36,7 @@ namespace Persistence.Services.Articles
             // Eski cache sistemi
             //await Cache.DeleteAllWithPrefixAsync(CachePrefix.Articles.All);
 
-            Publisher.Publish(QueueNames.Cache, ExchangeNames.Cache, new CacheRemovedEvent(CachePrefix.Articles.Prefix));
+            RemoveCachePrefixes();
 
             return new SuccessResultDto(201);
         }
@@ -49,14 +49,14 @@ namespace Persistence.Services.Articles
 
             await UnitOfWork.SaveChangesAsync();
 
-            Publisher.Publish(QueueNames.Cache, ExchangeNames.Cache, new CacheRemovedEvent(CachePrefix.Articles.Prefix));
+            RemoveCachePrefixes();
 
             return new SuccessResultDto(204);
         }
 
         public async Task<IPaginatedDataResult<ArticleItemDto>> GetAllAsync(int pageIndex = 1, int pageSize = 20)
         {
-            if(pageIndex < 5 && pageSize == 20)
+            if (pageIndex < 5 && pageSize == 20)
             {
                 string? cacheData = await Cache.GetAsync(CachePrefix.Articles.GetAllWithPagination(pageIndex, pageSize));
                 if (!string.IsNullOrEmpty(cacheData))
@@ -80,8 +80,8 @@ namespace Persistence.Services.Articles
 
             Article? article = await UnitOfWork.ArticleReadRepository
                 .Table
-                .Where(x=> x.Id == Guid.Parse(articleId))
-                .Include(x=> x.Category)
+                .Where(x => x.Id == Guid.Parse(articleId))
+                .Include(x => x.Category)
                 //.Select(p=> Mapper.Map<ProductInfoDto>(p))
                 .FirstOrDefaultAsync();
             return new SuccessDataResultDto<ArticleInfoDto>(Mapper.Map<ArticleInfoDto>(article!));
@@ -100,12 +100,20 @@ namespace Persistence.Services.Articles
 
             await UnitOfWork.SaveChangesAsync();
 
-            Publisher.Publish(QueueNames.Cache, ExchangeNames.Cache, new CacheRemovedEvent(CachePrefix.Articles.Prefix));
+            RemoveCachePrefixes();
 
             return new SuccessResultDto(204);
         }
 
-        public async Task<IPaginatedDataResult<ArticleItemDto>> GetAllAsync(BasePaginationRequestParameter pagination) => 
+        public async Task<IPaginatedDataResult<ArticleItemDto>> GetAllAsync(BasePaginationRequestParameter pagination) =>
             await GetAllAsync(pagination.PageIndex, pagination.PageSize);
+
+        private void RemoveCachePrefixes()
+        {
+            Publisher.Publish(QueueNames.Cache, ExchangeNames.Cache, new CacheRemovedEvent(new string[]
+            {
+                CachePrefix.Articles.Prefix,
+            }));
+        }
     }
 }

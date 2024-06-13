@@ -20,8 +20,12 @@ namespace API.Controllers
             _articleService = articleService;
         }
 
+        //[HttpGet]
+        //public async Task<IActionResult> GetAllArticles([FromQuery] RichPaginationRequestParameter parameter) =>
+        //    CreateResponse(await _articleService.GetAllAsync(parameter.PageIndex, parameter.PageSize));
+
         [HttpGet]
-        public async Task<IActionResult> GetAllArticles([FromQuery] RichPaginationRequestParameter parameter) =>
+        public async Task<IActionResult> GetAllArticles([FromQuery] PaginationRequestParameter parameter) =>
             CreateResponse(await _articleService.GetAllAsync(parameter.PageIndex, parameter.PageSize));
 
         [HttpGet("{articleId}")]

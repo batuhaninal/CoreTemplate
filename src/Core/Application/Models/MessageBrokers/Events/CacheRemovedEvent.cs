@@ -2,10 +2,14 @@
 {
     public record CacheRemovedEvent
     {
-        public CacheRemovedEvent(string cachePrefix)
+        public CacheRemovedEvent()
         {
-            CachePrefix = cachePrefix;
+            
         }
-        public string CachePrefix { get; init; } = null!;
+        public CacheRemovedEvent(string[] cachePrefixes)
+        {
+            CachePrefixes = cachePrefixes;
+        }
+        public string[] CachePrefixes { get; init; } = null!;
     }
 }

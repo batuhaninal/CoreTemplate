@@ -36,7 +36,7 @@ namespace Persistence.Services.Categories
             // Eski cache sistemi
             //await Cache.DeleteAllWithPrefixAsync(CachePrefix.Categories.All);
 
-            Publisher.Publish(QueueNames.Cache, ExchangeNames.Cache, new CacheRemovedEvent(CachePrefix.Categories.Prefix));
+            RemoveCachePrefixes();
 
             return new SuccessResultDto(201);
         }
@@ -80,7 +80,7 @@ namespace Persistence.Services.Categories
 
             await UnitOfWork.SaveChangesAsync();
 
-            Publisher.Publish(QueueNames.Cache, ExchangeNames.Cache, new CacheRemovedEvent(CachePrefix.Categories.Prefix));
+            RemoveCachePrefixes();
 
             return new SuccessResultDto(204);
         }
@@ -97,9 +97,18 @@ namespace Persistence.Services.Categories
             Mapper.Map(updateCategoryDto, oldCategory);
             await UnitOfWork.SaveChangesAsync();
 
-            Publisher.Publish(QueueNames.Cache, ExchangeNames.Cache, new CacheRemovedEvent(CachePrefix.Categories.Prefix));
+            RemoveCachePrefixes();
 
             return new SuccessResultDto(204);
+        }
+
+        private void RemoveCachePrefixes()
+        {
+            Publisher.Publish(QueueNames.Cache, ExchangeNames.Cache, new CacheRemovedEvent(new string[]
+            {
+                CachePrefix.Categories.Prefix,
+                CachePrefix.Articles.Prefix,
+            }));
         }
     }
 }

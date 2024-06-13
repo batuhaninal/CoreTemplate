@@ -44,9 +44,20 @@ namespace Adapter.Services.MessageBrokers.Consumers
                 var body = @event.Body.ToArray();
                 var cacheRemovedEvent = JsonSerializer.Deserialize<CacheRemovedEvent>(body);
 
+                foreach (var item in cacheRemovedEvent.CachePrefixes)
+                {
+                    Console.WriteLine(item);
+                }
+
                 if (cacheRemovedEvent != null)
                 {
-                    await _cacheService.DeleteAllWithPrefixAsync(cacheRemovedEvent.CachePrefix);
+                    if (cacheRemovedEvent.CachePrefixes is not null && cacheRemovedEvent.CachePrefixes.Any())
+                    {
+                        foreach (string cachePrefix in cacheRemovedEvent.CachePrefixes)
+                        {
+                            await _cacheService.DeleteAllWithPrefixAsync(cachePrefix);
+                        }
+                    }
                 }
 
                 _channel.BasicAck(@event.DeliveryTag, false);
