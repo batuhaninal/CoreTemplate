@@ -1,10 +1,10 @@
 using Adapter;
 using API.Extensions;
-using API.Middlewares;
 using Application;
 using Application.Utilities.FluentValidations.Categories;
 using FluentValidation.AspNetCore;
 using Persistence;
+using OpenTelemetry.Shared;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +27,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.ConfigureSwagger();
 
 builder.Services.ConfigureJwtAuth(builder.Configuration);
+
+builder.Services.AddOpenTelemetryExtension(builder.Configuration);
 
 var app = builder.Build();
 
