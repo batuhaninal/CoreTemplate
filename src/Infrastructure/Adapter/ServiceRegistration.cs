@@ -36,9 +36,11 @@ namespace Adapter
                     }
                 };
 
-                return new RedisService(redisOptions.ConfigurationOptions);
+                return new CacheService(redisOptions.ConfigurationOptions);
             });
 
+
+            // OpenTelemetry Redis intrumentation icin gerekli
             services.AddSingleton<IConnectionMultiplexer>(sp =>
             {
                 var redisService = sp.GetService<ICacheService>();

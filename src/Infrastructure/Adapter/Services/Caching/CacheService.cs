@@ -4,13 +4,13 @@ using System.Text.Json;
 
 namespace Adapter.Services.Caching
 {
-    public class RedisService : ICacheService
+    public class CacheService : ICacheService
     {
         private readonly ConnectionMultiplexer _connectionMultiplexer;
         private readonly IDatabase _database;
         private static int _dbIndex;
 
-        public RedisService(ConfigurationOptions redisOptions)
+        public CacheService(ConfigurationOptions redisOptions)
         {
             _dbIndex = redisOptions.DefaultDatabase.Value;
             _connectionMultiplexer = ConnectionMultiplexer.Connect(redisOptions);
