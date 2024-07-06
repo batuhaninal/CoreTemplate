@@ -50,6 +50,11 @@ namespace OpenTelemetry.Shared
                         };
                     });
 
+                    options.AddRedisInstrumentation(redisOptions =>
+                    {
+                        redisOptions.SetVerboseDatabaseStatements = true;
+                    });
+
                     options.AddOtlpExporter();
                 });
 

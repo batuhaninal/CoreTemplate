@@ -4,13 +4,13 @@ using System.Text.Json;
 
 namespace Adapter.Services.Caching
 {
-    public class CacheService : ICacheService
+    public class RedisService : ICacheService
     {
         private readonly ConnectionMultiplexer _connectionMultiplexer;
         private readonly IDatabase _database;
         private static int _dbIndex;
 
-        public CacheService(ConfigurationOptions redisOptions)
+        public RedisService(ConfigurationOptions redisOptions)
         {
             _dbIndex = redisOptions.DefaultDatabase.Value;
             _connectionMultiplexer = ConnectionMultiplexer.Connect(redisOptions);
@@ -39,6 +39,8 @@ namespace Adapter.Services.Caching
 
             return JsonSerializer.Deserialize<T>(data)!;
         }
+
+        public ConnectionMultiplexer GetConnectionMultiplexer() => _connectionMultiplexer;
 
         public async Task AddAsync(string key, object data, int minutes = 60) =>
             await _database.StringSetAsync(key, JsonSerializer.Serialize(data), TimeSpan.FromMinutes(minutes));

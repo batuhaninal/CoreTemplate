@@ -1,4 +1,6 @@
-﻿namespace Application.Abstractions.Commons.Caching
+﻿using StackExchange.Redis;
+
+namespace Application.Abstractions.Commons.Caching
 {
     public interface ICacheService
     {
@@ -7,5 +9,6 @@
         Task<T?> GetAsync<T>(string key);
         Task DeleteAsync(string key);
         Task DeleteAllWithPrefixAsync(string prefix);
+        ConnectionMultiplexer GetConnectionMultiplexer();
     }
 }

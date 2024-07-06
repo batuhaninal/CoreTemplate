@@ -46,7 +46,7 @@ namespace API.Middlewares
                 }));
                 return;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 httpContext.Response.ContentType = "application/json";
                 httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;

@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.IO;
 using System.Diagnostics;
-using System.Reflection;
 
 namespace API.Middlewares
 {
@@ -24,6 +23,18 @@ namespace API.Middlewares
                 .GetMetadata<ControllerActionDescriptor>();
 
             bool? b = actionDescriptor?.MethodInfo.CustomAttributes.Any( x=> x.AttributeType == typeof(SecureOperationAttribute));
+
+            // Token bilgisi sizma durumu icin
+
+            //if (b.HasValue && !b.Value)
+            //{
+            //    await AddRequestBodyContentToActivityTagAsync(context);
+            //    await AddResponseBodyContentToActivityTagAsync(context);
+            //}
+            //else
+            //{
+            //    await _next(context);
+            //}
 
             if (b.HasValue && !b.Value)
             {

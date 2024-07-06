@@ -12,6 +12,7 @@ using Application.Abstractions.Commons.Tokens;
 using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using StackExchange.Redis;
 
 namespace Adapter
 {
@@ -35,7 +36,14 @@ namespace Adapter
                     }
                 };
 
-                return new CacheService(redisOptions.ConfigurationOptions);
+                return new RedisService(redisOptions.ConfigurationOptions);
+            });
+
+            services.AddSingleton<IConnectionMultiplexer>(sp =>
+            {
+                var redisService = sp.GetService<ICacheService>();
+
+                return redisService.GetConnectionMultiplexer();
             });
 
             services.AddSingleton<IRabbitMQService, RabbitMQService>();
