@@ -44,6 +44,13 @@ services:
     volumes:
         - "rabbitmq-volume:/etc/rabbitmq/rabbitmq-volume"
 
+  jaeger:
+    image: jaegertracing/all-in-one:1.49  
+    container_name: "jaeger_container"
+    ports: 
+        - 4317:4317 # gRPC
+        - 4318:4318 # HTTP
+        - 16686:16686 # UI
 
 networks:
   app-network:
