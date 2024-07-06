@@ -5,6 +5,7 @@ using Application.Utilities.FluentValidations.Categories;
 using FluentValidation.AspNetCore;
 using Persistence;
 using OpenTelemetry.Shared;
+using API.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,6 +39,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<RequestResponseActivityMiddleware>();
 
 //app.UseMiddleware<CustomExceptionMiddleware>();
 
