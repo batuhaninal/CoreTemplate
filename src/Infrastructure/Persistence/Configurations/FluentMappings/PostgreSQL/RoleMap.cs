@@ -49,11 +49,11 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
                 },
                 new Role()
                 {
-                    Id = Guid.Parse(AppRoles.Seller),
+                    Id = Guid.Parse(AppRoles.Writer),
                     CreatedDate = DateTime.UtcNow,
                     UpdatedDate = DateTime.UtcNow,
                     IsActive = true,
-                    Name = "seller"
+                    Name = "writer"
                 }
             });
         }

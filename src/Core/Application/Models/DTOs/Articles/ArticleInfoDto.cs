@@ -1,4 +1,5 @@
 ﻿using Application.Models.DTOs.Categories;
+using Application.Models.DTOs.Writers;
 
 namespace Application.Models.DTOs.Articles
 {
@@ -8,6 +9,7 @@ namespace Application.Models.DTOs.Articles
         public string Title { get; init; } = null!;
         public string Content { get; init; } = null!;
         public CategoryInfoDto Category { get; init; } = null!;
+        public WriterInfoDto Writer { get; init; } = null!;
         public DateTime CreatedDate { get; init; }
     }
 }
