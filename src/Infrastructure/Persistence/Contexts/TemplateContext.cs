@@ -36,6 +36,7 @@ namespace Persistence.Contexts
             //builder.ConfigureIdttUserRoleMap();
 
             builder.ConfigureUserMap(_hashingService);
+            builder.ConfigureWriterMap();
             builder.ConfigureRoleMap();
             builder.ConfigureUserRoleMap();
 

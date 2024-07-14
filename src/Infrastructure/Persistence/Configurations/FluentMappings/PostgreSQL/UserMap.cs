@@ -83,9 +83,9 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
                     CreatedDate = DateTime.UtcNow,
                     UpdatedDate = DateTime.UtcNow,
                     IsActive = true,
-                    FirstName = "Seller",
-                    LastName = "Seller",
-                    Email = "seller@seller.com",
+                    FirstName = "Writer",
+                    LastName = "Writer",
+                    Email = "writer@writer.com",
                     PasswordHash = passwordHash,
                     PasswordSalt = passwordSalt
                 }
