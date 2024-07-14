@@ -6,6 +6,6 @@ namespace Application.Models.DTOs.Writers
     {
         public string WriterId { get; init; } = null!;
         public string Nick { get; init; } = null!;
-        public WriterLevel Level { get; init; }
+        public string Level { get; init; } = null!;
     }
 }

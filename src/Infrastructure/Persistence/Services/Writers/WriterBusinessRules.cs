@@ -25,5 +25,12 @@ namespace Persistence.Services.Writers
             if (!result)
                 throw new NotFoundException("Writer");
         }
+
+        public async Task CheckUserIdAvailable(string userId)
+        {
+            bool result = await _writerReadRepository.AnyAsync(x=> x.UserId == Guid.Parse(userId));
+            if(result)
+                throw new DuplicateException("User Id", userId);
+        }
     }
 }

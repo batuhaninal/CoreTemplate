@@ -27,7 +27,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentatio
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API", "src\Presentation\API\API.csproj", "{48547A06-9D57-4924-A6BC-C16ED3261B08}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTelemetry.Shared", "src\Infrastructure\OpenTelemetry.Shared\OpenTelemetry.Shared.csproj", "{63D0C2D8-6AAE-4B89-ADFC-3213903298F0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenTelemetry.Shared", "src\Infrastructure\OpenTelemetry.Shared\OpenTelemetry.Shared.csproj", "{63D0C2D8-6AAE-4B89-ADFC-3213903298F0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

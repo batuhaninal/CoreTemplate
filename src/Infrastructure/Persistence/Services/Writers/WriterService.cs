@@ -28,6 +28,9 @@ namespace Persistence.Services.Writers
 
         public async Task<IBaseResult> CreateAsync(CreateWriterDto createWriterDto)
         {
+            await _writerBusinessRules.CheckNickAvailable(createWriterDto.Nick);
+            await _writerBusinessRules.CheckUserIdAvailable(createWriterDto.UserId);
+
             Writer toCreateEntity = Mapper.Map<Writer>(createWriterDto);
             await UnitOfWork.WriterWriteRepository.CreateAsync(toCreateEntity);
             await UnitOfWork.SaveChangesAsync();
@@ -58,6 +61,7 @@ namespace Persistence.Services.Writers
             await _writerBusinessRules.CheckWriterExistById(writerId);
 
             WriterInfoDto writer = (await UnitOfWork.WriterReadRepository.Table
+                .Include(x=> x.User)
                 .Where(x => x.Id == Guid.Parse(writerId))
                 .Select(x => Mapper.Map<WriterInfoDto>(x))
                 .FirstOrDefaultAsync())!;

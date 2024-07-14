@@ -18,8 +18,10 @@ namespace Persistence.Contexts
         public DbSet<Role> Roles { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
 
+        public DbSet<Writer> Writers { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Article> Articles { get; set; }
+        
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

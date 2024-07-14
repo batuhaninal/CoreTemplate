@@ -1,6 +1,7 @@
 ﻿using Application.Models.DTOs.Auths;
 using Application.Models.DTOs.Writers;
 using Application.Models.Enums;
+using Application.Utilities.Helpers;
 using AutoMapper;
 using Domain.Entities;
 
@@ -12,11 +13,11 @@ namespace Application.Utilities.MappingProfiles
         {
             CreateMap<Writer, WriterInfoDto>()
                 .ForMember(dest => dest.WriterId, src => src.MapFrom(x => x.Id))
-                .ForMember(dest => dest.Level, src => src.MapFrom(x => (WriterLevel)x.Level));
+                .ForMember(dest => dest.Level, src => src.MapFrom(x => EnumConverters.ConvertWriterLevelToString((WriterLevel)x.Level)));
 
             CreateMap<Writer, WriterItemDto>()
                 .ForMember(dest => dest.WriterId, src => src.MapFrom(x => x.Id))
-                .ForMember(dest => dest.Level, src => src.MapFrom(x => (WriterLevel)x.Level));
+                .ForMember(dest => dest.Level, src => src.MapFrom(x => EnumConverters.ConvertWriterLevelToString((WriterLevel)x.Level)));
 
             CreateMap<RegisterWriterDto, RegisterDto>();
 

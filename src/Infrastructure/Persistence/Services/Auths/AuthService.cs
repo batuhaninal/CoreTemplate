@@ -109,6 +109,8 @@ namespace Persistence.Services.Auths
 
                     var userId = await UnitOfWork.UserWriteRepository.CreateAsync(newUser);
 
+                    await _writerBusinessRules.CheckUserIdAvailable(userId.ToString());
+
                     await UnitOfWork.UserRoleWriteRepository.CreateAsync(new UserRole()
                     {
                         UserId = userId,

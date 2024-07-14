@@ -148,8 +148,8 @@ namespace Persistence.Migrations
                 columns: new[] { "id", "created_date", "is_active", "title", "updated_date" },
                 values: new object[,]
                 {
-                    { new Guid("1fe6dbd9-048f-45cf-b1ea-d46210a87d96"), new DateTime(2024, 7, 14, 12, 56, 59, 147, DateTimeKind.Utc).AddTicks(5725), true, "Yazılım", new DateTime(2024, 7, 14, 12, 56, 59, 147, DateTimeKind.Utc).AddTicks(5725) },
-                    { new Guid("24fe2676-c6b0-4f15-b045-edd9a84a7ca7"), new DateTime(2024, 7, 14, 12, 56, 59, 147, DateTimeKind.Utc).AddTicks(5723), true, "Teknoloji", new DateTime(2024, 7, 14, 12, 56, 59, 147, DateTimeKind.Utc).AddTicks(5723) }
+                    { new Guid("1fe6dbd9-048f-45cf-b1ea-d46210a87d96"), new DateTime(2024, 7, 14, 16, 7, 13, 124, DateTimeKind.Utc).AddTicks(7920), true, "Yazılım", new DateTime(2024, 7, 14, 16, 7, 13, 124, DateTimeKind.Utc).AddTicks(7920) },
+                    { new Guid("24fe2676-c6b0-4f15-b045-edd9a84a7ca7"), new DateTime(2024, 7, 14, 16, 7, 13, 124, DateTimeKind.Utc).AddTicks(7918), true, "Teknoloji", new DateTime(2024, 7, 14, 16, 7, 13, 124, DateTimeKind.Utc).AddTicks(7918) }
                 });
 
             migrationBuilder.InsertData(
@@ -157,9 +157,9 @@ namespace Persistence.Migrations
                 columns: new[] { "id", "created_date", "is_active", "name", "updated_date" },
                 values: new object[,]
                 {
-                    { new Guid("1e9d831e-fb57-4c7a-b8d5-8a4a0fb1f7b2"), new DateTime(2024, 7, 14, 12, 56, 59, 147, DateTimeKind.Utc).AddTicks(1328), true, "user", new DateTime(2024, 7, 14, 12, 56, 59, 147, DateTimeKind.Utc).AddTicks(1328) },
-                    { new Guid("83e5c9f0-7e6d-4a08-a515-2e8889f3b140"), new DateTime(2024, 7, 14, 12, 56, 59, 147, DateTimeKind.Utc).AddTicks(1332), true, "writer", new DateTime(2024, 7, 14, 12, 56, 59, 147, DateTimeKind.Utc).AddTicks(1332) },
-                    { new Guid("cf2a3f8d-88bc-4c0c-a5e7-b5f9dd20658b"), new DateTime(2024, 7, 14, 12, 56, 59, 147, DateTimeKind.Utc).AddTicks(1323), true, "admin", new DateTime(2024, 7, 14, 12, 56, 59, 147, DateTimeKind.Utc).AddTicks(1324) }
+                    { new Guid("1e9d831e-fb57-4c7a-b8d5-8a4a0fb1f7b2"), new DateTime(2024, 7, 14, 16, 7, 13, 124, DateTimeKind.Utc).AddTicks(6603), true, "user", new DateTime(2024, 7, 14, 16, 7, 13, 124, DateTimeKind.Utc).AddTicks(6603) },
+                    { new Guid("83e5c9f0-7e6d-4a08-a515-2e8889f3b140"), new DateTime(2024, 7, 14, 16, 7, 13, 124, DateTimeKind.Utc).AddTicks(6604), true, "writer", new DateTime(2024, 7, 14, 16, 7, 13, 124, DateTimeKind.Utc).AddTicks(6605) },
+                    { new Guid("cf2a3f8d-88bc-4c0c-a5e7-b5f9dd20658b"), new DateTime(2024, 7, 14, 16, 7, 13, 124, DateTimeKind.Utc).AddTicks(6598), true, "admin", new DateTime(2024, 7, 14, 16, 7, 13, 124, DateTimeKind.Utc).AddTicks(6599) }
                 });
 
             migrationBuilder.InsertData(
@@ -167,9 +167,9 @@ namespace Persistence.Migrations
                 columns: new[] { "id", "created_date", "email", "first_name", "is_active", "last_name", "password_hash", "password_salt", "updated_date" },
                 values: new object[,]
                 {
-                    { new Guid("ca9a97c7-6149-4e89-a5c3-61928510c2b9"), new DateTime(2024, 7, 14, 12, 56, 59, 146, DateTimeKind.Utc).AddTicks(5215), "user@user.com", "User", true, "User", new byte[] { 37, 203, 14, 109, 227, 73, 210, 71, 112, 237, 183, 238, 213, 28, 199, 154, 59, 165, 157, 62, 54, 254, 209, 243, 139, 209, 140, 171, 40, 38, 188, 242 }, new byte[] { 108, 140, 207, 120, 169, 236, 65, 72, 5, 234, 255, 80, 110, 231, 87, 237, 6, 188, 242, 128, 78, 65, 214, 214, 234, 112, 44, 160, 124, 173, 151, 73, 54, 202, 51, 48, 215, 35, 141, 173, 185, 37, 77, 156, 146, 117, 103, 181, 15, 231, 94, 246, 225, 200, 221, 87, 43, 56, 133, 108, 125, 93, 184, 183 }, new DateTime(2024, 7, 14, 12, 56, 59, 146, DateTimeKind.Utc).AddTicks(5215) },
-                    { new Guid("f219d021-5d29-4e63-8250-4aa1e514d8dc"), new DateTime(2024, 7, 14, 12, 56, 59, 146, DateTimeKind.Utc).AddTicks(5207), "batuhan@inal.com", "Batuhan", true, "Inal", new byte[] { 37, 203, 14, 109, 227, 73, 210, 71, 112, 237, 183, 238, 213, 28, 199, 154, 59, 165, 157, 62, 54, 254, 209, 243, 139, 209, 140, 171, 40, 38, 188, 242 }, new byte[] { 108, 140, 207, 120, 169, 236, 65, 72, 5, 234, 255, 80, 110, 231, 87, 237, 6, 188, 242, 128, 78, 65, 214, 214, 234, 112, 44, 160, 124, 173, 151, 73, 54, 202, 51, 48, 215, 35, 141, 173, 185, 37, 77, 156, 146, 117, 103, 181, 15, 231, 94, 246, 225, 200, 221, 87, 43, 56, 133, 108, 125, 93, 184, 183 }, new DateTime(2024, 7, 14, 12, 56, 59, 146, DateTimeKind.Utc).AddTicks(5209) },
-                    { new Guid("f3c72d95-d69b-478b-a186-7934a9bf87a4"), new DateTime(2024, 7, 14, 12, 56, 59, 146, DateTimeKind.Utc).AddTicks(5217), "writer@writer.com", "Writer", true, "Writer", new byte[] { 37, 203, 14, 109, 227, 73, 210, 71, 112, 237, 183, 238, 213, 28, 199, 154, 59, 165, 157, 62, 54, 254, 209, 243, 139, 209, 140, 171, 40, 38, 188, 242 }, new byte[] { 108, 140, 207, 120, 169, 236, 65, 72, 5, 234, 255, 80, 110, 231, 87, 237, 6, 188, 242, 128, 78, 65, 214, 214, 234, 112, 44, 160, 124, 173, 151, 73, 54, 202, 51, 48, 215, 35, 141, 173, 185, 37, 77, 156, 146, 117, 103, 181, 15, 231, 94, 246, 225, 200, 221, 87, 43, 56, 133, 108, 125, 93, 184, 183 }, new DateTime(2024, 7, 14, 12, 56, 59, 146, DateTimeKind.Utc).AddTicks(5218) }
+                    { new Guid("ca9a97c7-6149-4e89-a5c3-61928510c2b9"), new DateTime(2024, 7, 14, 16, 7, 13, 124, DateTimeKind.Utc).AddTicks(4550), "user@user.com", "User", true, "User", new byte[] { 148, 171, 13, 115, 109, 177, 129, 178, 152, 75, 238, 217, 38, 102, 124, 68, 72, 144, 63, 99, 201, 86, 240, 192, 61, 253, 187, 231, 254, 196, 171, 194 }, new byte[] { 67, 194, 236, 79, 221, 34, 171, 209, 100, 216, 100, 166, 5, 71, 235, 235, 205, 44, 104, 83, 115, 160, 51, 210, 43, 183, 226, 170, 164, 175, 219, 40, 149, 242, 13, 168, 255, 53, 195, 218, 251, 43, 198, 253, 226, 155, 136, 129, 174, 77, 41, 1, 88, 119, 44, 190, 186, 89, 50, 42, 172, 207, 228, 180 }, new DateTime(2024, 7, 14, 16, 7, 13, 124, DateTimeKind.Utc).AddTicks(4550) },
+                    { new Guid("f219d021-5d29-4e63-8250-4aa1e514d8dc"), new DateTime(2024, 7, 14, 16, 7, 13, 124, DateTimeKind.Utc).AddTicks(4540), "batuhan@inal.com", "Batuhan", true, "Inal", new byte[] { 148, 171, 13, 115, 109, 177, 129, 178, 152, 75, 238, 217, 38, 102, 124, 68, 72, 144, 63, 99, 201, 86, 240, 192, 61, 253, 187, 231, 254, 196, 171, 194 }, new byte[] { 67, 194, 236, 79, 221, 34, 171, 209, 100, 216, 100, 166, 5, 71, 235, 235, 205, 44, 104, 83, 115, 160, 51, 210, 43, 183, 226, 170, 164, 175, 219, 40, 149, 242, 13, 168, 255, 53, 195, 218, 251, 43, 198, 253, 226, 155, 136, 129, 174, 77, 41, 1, 88, 119, 44, 190, 186, 89, 50, 42, 172, 207, 228, 180 }, new DateTime(2024, 7, 14, 16, 7, 13, 124, DateTimeKind.Utc).AddTicks(4542) },
+                    { new Guid("f3c72d95-d69b-478b-a186-7934a9bf87a4"), new DateTime(2024, 7, 14, 16, 7, 13, 124, DateTimeKind.Utc).AddTicks(4552), "writer@writer.com", "Writer", true, "Writer", new byte[] { 148, 171, 13, 115, 109, 177, 129, 178, 152, 75, 238, 217, 38, 102, 124, 68, 72, 144, 63, 99, 201, 86, 240, 192, 61, 253, 187, 231, 254, 196, 171, 194 }, new byte[] { 67, 194, 236, 79, 221, 34, 171, 209, 100, 216, 100, 166, 5, 71, 235, 235, 205, 44, 104, 83, 115, 160, 51, 210, 43, 183, 226, 170, 164, 175, 219, 40, 149, 242, 13, 168, 255, 53, 195, 218, 251, 43, 198, 253, 226, 155, 136, 129, 174, 77, 41, 1, 88, 119, 44, 190, 186, 89, 50, 42, 172, 207, 228, 180 }, new DateTime(2024, 7, 14, 16, 7, 13, 124, DateTimeKind.Utc).AddTicks(4552) }
                 });
 
             migrationBuilder.InsertData(
@@ -177,25 +177,25 @@ namespace Persistence.Migrations
                 columns: new[] { "id", "created_date", "is_active", "role_id", "updated_date", "user_id" },
                 values: new object[,]
                 {
-                    { new Guid("0e398d5d-c49e-4b68-8da1-9616a0145a6d"), new DateTime(2024, 7, 14, 12, 56, 59, 147, DateTimeKind.Utc).AddTicks(3473), true, new Guid("cf2a3f8d-88bc-4c0c-a5e7-b5f9dd20658b"), new DateTime(2024, 7, 14, 12, 56, 59, 147, DateTimeKind.Utc).AddTicks(3474), new Guid("f219d021-5d29-4e63-8250-4aa1e514d8dc") },
-                    { new Guid("1fca6ef1-27de-4fe4-9b8b-faebc2150d43"), new DateTime(2024, 7, 14, 12, 56, 59, 147, DateTimeKind.Utc).AddTicks(3481), true, new Guid("83e5c9f0-7e6d-4a08-a515-2e8889f3b140"), new DateTime(2024, 7, 14, 12, 56, 59, 147, DateTimeKind.Utc).AddTicks(3481), new Guid("f3c72d95-d69b-478b-a186-7934a9bf87a4") },
-                    { new Guid("8c056215-aa82-4ed8-bf86-b150a3e0fcf7"), new DateTime(2024, 7, 14, 12, 56, 59, 147, DateTimeKind.Utc).AddTicks(3479), true, new Guid("1e9d831e-fb57-4c7a-b8d5-8a4a0fb1f7b2"), new DateTime(2024, 7, 14, 12, 56, 59, 147, DateTimeKind.Utc).AddTicks(3479), new Guid("ca9a97c7-6149-4e89-a5c3-61928510c2b9") }
+                    { new Guid("0e398d5d-c49e-4b68-8da1-9616a0145a6d"), new DateTime(2024, 7, 14, 16, 7, 13, 124, DateTimeKind.Utc).AddTicks(7206), true, new Guid("cf2a3f8d-88bc-4c0c-a5e7-b5f9dd20658b"), new DateTime(2024, 7, 14, 16, 7, 13, 124, DateTimeKind.Utc).AddTicks(7206), new Guid("f219d021-5d29-4e63-8250-4aa1e514d8dc") },
+                    { new Guid("1fca6ef1-27de-4fe4-9b8b-faebc2150d43"), new DateTime(2024, 7, 14, 16, 7, 13, 124, DateTimeKind.Utc).AddTicks(7211), true, new Guid("83e5c9f0-7e6d-4a08-a515-2e8889f3b140"), new DateTime(2024, 7, 14, 16, 7, 13, 124, DateTimeKind.Utc).AddTicks(7212), new Guid("f3c72d95-d69b-478b-a186-7934a9bf87a4") },
+                    { new Guid("8c056215-aa82-4ed8-bf86-b150a3e0fcf7"), new DateTime(2024, 7, 14, 16, 7, 13, 124, DateTimeKind.Utc).AddTicks(7209), true, new Guid("1e9d831e-fb57-4c7a-b8d5-8a4a0fb1f7b2"), new DateTime(2024, 7, 14, 16, 7, 13, 124, DateTimeKind.Utc).AddTicks(7210), new Guid("ca9a97c7-6149-4e89-a5c3-61928510c2b9") }
                 });
 
             migrationBuilder.InsertData(
                 table: "writers",
                 columns: new[] { "id", "created_date", "is_active", "level", "nick", "updated_date", "user_id" },
-                values: new object[] { new Guid("7e137c28-9868-4e00-b2bd-73ab46e43bc2"), new DateTime(2024, 7, 14, 12, 56, 59, 146, DateTimeKind.Utc).AddTicks(8223), true, (byte)4, "default-user", new DateTime(2024, 7, 14, 12, 56, 59, 146, DateTimeKind.Utc).AddTicks(8224), new Guid("f3c72d95-d69b-478b-a186-7934a9bf87a4") });
+                values: new object[] { new Guid("7e137c28-9868-4e00-b2bd-73ab46e43bc2"), new DateTime(2024, 7, 14, 16, 7, 13, 124, DateTimeKind.Utc).AddTicks(5735), true, (byte)4, "default-user", new DateTime(2024, 7, 14, 16, 7, 13, 124, DateTimeKind.Utc).AddTicks(5736), new Guid("f3c72d95-d69b-478b-a186-7934a9bf87a4") });
 
             migrationBuilder.InsertData(
                 table: "articles",
                 columns: new[] { "id", "category_id", "content", "created_date", "is_active", "title", "updated_date", "writer_id" },
                 values: new object[,]
                 {
-                    { new Guid("29e2d55d-fbd2-4f0c-b71e-357d2b7ffe88"), new Guid("24fe2676-c6b0-4f15-b045-edd9a84a7ca7"), "Content", new DateTime(2024, 7, 14, 12, 56, 59, 147, DateTimeKind.Utc).AddTicks(7432), true, "Klavye", new DateTime(2024, 7, 14, 12, 56, 59, 147, DateTimeKind.Utc).AddTicks(7433), new Guid("7e137c28-9868-4e00-b2bd-73ab46e43bc2") },
-                    { new Guid("5836c09f-c947-4222-9cfb-5f665b83f755"), new Guid("24fe2676-c6b0-4f15-b045-edd9a84a7ca7"), "Content", new DateTime(2024, 7, 14, 12, 56, 59, 147, DateTimeKind.Utc).AddTicks(7442), false, "Go", new DateTime(2024, 7, 14, 12, 56, 59, 147, DateTimeKind.Utc).AddTicks(7443), new Guid("7e137c28-9868-4e00-b2bd-73ab46e43bc2") },
-                    { new Guid("5d11e4f2-1db7-4667-9a90-87918dd73569"), new Guid("1fe6dbd9-048f-45cf-b1ea-d46210a87d96"), "Content", new DateTime(2024, 7, 14, 12, 56, 59, 147, DateTimeKind.Utc).AddTicks(7439), false, "C#", new DateTime(2024, 7, 14, 12, 56, 59, 147, DateTimeKind.Utc).AddTicks(7439), new Guid("7e137c28-9868-4e00-b2bd-73ab46e43bc2") },
-                    { new Guid("f4edf481-d457-4e3e-a670-0b52635744df"), new Guid("1fe6dbd9-048f-45cf-b1ea-d46210a87d96"), "Content", new DateTime(2024, 7, 14, 12, 56, 59, 147, DateTimeKind.Utc).AddTicks(7441), true, "C++", new DateTime(2024, 7, 14, 12, 56, 59, 147, DateTimeKind.Utc).AddTicks(7441), new Guid("7e137c28-9868-4e00-b2bd-73ab46e43bc2") }
+                    { new Guid("29e2d55d-fbd2-4f0c-b71e-357d2b7ffe88"), new Guid("24fe2676-c6b0-4f15-b045-edd9a84a7ca7"), "Content", new DateTime(2024, 7, 14, 16, 7, 13, 124, DateTimeKind.Utc).AddTicks(8660), true, "Klavye", new DateTime(2024, 7, 14, 16, 7, 13, 124, DateTimeKind.Utc).AddTicks(8661), new Guid("7e137c28-9868-4e00-b2bd-73ab46e43bc2") },
+                    { new Guid("5836c09f-c947-4222-9cfb-5f665b83f755"), new Guid("24fe2676-c6b0-4f15-b045-edd9a84a7ca7"), "Content", new DateTime(2024, 7, 14, 16, 7, 13, 124, DateTimeKind.Utc).AddTicks(8670), false, "Go", new DateTime(2024, 7, 14, 16, 7, 13, 124, DateTimeKind.Utc).AddTicks(8670), new Guid("7e137c28-9868-4e00-b2bd-73ab46e43bc2") },
+                    { new Guid("5d11e4f2-1db7-4667-9a90-87918dd73569"), new Guid("1fe6dbd9-048f-45cf-b1ea-d46210a87d96"), "Content", new DateTime(2024, 7, 14, 16, 7, 13, 124, DateTimeKind.Utc).AddTicks(8666), false, "C#", new DateTime(2024, 7, 14, 16, 7, 13, 124, DateTimeKind.Utc).AddTicks(8666), new Guid("7e137c28-9868-4e00-b2bd-73ab46e43bc2") },
+                    { new Guid("f4edf481-d457-4e3e-a670-0b52635744df"), new Guid("1fe6dbd9-048f-45cf-b1ea-d46210a87d96"), "Content", new DateTime(2024, 7, 14, 16, 7, 13, 124, DateTimeKind.Utc).AddTicks(8668), true, "C++", new DateTime(2024, 7, 14, 16, 7, 13, 124, DateTimeKind.Utc).AddTicks(8668), new Guid("7e137c28-9868-4e00-b2bd-73ab46e43bc2") }
                 });
 
             migrationBuilder.CreateIndex(

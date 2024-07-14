@@ -65,6 +65,8 @@ namespace Persistence.Services.Articles
 
             var data = await UnitOfWork.ArticleReadRepository
                 .Table
+                .Include(x=> x.Category)
+                .Include(x=> x.Writer)
                 .Select(x => Mapper.Map<ArticleItemDto>(x))
                 .ToPaginatedListDtoAsync(pageIndex, pageSize);
 
@@ -78,13 +80,16 @@ namespace Persistence.Services.Articles
         {
             await _businessRule.CheckArticleExist(articleId);
 
-            Article? article = await UnitOfWork.ArticleReadRepository
+            ArticleInfoDto article = (await UnitOfWork.ArticleReadRepository
                 .Table
                 .Where(x => x.Id == Guid.Parse(articleId))
                 .Include(x => x.Category)
-                //.Select(p=> Mapper.Map<ProductInfoDto>(p))
-                .FirstOrDefaultAsync();
-            return new SuccessDataResultDto<ArticleInfoDto>(Mapper.Map<ArticleInfoDto>(article!));
+                .Include(x=> x.Writer)
+                    .ThenInclude(w=> w.User)
+                .Select(p=> Mapper.Map<ArticleInfoDto>(p))
+                .FirstOrDefaultAsync())!;
+
+            return new SuccessDataResultDto<ArticleInfoDto>(article);
         }
 
         public async Task<IBaseResult> UpdateAsync(string articleId, UpdateArticleDto updateArticleDto)
