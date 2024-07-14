@@ -3,6 +3,7 @@ using Application.Abstractions.Repositories.Categories;
 using Application.Abstractions.Repositories.Roles;
 using Application.Abstractions.Repositories.UserRoles;
 using Application.Abstractions.Repositories.Users;
+using Application.Abstractions.Repositories.Writers;
 
 namespace Application.Abstractions.Repositories.Commons
 {
@@ -18,6 +19,8 @@ namespace Application.Abstractions.Repositories.Commons
         IRoleWriteRepository RoleWriteRepository { get; }
         IUserRoleReadRepository UserRoleReadRepository { get; }
         IUserRoleWriteRepository UserRoleWriteRepository { get; }
+        IWriterReadRepository WriterReadRepository { get; }
+        IWriterWriteRepository WriterWriteRepository { get; }
         IDatabaseTransaction BeginTransaction();
         Task<int> SaveChangesAsync();
     }

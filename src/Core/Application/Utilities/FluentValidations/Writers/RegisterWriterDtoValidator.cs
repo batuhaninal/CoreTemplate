@@ -1,13 +1,13 @@
-﻿using Application.Models.DTOs.Auths;
+﻿using Application.Models.DTOs.Writers;
 using Application.Models.Messages;
 using Application.Utilities.Helpers;
 using FluentValidation;
 
-namespace Application.Utilities.FluentValidations.Users
+namespace Application.Utilities.FluentValidations.Writers
 {
-    public class RegisterDtoValidator : AbstractValidator<RegisterDto>
+    public class RegisterWriterDtoValidator : AbstractValidator<RegisterWriterDto>
     {
-        public RegisterDtoValidator()
+        public RegisterWriterDtoValidator()
         {
             RuleFor(x => x.Email)
                 .NotEmpty()
@@ -67,6 +67,15 @@ namespace Application.Utilities.FluentValidations.Users
                 .Must(RegexHelper.CheckWhiteSpaceDuplicate)
                     .WithMessage(CommonMessage.RegexErr.DuplicateWhiteSpace("Last Name"));
 
+            RuleFor(x => x.Nick)
+                .NotEmpty()
+                    .WithMessage(CommonMessage.Validation.NotNull("Nick"))
+                .NotNull()
+                    .WithMessage(CommonMessage.Validation.NotNull("Nick"))
+                .MaximumLength(50)
+                    .WithMessage(CommonMessage.Validation.MaxLength("Nick", 50))
+                .Must(RegexHelper.CheckWhiteSpaceExist)
+                    .WithMessage(CommonMessage.RegexErr.WhiteSpace("Nick"));
         }
     }
 }

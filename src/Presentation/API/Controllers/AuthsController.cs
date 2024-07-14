@@ -1,6 +1,7 @@
 ﻿using API.Attributes;
 using Application.Abstractions.Services.Auths;
 using Application.Models.DTOs.Auths;
+using Application.Models.DTOs.Writers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -20,6 +21,11 @@ namespace API.Controllers
         [SecureOperation]
         public async Task<IActionResult> SignUp([FromBody] RegisterDto registerDto) =>
             CreateResponse(await _authService.RegisterUserAsync(registerDto));
+
+        [HttpPost]
+        [SecureOperation]
+        public async Task<IActionResult> WriterSignUp([FromBody] RegisterWriterDto registerWriterDto) =>
+            CreateResponse(await _authService.RegisterWriterAsync(registerWriterDto));
 
         [HttpPost]
         [SecureOperation]

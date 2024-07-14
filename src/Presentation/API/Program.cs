@@ -42,7 +42,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseMiddleware<RequestResponseActivityMiddleware>();
 
-//app.UseMiddleware<CustomExceptionMiddleware>();
+app.UseMiddleware<CustomExceptionMiddleware>();
 
 // Auto migration
 await app.ConfigureMigrationAsync();

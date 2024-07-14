@@ -22,6 +22,8 @@ namespace Application.Utilities.MappingProfiles
 
             CreateMap<RegisterWriterDto, CreateWriterDto>();
 
+            CreateMap<RegisterWriterDto, Writer>();
+
             CreateMap<CreateWriterDto, Writer>()
                 .ForMember(dest=> dest.Level, src=> src.MapFrom(x=> (byte)WriterLevel.Newbie));
 

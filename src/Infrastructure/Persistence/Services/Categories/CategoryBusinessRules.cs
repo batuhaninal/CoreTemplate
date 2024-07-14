@@ -7,9 +7,9 @@ namespace Persistence.Services.Categories
     internal class CategoryBusinessRules
     {
         private ICategoryReadRepository _categoryReadRepository;
-        public CategoryBusinessRules(IUnitOfWork unitOfWork)
+        public CategoryBusinessRules(ICategoryReadRepository categoryReadRepository)
         {
-            _categoryReadRepository = unitOfWork.CategoryReadRepository;
+            _categoryReadRepository = categoryReadRepository;
         }
 
         public async Task CheckCategoryExist(string categoryId)

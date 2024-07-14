@@ -22,7 +22,7 @@ namespace Persistence.Services.Categories
         private readonly CategoryBusinessRules _businessRules;
         public CategoryService(IUnitOfWork unitOfWork, IMapper mapper, ICacheService cache, IRabbitMQPublisherService rabbitMQPublisherService) : base(unitOfWork, mapper, cache, rabbitMQPublisherService)
         {
-            _businessRules = new CategoryBusinessRules(unitOfWork);
+            _businessRules = new CategoryBusinessRules(unitOfWork.CategoryReadRepository);
         }
 
         public async Task<IBaseResult> CreateAsync(CreateCategoryDto createCategoryDto)
