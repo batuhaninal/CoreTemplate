@@ -13,6 +13,9 @@ namespace Application.Utilities.MappingProfiles
                 .ForMember(dest => dest.Id, src => src.MapFrom(x => x.UserId));
 
             CreateMap<RegisterDto, User>();
+
+            CreateMap<User, UserInfoDto>()
+                .ForMember(dest=> dest.UserId, src=> src.MapFrom(x=> x.Id));
         }
     }
 }

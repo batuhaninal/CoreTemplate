@@ -1,6 +1,6 @@
 ﻿namespace Application.Models.Enums
 {
-    public enum WriterLevel
+    public enum WriterLevel : byte
     {
         Newbie = 0,
         Junior = 1,
