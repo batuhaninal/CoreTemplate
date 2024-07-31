@@ -10,5 +10,6 @@ namespace Domain.Entities
         public string FirstName { get; set; } = null!;
         public string LastName { get; set; } = null!;
         public virtual ICollection<UserRole>? UserRoles { get; set; }
+        public virtual ICollection<ArticleFavorite>? ArticleFavorites { get; set; }
     }
 }

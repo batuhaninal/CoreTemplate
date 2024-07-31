@@ -6,148 +6,167 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class article_countinfo_mig : Migration
+    public partial class articlefavorite_model_mig : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<int>(
-                name: "fav_count",
-                table: "articles",
-                type: "integer",
-                nullable: false,
-                defaultValue: 0);
-
-            migrationBuilder.AddColumn<int>(
-                name: "like_count",
-                table: "articles",
-                type: "integer",
-                nullable: false,
-                defaultValue: 0);
+            migrationBuilder.CreateTable(
+                name: "article_favorites",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    article_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    user_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    created_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    updated_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    is_active = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_article_favorites", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_article_favorites_articles_article_id",
+                        column: x => x.article_id,
+                        principalTable: "articles",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_article_favorites_users_user_id",
+                        column: x => x.user_id,
+                        principalTable: "users",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
 
             migrationBuilder.UpdateData(
                 table: "articles",
                 keyColumn: "id",
                 keyValue: new Guid("29e2d55d-fbd2-4f0c-b71e-357d2b7ffe88"),
                 columns: new[] { "created_date", "updated_date" },
-                values: new object[] { new DateTime(2024, 7, 31, 20, 37, 36, 847, DateTimeKind.Utc).AddTicks(8512), new DateTime(2024, 7, 31, 20, 37, 36, 847, DateTimeKind.Utc).AddTicks(8512) });
+                values: new object[] { new DateTime(2024, 7, 31, 21, 5, 9, 290, DateTimeKind.Utc).AddTicks(7883), new DateTime(2024, 7, 31, 21, 5, 9, 290, DateTimeKind.Utc).AddTicks(7883) });
 
             migrationBuilder.UpdateData(
                 table: "articles",
                 keyColumn: "id",
                 keyValue: new Guid("5836c09f-c947-4222-9cfb-5f665b83f755"),
                 columns: new[] { "created_date", "updated_date" },
-                values: new object[] { new DateTime(2024, 7, 31, 20, 37, 36, 847, DateTimeKind.Utc).AddTicks(8520), new DateTime(2024, 7, 31, 20, 37, 36, 847, DateTimeKind.Utc).AddTicks(8520) });
+                values: new object[] { new DateTime(2024, 7, 31, 21, 5, 9, 290, DateTimeKind.Utc).AddTicks(7894), new DateTime(2024, 7, 31, 21, 5, 9, 290, DateTimeKind.Utc).AddTicks(7894) });
 
             migrationBuilder.UpdateData(
                 table: "articles",
                 keyColumn: "id",
                 keyValue: new Guid("5d11e4f2-1db7-4667-9a90-87918dd73569"),
                 columns: new[] { "created_date", "updated_date" },
-                values: new object[] { new DateTime(2024, 7, 31, 20, 37, 36, 847, DateTimeKind.Utc).AddTicks(8516), new DateTime(2024, 7, 31, 20, 37, 36, 847, DateTimeKind.Utc).AddTicks(8516) });
+                values: new object[] { new DateTime(2024, 7, 31, 21, 5, 9, 290, DateTimeKind.Utc).AddTicks(7889), new DateTime(2024, 7, 31, 21, 5, 9, 290, DateTimeKind.Utc).AddTicks(7889) });
 
             migrationBuilder.UpdateData(
                 table: "articles",
                 keyColumn: "id",
                 keyValue: new Guid("f4edf481-d457-4e3e-a670-0b52635744df"),
                 columns: new[] { "created_date", "updated_date" },
-                values: new object[] { new DateTime(2024, 7, 31, 20, 37, 36, 847, DateTimeKind.Utc).AddTicks(8518), new DateTime(2024, 7, 31, 20, 37, 36, 847, DateTimeKind.Utc).AddTicks(8519) });
+                values: new object[] { new DateTime(2024, 7, 31, 21, 5, 9, 290, DateTimeKind.Utc).AddTicks(7892), new DateTime(2024, 7, 31, 21, 5, 9, 290, DateTimeKind.Utc).AddTicks(7892) });
 
             migrationBuilder.UpdateData(
                 table: "categories",
                 keyColumn: "id",
                 keyValue: new Guid("1fe6dbd9-048f-45cf-b1ea-d46210a87d96"),
                 columns: new[] { "created_date", "updated_date" },
-                values: new object[] { new DateTime(2024, 7, 31, 20, 37, 36, 847, DateTimeKind.Utc).AddTicks(7574), new DateTime(2024, 7, 31, 20, 37, 36, 847, DateTimeKind.Utc).AddTicks(7574) });
+                values: new object[] { new DateTime(2024, 7, 31, 21, 5, 9, 290, DateTimeKind.Utc).AddTicks(6758), new DateTime(2024, 7, 31, 21, 5, 9, 290, DateTimeKind.Utc).AddTicks(6758) });
 
             migrationBuilder.UpdateData(
                 table: "categories",
                 keyColumn: "id",
                 keyValue: new Guid("24fe2676-c6b0-4f15-b045-edd9a84a7ca7"),
                 columns: new[] { "created_date", "updated_date" },
-                values: new object[] { new DateTime(2024, 7, 31, 20, 37, 36, 847, DateTimeKind.Utc).AddTicks(7572), new DateTime(2024, 7, 31, 20, 37, 36, 847, DateTimeKind.Utc).AddTicks(7573) });
+                values: new object[] { new DateTime(2024, 7, 31, 21, 5, 9, 290, DateTimeKind.Utc).AddTicks(6756), new DateTime(2024, 7, 31, 21, 5, 9, 290, DateTimeKind.Utc).AddTicks(6756) });
 
             migrationBuilder.UpdateData(
                 table: "roles",
                 keyColumn: "id",
                 keyValue: new Guid("1e9d831e-fb57-4c7a-b8d5-8a4a0fb1f7b2"),
                 columns: new[] { "created_date", "updated_date" },
-                values: new object[] { new DateTime(2024, 7, 31, 20, 37, 36, 847, DateTimeKind.Utc).AddTicks(6209), new DateTime(2024, 7, 31, 20, 37, 36, 847, DateTimeKind.Utc).AddTicks(6209) });
+                values: new object[] { new DateTime(2024, 7, 31, 21, 5, 9, 290, DateTimeKind.Utc).AddTicks(5317), new DateTime(2024, 7, 31, 21, 5, 9, 290, DateTimeKind.Utc).AddTicks(5318) });
 
             migrationBuilder.UpdateData(
                 table: "roles",
                 keyColumn: "id",
                 keyValue: new Guid("83e5c9f0-7e6d-4a08-a515-2e8889f3b140"),
                 columns: new[] { "created_date", "updated_date" },
-                values: new object[] { new DateTime(2024, 7, 31, 20, 37, 36, 847, DateTimeKind.Utc).AddTicks(6211), new DateTime(2024, 7, 31, 20, 37, 36, 847, DateTimeKind.Utc).AddTicks(6212) });
+                values: new object[] { new DateTime(2024, 7, 31, 21, 5, 9, 290, DateTimeKind.Utc).AddTicks(5320), new DateTime(2024, 7, 31, 21, 5, 9, 290, DateTimeKind.Utc).AddTicks(5320) });
 
             migrationBuilder.UpdateData(
                 table: "roles",
                 keyColumn: "id",
                 keyValue: new Guid("cf2a3f8d-88bc-4c0c-a5e7-b5f9dd20658b"),
                 columns: new[] { "created_date", "updated_date" },
-                values: new object[] { new DateTime(2024, 7, 31, 20, 37, 36, 847, DateTimeKind.Utc).AddTicks(6205), new DateTime(2024, 7, 31, 20, 37, 36, 847, DateTimeKind.Utc).AddTicks(6205) });
+                values: new object[] { new DateTime(2024, 7, 31, 21, 5, 9, 290, DateTimeKind.Utc).AddTicks(5313), new DateTime(2024, 7, 31, 21, 5, 9, 290, DateTimeKind.Utc).AddTicks(5314) });
 
             migrationBuilder.UpdateData(
                 table: "user_roles",
                 keyColumn: "id",
                 keyValue: new Guid("0e398d5d-c49e-4b68-8da1-9616a0145a6d"),
                 columns: new[] { "created_date", "updated_date" },
-                values: new object[] { new DateTime(2024, 7, 31, 20, 37, 36, 847, DateTimeKind.Utc).AddTicks(6853), new DateTime(2024, 7, 31, 20, 37, 36, 847, DateTimeKind.Utc).AddTicks(6854) });
+                values: new object[] { new DateTime(2024, 7, 31, 21, 5, 9, 290, DateTimeKind.Utc).AddTicks(5996), new DateTime(2024, 7, 31, 21, 5, 9, 290, DateTimeKind.Utc).AddTicks(5996) });
 
             migrationBuilder.UpdateData(
                 table: "user_roles",
                 keyColumn: "id",
                 keyValue: new Guid("1fca6ef1-27de-4fe4-9b8b-faebc2150d43"),
                 columns: new[] { "created_date", "updated_date" },
-                values: new object[] { new DateTime(2024, 7, 31, 20, 37, 36, 847, DateTimeKind.Utc).AddTicks(6860), new DateTime(2024, 7, 31, 20, 37, 36, 847, DateTimeKind.Utc).AddTicks(6860) });
+                values: new object[] { new DateTime(2024, 7, 31, 21, 5, 9, 290, DateTimeKind.Utc).AddTicks(6005), new DateTime(2024, 7, 31, 21, 5, 9, 290, DateTimeKind.Utc).AddTicks(6005) });
 
             migrationBuilder.UpdateData(
                 table: "user_roles",
                 keyColumn: "id",
                 keyValue: new Guid("8c056215-aa82-4ed8-bf86-b150a3e0fcf7"),
                 columns: new[] { "created_date", "updated_date" },
-                values: new object[] { new DateTime(2024, 7, 31, 20, 37, 36, 847, DateTimeKind.Utc).AddTicks(6858), new DateTime(2024, 7, 31, 20, 37, 36, 847, DateTimeKind.Utc).AddTicks(6858) });
+                values: new object[] { new DateTime(2024, 7, 31, 21, 5, 9, 290, DateTimeKind.Utc).AddTicks(6001), new DateTime(2024, 7, 31, 21, 5, 9, 290, DateTimeKind.Utc).AddTicks(6001) });
 
             migrationBuilder.UpdateData(
                 table: "users",
                 keyColumn: "id",
                 keyValue: new Guid("ca9a97c7-6149-4e89-a5c3-61928510c2b9"),
                 columns: new[] { "created_date", "password_hash", "password_salt", "updated_date" },
-                values: new object[] { new DateTime(2024, 7, 31, 20, 37, 36, 847, DateTimeKind.Utc).AddTicks(4091), new byte[] { 41, 241, 147, 45, 194, 145, 240, 56, 175, 8, 218, 17, 128, 224, 183, 136, 174, 144, 9, 140, 234, 19, 205, 86, 11, 194, 15, 101, 113, 235, 57, 4 }, new byte[] { 53, 249, 245, 84, 229, 117, 198, 106, 183, 146, 148, 164, 202, 255, 90, 194, 63, 90, 249, 27, 221, 212, 245, 154, 68, 43, 180, 23, 134, 227, 247, 215, 70, 130, 119, 206, 125, 32, 100, 228, 146, 133, 124, 191, 195, 231, 210, 42, 200, 102, 221, 225, 235, 29, 50, 188, 189, 208, 73, 18, 179, 78, 205, 193 }, new DateTime(2024, 7, 31, 20, 37, 36, 847, DateTimeKind.Utc).AddTicks(4092) });
+                values: new object[] { new DateTime(2024, 7, 31, 21, 5, 9, 290, DateTimeKind.Utc).AddTicks(3186), new byte[] { 51, 160, 51, 101, 92, 3, 60, 129, 92, 48, 33, 223, 46, 209, 44, 250, 225, 15, 92, 121, 211, 162, 125, 181, 158, 135, 244, 216, 149, 130, 163, 233 }, new byte[] { 188, 87, 215, 186, 193, 112, 33, 123, 32, 167, 117, 116, 126, 83, 137, 186, 19, 251, 95, 242, 141, 201, 131, 255, 10, 224, 17, 220, 8, 47, 33, 217, 120, 97, 36, 120, 198, 134, 79, 251, 197, 154, 209, 142, 228, 146, 168, 22, 122, 28, 210, 102, 104, 124, 255, 43, 6, 176, 232, 224, 213, 197, 252, 97 }, new DateTime(2024, 7, 31, 21, 5, 9, 290, DateTimeKind.Utc).AddTicks(3187) });
 
             migrationBuilder.UpdateData(
                 table: "users",
                 keyColumn: "id",
                 keyValue: new Guid("f219d021-5d29-4e63-8250-4aa1e514d8dc"),
                 columns: new[] { "created_date", "password_hash", "password_salt", "updated_date" },
-                values: new object[] { new DateTime(2024, 7, 31, 20, 37, 36, 847, DateTimeKind.Utc).AddTicks(4083), new byte[] { 41, 241, 147, 45, 194, 145, 240, 56, 175, 8, 218, 17, 128, 224, 183, 136, 174, 144, 9, 140, 234, 19, 205, 86, 11, 194, 15, 101, 113, 235, 57, 4 }, new byte[] { 53, 249, 245, 84, 229, 117, 198, 106, 183, 146, 148, 164, 202, 255, 90, 194, 63, 90, 249, 27, 221, 212, 245, 154, 68, 43, 180, 23, 134, 227, 247, 215, 70, 130, 119, 206, 125, 32, 100, 228, 146, 133, 124, 191, 195, 231, 210, 42, 200, 102, 221, 225, 235, 29, 50, 188, 189, 208, 73, 18, 179, 78, 205, 193 }, new DateTime(2024, 7, 31, 20, 37, 36, 847, DateTimeKind.Utc).AddTicks(4085) });
+                values: new object[] { new DateTime(2024, 7, 31, 21, 5, 9, 290, DateTimeKind.Utc).AddTicks(3177), new byte[] { 51, 160, 51, 101, 92, 3, 60, 129, 92, 48, 33, 223, 46, 209, 44, 250, 225, 15, 92, 121, 211, 162, 125, 181, 158, 135, 244, 216, 149, 130, 163, 233 }, new byte[] { 188, 87, 215, 186, 193, 112, 33, 123, 32, 167, 117, 116, 126, 83, 137, 186, 19, 251, 95, 242, 141, 201, 131, 255, 10, 224, 17, 220, 8, 47, 33, 217, 120, 97, 36, 120, 198, 134, 79, 251, 197, 154, 209, 142, 228, 146, 168, 22, 122, 28, 210, 102, 104, 124, 255, 43, 6, 176, 232, 224, 213, 197, 252, 97 }, new DateTime(2024, 7, 31, 21, 5, 9, 290, DateTimeKind.Utc).AddTicks(3180) });
 
             migrationBuilder.UpdateData(
                 table: "users",
                 keyColumn: "id",
                 keyValue: new Guid("f3c72d95-d69b-478b-a186-7934a9bf87a4"),
                 columns: new[] { "created_date", "password_hash", "password_salt", "updated_date" },
-                values: new object[] { new DateTime(2024, 7, 31, 20, 37, 36, 847, DateTimeKind.Utc).AddTicks(4093), new byte[] { 41, 241, 147, 45, 194, 145, 240, 56, 175, 8, 218, 17, 128, 224, 183, 136, 174, 144, 9, 140, 234, 19, 205, 86, 11, 194, 15, 101, 113, 235, 57, 4 }, new byte[] { 53, 249, 245, 84, 229, 117, 198, 106, 183, 146, 148, 164, 202, 255, 90, 194, 63, 90, 249, 27, 221, 212, 245, 154, 68, 43, 180, 23, 134, 227, 247, 215, 70, 130, 119, 206, 125, 32, 100, 228, 146, 133, 124, 191, 195, 231, 210, 42, 200, 102, 221, 225, 235, 29, 50, 188, 189, 208, 73, 18, 179, 78, 205, 193 }, new DateTime(2024, 7, 31, 20, 37, 36, 847, DateTimeKind.Utc).AddTicks(4093) });
+                values: new object[] { new DateTime(2024, 7, 31, 21, 5, 9, 290, DateTimeKind.Utc).AddTicks(3189), new byte[] { 51, 160, 51, 101, 92, 3, 60, 129, 92, 48, 33, 223, 46, 209, 44, 250, 225, 15, 92, 121, 211, 162, 125, 181, 158, 135, 244, 216, 149, 130, 163, 233 }, new byte[] { 188, 87, 215, 186, 193, 112, 33, 123, 32, 167, 117, 116, 126, 83, 137, 186, 19, 251, 95, 242, 141, 201, 131, 255, 10, 224, 17, 220, 8, 47, 33, 217, 120, 97, 36, 120, 198, 134, 79, 251, 197, 154, 209, 142, 228, 146, 168, 22, 122, 28, 210, 102, 104, 124, 255, 43, 6, 176, 232, 224, 213, 197, 252, 97 }, new DateTime(2024, 7, 31, 21, 5, 9, 290, DateTimeKind.Utc).AddTicks(3189) });
 
             migrationBuilder.UpdateData(
                 table: "writers",
                 keyColumn: "id",
                 keyValue: new Guid("7e137c28-9868-4e00-b2bd-73ab46e43bc2"),
                 columns: new[] { "created_date", "updated_date" },
-                values: new object[] { new DateTime(2024, 7, 31, 20, 37, 36, 847, DateTimeKind.Utc).AddTicks(5348), new DateTime(2024, 7, 31, 20, 37, 36, 847, DateTimeKind.Utc).AddTicks(5348) });
+                values: new object[] { new DateTime(2024, 7, 31, 21, 5, 9, 290, DateTimeKind.Utc).AddTicks(4405), new DateTime(2024, 7, 31, 21, 5, 9, 290, DateTimeKind.Utc).AddTicks(4406) });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_article_favorites_article_id",
+                table: "article_favorites",
+                column: "article_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_article_favorites_user_id",
+                table: "article_favorites",
+                column: "user_id");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "fav_count",
-                table: "articles");
-
-            migrationBuilder.DropColumn(
-                name: "like_count",
-                table: "articles");
+            migrationBuilder.DropTable(
+                name: "article_favorites");
 
             migrationBuilder.UpdateData(
                 table: "articles",

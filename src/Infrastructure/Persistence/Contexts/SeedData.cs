@@ -100,8 +100,6 @@ namespace Persistence.Contexts
                 .RuleFor(x => x.IsActive, i => i.PickRandom(true, false))
                 .RuleFor(x => x.CategoryId, i => i.PickRandom(categoryIds))
                 .RuleFor(x => x.WriterId, i => writerId)
-                .RuleFor(x => x.LikeCount, i => 0)
-                .RuleFor(x => x.FavCount, i => 0)
                 .Generate(500);
 
             var articlesRandomWriters = new Faker<Article>("tr")

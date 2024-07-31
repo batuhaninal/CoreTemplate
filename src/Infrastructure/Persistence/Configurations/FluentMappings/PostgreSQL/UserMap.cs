@@ -45,6 +45,8 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
                     .IsRequired();
 
                 c.HasMany(x=> x.UserRoles);
+
+                c.HasMany(x=> x.ArticleFavorites);
             });
 
             byte[] passwordHash, passwordSalt;

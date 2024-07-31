@@ -21,7 +21,8 @@ namespace Persistence.Contexts
         public DbSet<Writer> Writers { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Article> Articles { get; set; }
-        
+        public DbSet<ArticleFavorite> ArticleFavorites { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -44,6 +45,7 @@ namespace Persistence.Contexts
 
             builder.ConfigureCategoryMap();
             builder.ConfigureArticleMap();
+            builder.ConfigureArticleFavoriteMap();
         }
 
         // Dto mapping isleminde de handle edilebilir state durumlari
