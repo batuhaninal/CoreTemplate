@@ -8,6 +8,7 @@ using Application.Models.Constants.MessageBrokers;
 using Application.Models.DTOs.Articles;
 using Application.Models.DTOs.Commons.Results;
 using Application.Models.MessageBrokers.Events;
+using Application.Models.MessageBrokers.Events.Articles;
 using Application.Models.RequestParameters.Commons;
 using Application.Utilities.Exceptions.Commons;
 using Application.Utilities.Pagination;
