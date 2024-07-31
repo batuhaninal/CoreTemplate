@@ -25,7 +25,7 @@ namespace Persistence.Services.Articles
 
         public ArticleService(IUnitOfWork unitOfWork, IMapper mapper, ICacheService cache, IRabbitMQPublisherService rabbitMQPublisherService) : base(unitOfWork, mapper, cache, rabbitMQPublisherService)
         {
-            _businessRule = new ArticleBusinessRule(unitOfWork.ArticleReadRepository);
+            _businessRule = new ArticleBusinessRule(unitOfWork.ArticleReadRepository, unitOfWork.ArticleFavoriteReadRepository);
         }
 
         public async Task<IBaseResult> CreateAsync(CreateArticleDto createArticleDto)
@@ -119,6 +119,13 @@ namespace Persistence.Services.Articles
             {
                 CachePrefix.Articles.Prefix,
             }));
+        }
+
+        public async Task<IBaseResult> Fav(string articleId, string userId)
+        {
+            await _businessRule.CheckArticleAlreadyFavorited(articleId, userId);
+            Publisher.Publish(QueueNames.ArticleLike, ExchangeNames.Article, new ArticleFavoritedEvent() { ArticleId = Guid.Parse(articleId), UserId = Guid.Parse(userId) });
+            return new SuccessResultDto(204);
         }
     }
 }
