@@ -30,6 +30,16 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
                     .IsRequired()
                     .HasColumnType("text");
 
+                p.Property(x => x.FavCount)
+                    .HasColumnName("fav_count")
+                    .IsRequired()
+                    .HasDefaultValue(0);
+
+                p.Property(x => x.LikeCount)
+                    .HasColumnName("like_count")
+                    .IsRequired()
+                    .HasDefaultValue(0);
+
                 p.Property(x => x.CategoryId)
                     .HasColumnName("category_id")
                     .IsRequired();

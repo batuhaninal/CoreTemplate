@@ -28,8 +28,8 @@ namespace Adapter.Services.MessageBrokers.Consumers
             _channel = _connection.CreateModel();
 
             _channel.ExchangeDeclare(ExchangeNames.Cache, ExchangeType.Direct, true, false);
-            _channel.QueueDeclare(QueueNames.Cache, true, false, false);
-            _channel.QueueBind(QueueNames.Cache, ExchangeNames.Cache, QueueNames.Cache);
+            _channel.QueueDeclare(QueueNames.CacheRemove, true, false, false);
+            _channel.QueueBind(QueueNames.CacheRemove, ExchangeNames.Cache, QueueNames.CacheRemove);
             _channel.BasicQos(0, 1, false);
 
             return base.StartAsync(cancellationToken);
@@ -63,7 +63,7 @@ namespace Adapter.Services.MessageBrokers.Consumers
                 _channel.BasicAck(@event.DeliveryTag, false);
             };
 
-            _channel.BasicConsume(QueueNames.Cache, false, consumer);
+            _channel.BasicConsume(QueueNames.CacheRemove, false, consumer);
 
             return Task.CompletedTask;
         }

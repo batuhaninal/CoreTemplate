@@ -6,6 +6,8 @@ namespace Domain.Entities
     {
         public string Title { get; set; } = null!;
         public string Content { get; set; } = null!;
+        public int LikeCount { get; set; }
+        public int FavCount { get; set; }
 
         // 1-n eklenmesi gerekmektedir
         public Guid CategoryId { get; set; }

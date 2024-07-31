@@ -115,7 +115,7 @@ namespace Persistence.Services.Articles
 
         private void RemoveCachePrefixes()
         {
-            Publisher.Publish(QueueNames.Cache, ExchangeNames.Cache, new CacheRemovedEvent(new string[]
+            Publisher.Publish(QueueNames.CacheRemove, ExchangeNames.Cache, new CacheRemovedEvent(new string[]
             {
                 CachePrefix.Articles.Prefix,
             }));

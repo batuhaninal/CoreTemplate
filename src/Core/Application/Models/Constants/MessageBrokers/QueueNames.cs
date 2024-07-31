@@ -3,7 +3,7 @@
     public static class QueueNames
     {
         public const string Default = "default-queue";
-        public const string Cache = "cache-queue";
+        public const string CacheRemove = "cache-remove-queue";
     }
 
     public static class ExchangeNames
