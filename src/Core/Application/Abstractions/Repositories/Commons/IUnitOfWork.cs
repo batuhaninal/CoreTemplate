@@ -1,4 +1,5 @@
-﻿using Application.Abstractions.Repositories.Articles;
+﻿using Application.Abstractions.Repositories.ArticleFavorites;
+using Application.Abstractions.Repositories.Articles;
 using Application.Abstractions.Repositories.Categories;
 using Application.Abstractions.Repositories.Roles;
 using Application.Abstractions.Repositories.UserRoles;
@@ -21,6 +22,8 @@ namespace Application.Abstractions.Repositories.Commons
         IUserRoleWriteRepository UserRoleWriteRepository { get; }
         IWriterReadRepository WriterReadRepository { get; }
         IWriterWriteRepository WriterWriteRepository { get; }
+        IArticleFavoriteReadRepository ArticleFavoriteReadRepository { get; }
+        IArticleFavoriteWriteRepository ArticleFavoriteWriteRepository { get; }
         IDatabaseTransaction BeginTransaction();
         Task<int> SaveChangesAsync();
     }

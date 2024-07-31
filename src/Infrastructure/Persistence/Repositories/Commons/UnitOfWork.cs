@@ -1,4 +1,5 @@
-﻿using Application.Abstractions.Repositories.Articles;
+﻿using Application.Abstractions.Repositories.ArticleFavorites;
+using Application.Abstractions.Repositories.Articles;
 using Application.Abstractions.Repositories.Categories;
 using Application.Abstractions.Repositories.Commons;
 using Application.Abstractions.Repositories.Roles;
@@ -6,6 +7,7 @@ using Application.Abstractions.Repositories.UserRoles;
 using Application.Abstractions.Repositories.Users;
 using Application.Abstractions.Repositories.Writers;
 using Persistence.Contexts;
+using Persistence.Repositories.ArticleFavorites;
 using Persistence.Repositories.Articles;
 using Persistence.Repositories.Categories;
 using Persistence.Repositories.Roles;
@@ -30,6 +32,8 @@ namespace Persistence.Repositories.Commons
         private readonly UserRoleWriteRepository _userRoleWriteRepository;
         private readonly WriterReadRepository _writerReadRepository;
         private readonly WriterWriteRepository _writerWriteRepository;
+        private readonly ArticleFavoriteReadRepository _articleFavoriteReadRepository;
+        private readonly ArticleFavoriteWriteRepository _articleFavoriteWriteRepository;
         public UnitOfWork(TemplateContext templateContext)
         {
             _context = templateContext;
@@ -58,6 +62,10 @@ namespace Persistence.Repositories.Commons
         public IWriterReadRepository WriterReadRepository => _writerReadRepository ?? new WriterReadRepository(_context);
 
         public IWriterWriteRepository WriterWriteRepository => _writerWriteRepository ?? new WriterWriteRepository(_context);
+
+        public IArticleFavoriteReadRepository ArticleFavoriteReadRepository => _articleFavoriteReadRepository ?? new ArticleFavoriteReadRepository(_context);
+
+        public IArticleFavoriteWriteRepository ArticleFavoriteWriteRepository => _articleFavoriteWriteRepository ?? new ArticleFavoriteWriteRepository(_context);
 
         public IDatabaseTransaction BeginTransaction() => 
             new DatabaseTransaction(_context);
