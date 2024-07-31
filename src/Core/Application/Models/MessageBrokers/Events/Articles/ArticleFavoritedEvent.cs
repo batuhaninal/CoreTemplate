@@ -1,4 +1,4 @@
-﻿namespace Application.Models.MessageBrokers.Events
+﻿namespace Application.Models.MessageBrokers.Events.Articles
 {
     public record ArticleFavoritedEvent
     {
