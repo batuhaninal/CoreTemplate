@@ -134,6 +134,37 @@ namespace Persistence.Services.Articles
 
         public async Task<IPaginatedDataResult<ArticleItemDto>> GetAllAsync(ArticleRequestParameter articleRequest, PaginationRequestParameter pagination)
         {
+            /* (.ProjectTo<ArticleItemDto>(Mapper.ConfigurationProvider)) Buyuk data sorgulari icin performansli fakat kucuk veriler icin performansi dusuk!  Query ciktisi =>
+             SELECT t.title, FALSE, c.id::text, c.title, c.created_date, FALSE, w.nick, w.level::smallint, w.id::text, t.created_date, t.id::text
+                FROM (
+                    SELECT a.id, a.category_id, a.created_date, a.title, a.writer_id
+                    FROM articles AS a
+                    LIMIT @__p_1 OFFSET @__p_0
+                ) AS t
+            INNER JOIN categories AS c ON t.category_id = c.id
+            INNER JOIN writers AS w ON t.writer_id = w.id
+            */
+
+            //var data = await UnitOfWork.ArticleReadRepository
+            //    .Table
+            //    .Include(x => x.Category)
+            //    .Include(x => x.Writer)
+            //    .Filter(articleRequest)
+            //    .ProjectTo<ArticleItemDto>(Mapper.ConfigurationProvider)
+            //    .ToPaginatedListDtoAsync(pagination);
+
+
+            /* (.Select(x => Mapper.Map<ArticleItemDto>(x))) Buyuk data sorgulari icin perfonmansi dusuk fakat kucuk veriler icin cok daha performansli! Query ciktisi =>
+             SELECT t.id, t.category_id, t.content, t.created_date, t.is_active, t.title, t.updated_date, t.writer_id, c.id, c.created_date, c.is_active, c.title, c.updated_date, w.id, w.created_date, w.is_active, w.level, w.nick, w.updated_date, w.user_id
+                FROM (
+                    SELECT a.id, a.category_id, a.content, a.created_date, a.is_active, a.title, a.updated_date, a.writer_id
+                    FROM articles AS a
+                    LIMIT @__p_2 OFFSET @__p_1
+                ) AS t
+            INNER JOIN categories AS c ON t.category_id = c.id
+            INNER JOIN writers AS w ON t.writer_id = w.id
+             */
+
             var data = await UnitOfWork.ArticleReadRepository
                 .Table
                 .Include(x => x.Category)

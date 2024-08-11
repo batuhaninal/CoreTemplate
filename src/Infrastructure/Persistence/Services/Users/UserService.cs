@@ -10,6 +10,7 @@ using Application.Models.RequestParameters.Commons;
 using Application.Models.RequestParameters.Users;
 using Application.Utilities.Pagination;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Persistence.Repositories.Users.Extensions;
 using Persistence.Services.Commons;
 using System.Text.Json;
@@ -24,9 +25,16 @@ namespace Persistence.Services.Users
 
         public async Task<IPaginatedDataResult<UserItemDto>> GetAllAsync(UserRequestParameter parameter, BasePaginationRequestParameter pagination)
         {
+            //var users = await UnitOfWork.UserReadRepository.Table
+            //    .AsNoTracking()
+            //    .Filter(parameter)
+            //    .ProjectTo<UserItemDto>(Mapper.ConfigurationProvider)
+            //    .ToPaginatedListDtoAsync(pagination);
+
             var users = await UnitOfWork.UserReadRepository.Table
+                .AsNoTracking()
                 .Filter(parameter)
-                .Select(x => Mapper.Map<UserItemDto>(x))
+                .Select(x => Mapper.Map<UserItemDto>(x)!)
                 .ToPaginatedListDtoAsync(pagination);
 
             return users;
@@ -42,7 +50,8 @@ namespace Persistence.Services.Users
             }
 
             var users = await UnitOfWork.UserReadRepository.Table
-                .Select(x => Mapper.Map<UserItemDto>(x))
+                .AsNoTracking()
+                .Select(x => Mapper.Map<UserItemDto>(x)!)
                 .ToPaginatedListDtoAsync(pagination);
 
             if (pagination.PageIndex <= 5 && (pagination.PageSize == 20 || pagination.PageSize == 50 || pagination.PageSize == 100) && users.ItemsCount > 0)
