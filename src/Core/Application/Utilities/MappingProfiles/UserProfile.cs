@@ -19,6 +19,10 @@ namespace Application.Utilities.MappingProfiles
 
             CreateMap<User, UserInfoDto>()
                 .ForMember(dest=> dest.UserId, src=> src.MapFrom(x=> x.Id));
+
+            CreateMap<User, UserItemDto>()
+                .ForMember(dest => dest.UserId, src => src.MapFrom(x => x.Id))
+                .ForMember(dest => dest.FullName, src => src.MapFrom(x => string.Join(' ', x.FirstName, x.LastName)));
         }
     }
 }
