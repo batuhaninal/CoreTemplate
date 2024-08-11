@@ -14,51 +14,56 @@ namespace OpenTelemetry.Shared
 
             OpenTelemetryConstants openTelemetryConstant = (configuration.GetSection("OpenTelemetry").Get<OpenTelemetryConstants>())!;
 
-            services.AddOpenTelemetry()
-                .WithTracing(options =>
-                {
-                    options.AddSource(openTelemetryConstant.ActivitySourceName)
-                    .ConfigureResource(resource =>
-                    {
-                        resource.AddService(serviceName: openTelemetryConstant.ServiceName, serviceVersion: openTelemetryConstant.ServiceVersion);
-                    });
+            if (openTelemetryConstant != null)
+            {
 
-                    options.AddAspNetCoreInstrumentation(ancOptions =>
+                services.AddOpenTelemetry()
+                    .WithTracing(options =>
                     {
-                        ancOptions.Filter = (context) =>
+                        options.AddSource(openTelemetryConstant.ActivitySourceName ?? "IIS")
+                        .ConfigureResource(resource =>
                         {
-                            if (!string.IsNullOrEmpty(context.Request.Path.Value))
-                                return context.Request.Path.Value.Contains("api", StringComparison.InvariantCulture);
+                            resource.AddService(serviceName: openTelemetryConstant.ServiceName, serviceVersion: openTelemetryConstant.ServiceVersion);
+                        });
 
-                            return false;
-                        };
-
-                        ancOptions.RecordException = true;
-
-                        ancOptions.EnrichWithException = (activity, exception) =>
+                        options.AddAspNetCoreInstrumentation(ancOptions =>
                         {
-                        };
-                    });
+                            ancOptions.Filter = (context) =>
+                            {
+                                if (!string.IsNullOrEmpty(context.Request.Path.Value))
+                                    return context.Request.Path.Value.Contains("api", StringComparison.InvariantCulture);
 
-                    options.AddEntityFrameworkCoreInstrumentation(efOptions =>
-                    {
-                        efOptions.SetDbStatementForText = true;
-                        efOptions.SetDbStatementForStoredProcedure = true;
-                        efOptions.EnrichWithIDbCommand = (activity, dbCommand) =>
+                                return false;
+                            };
+
+                            ancOptions.RecordException = true;
+
+                            ancOptions.EnrichWithException = (activity, exception) =>
+                            {
+                            };
+                        });
+
+                        options.AddEntityFrameworkCoreInstrumentation(efOptions =>
                         {
+                            efOptions.SetDbStatementForText = true;
+                            efOptions.SetDbStatementForStoredProcedure = true;
+                            efOptions.EnrichWithIDbCommand = (activity, dbCommand) =>
+                            {
 
-                        };
+                            };
+                        });
+
+                        options.AddRedisInstrumentation(redisOptions =>
+                        {
+                            redisOptions.SetVerboseDatabaseStatements = true;
+                        });
+
+                        options.AddOtlpExporter();
                     });
 
-                    options.AddRedisInstrumentation(redisOptions =>
-                    {
-                        redisOptions.SetVerboseDatabaseStatements = true;
-                    });
+                ActivitySourceProvider.Source = new ActivitySource(openTelemetryConstant.ActivitySourceName);
 
-                    options.AddOtlpExporter();
-                });
-
-            ActivitySourceProvider.Source = new ActivitySource(openTelemetryConstant.ActivitySourceName);
+            }
         }
     }
 }

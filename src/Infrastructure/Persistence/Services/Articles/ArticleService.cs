@@ -9,12 +9,15 @@ using Application.Models.DTOs.Articles;
 using Application.Models.DTOs.Commons.Results;
 using Application.Models.MessageBrokers.Events;
 using Application.Models.MessageBrokers.Events.Articles;
+using Application.Models.RequestParameters;
+using Application.Models.RequestParameters.Articles;
 using Application.Models.RequestParameters.Commons;
 using Application.Utilities.Exceptions.Commons;
 using Application.Utilities.Pagination;
 using AutoMapper;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Persistence.Repositories.Articles.Extensions;
 using Persistence.Services.Commons;
 using System.Text.Json;
 
@@ -127,6 +130,19 @@ namespace Persistence.Services.Articles
             await _businessRule.CheckArticleAlreadyFavorited(articleId, userId);
             Publisher.Publish(QueueNames.ArticleLike, ExchangeNames.Article, new ArticleFavoritedEvent() { ArticleId = Guid.Parse(articleId), UserId = Guid.Parse(userId) });
             return new SuccessResultDto(204);
+        }
+
+        public async Task<IPaginatedDataResult<ArticleItemDto>> GetAllAsync(ArticleRequestParameter articleRequest, PaginationRequestParameter pagination)
+        {
+            var data = await UnitOfWork.ArticleReadRepository
+                .Table
+                .Include(x => x.Category)
+                .Include(x => x.Writer)
+                .Filter(articleRequest)
+                .Select(x => Mapper.Map<ArticleItemDto>(x))
+                .ToPaginatedListDtoAsync(pagination);
+
+            return data;
         }
     }
 }
