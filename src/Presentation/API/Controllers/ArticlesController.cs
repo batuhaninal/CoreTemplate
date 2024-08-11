@@ -26,30 +26,30 @@ namespace API.Controllers
         //    CreateResponse(await _articleService.GetAllAsync(parameter.PageIndex, parameter.PageSize));
 
         [HttpGet]
-        public async Task<IActionResult> GetAllArticles([FromQuery] PaginationRequestParameter parameter) =>
+        public async Task<IActionResult> GetAll([FromQuery] PaginationRequestParameter parameter) =>
             CreateResponse(await _articleService.GetAllAsync(parameter.PageIndex, parameter.PageSize));
 
         [HttpGet]
-        public async Task<IActionResult> GetAllFilteredArticles([FromQuery] ArticleRequestParameter parameter,[FromQuery] PaginationRequestParameter pagination) =>
+        public async Task<IActionResult> GetAllFiltered([FromQuery] ArticleRequestParameter parameter,[FromQuery] PaginationRequestParameter pagination) =>
             CreateResponse(await _articleService.GetAllAsync(parameter, pagination));
 
-        [HttpGet("{articleId}")]
-        public async Task<IActionResult> GetArticleById([FromRoute(Name = "articleId")] string articleId) => 
+        [HttpGet("{articleid}")]
+        public async Task<IActionResult> GetById([FromRoute(Name = "articleid")] string articleId) => 
             CreateResponse(await _articleService.GetByIdAsync(articleId));
 
         [HttpPost]
         [Authorize(Roles = "admin")]
-        public async Task<IActionResult> CreateArticle([FromBody] CreateArticleDto createArticleDto) =>
+        public async Task<IActionResult> Create([FromBody] CreateArticleDto createArticleDto) =>
             CreateResponse(await _articleService.CreateAsync(createArticleDto));
 
-        [HttpPut("{articleId}")]
+        [HttpPut("{articleid}")]
         [Authorize(Roles = "admin")]
-        public async Task<IActionResult> UpdateArticle([FromRoute(Name = "articleId")] string articleId, [FromBody] UpdateArticleDto updateArticleDto) =>
+        public async Task<IActionResult> Update([FromRoute(Name = "articleid")] string articleId, [FromBody] UpdateArticleDto updateArticleDto) =>
             CreateResponse(await _articleService.UpdateAsync(articleId, updateArticleDto));
 
-        [HttpDelete("{articleId}")]
+        [HttpDelete("{articleid}")]
         [Authorize(Roles = "admin")]
-        public async Task<IActionResult> RemoveArticle([FromRoute(Name = "articleId")] string articleId) =>
+        public async Task<IActionResult> Remove([FromRoute(Name = "articleid")] string articleId) =>
             CreateResponse(await _articleService.RemoveAsync(articleId));
     }
 }

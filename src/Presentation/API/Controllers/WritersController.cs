@@ -1,6 +1,6 @@
 ﻿using Application.Abstractions.Services.Writers;
 using Application.Models.RequestParameters;
-using Microsoft.AspNetCore.Http;
+using Application.Models.RequestParameters.Writers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -20,8 +20,12 @@ namespace API.Controllers
         public async Task<IActionResult> GetAll([FromQuery] PaginationRequestParameter paginationRequestParameter) =>
              CreateResponse(await _writerService.GetAllAsync(paginationRequestParameter));
 
-        [HttpGet("{writerId}")]
-        public async Task<IActionResult> GetAll([FromRoute(Name = "writerId")] string writerId) =>
+        [HttpGet]
+        public async Task<IActionResult> GetAllFiltered([FromQuery] WriterRequestParameter parameter, [FromQuery] PaginationRequestParameter pagination) =>
+             CreateResponse(await _writerService.GetAllAsync(parameter, pagination));
+
+        [HttpGet("{writerid}")]
+        public async Task<IActionResult> GetAll([FromRoute(Name = "writerid")] string writerId) =>
              CreateResponse(await _writerService.GetByIdAsync(writerId));
     }
 }
