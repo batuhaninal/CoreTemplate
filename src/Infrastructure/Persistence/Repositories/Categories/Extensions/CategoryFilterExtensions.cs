@@ -2,22 +2,22 @@
 using Application.Utilities.Helpers;
 using Domain.Entities;
 
-namespace Persistence.Repositories.Articles.Extensions
+namespace Persistence.Repositories.Categories.Extensions
 {
-    public static class ArticleFilterExtensions
+    public static class CategoryFilterExtensions
     {
-        public static IQueryable<Article> Filter(this IQueryable<Article> source, ArticleRequestParameter parameter)
+        public static IQueryable<Category> Filter(this IQueryable<Category> source, ArticleRequestParameter parameter)
         {
-            var predicate = PredicateBuilderHelper.True<Article>();
+            var predicate = PredicateBuilderHelper.True<Category>();
 
             if (parameter.IsActive is not null)
                 predicate = predicate.And(x => x.IsActive == parameter.IsActive);
 
-            if(parameter.MinDate is not null)
+            if (parameter.MinDate is not null)
                 predicate = predicate.And(x => x.CreatedDate >= parameter.MinDate);
 
-            if(parameter.MaxDate is not null)
-                predicate = predicate.And(x=> x.CreatedDate <= parameter.MaxDate);
+            if (parameter.MaxDate is not null)
+                predicate = predicate.And(x => x.CreatedDate <= parameter.MaxDate);
 
             source = source.Where(predicate);
 
@@ -26,25 +26,21 @@ namespace Persistence.Repositories.Articles.Extensions
             return source.OrderQuery(parameter.OrderBy);
         }
 
-        public static IQueryable<Article> Search(this IQueryable<Article> source, string? condition)
+        public static IQueryable<Category> Search(this IQueryable<Category> source, string? condition)
         {
             if (string.IsNullOrWhiteSpace(condition))
                 return source;
 
             string normalizedCondition = condition.TrimStart().TrimEnd().ToUpper();
 
-            return source.Where(s=> 
-                s.Title.ToUpper().Contains(normalizedCondition) ||
-                s.Writer!.Nick.ToUpper().Contains(normalizedCondition) ||
-                s.Writer!.User!.FirstName.ToUpper().Contains(normalizedCondition) ||
-                s.Writer.User.LastName.ToUpper().Contains(normalizedCondition) ||
-                s.Writer.User.Email.ToUpper().Contains(normalizedCondition)
+            return source.Where(s =>
+                s.Title.ToUpper().Contains(normalizedCondition)
             );
         }
 
-        public static IQueryable<Article> OrderQuery(this IQueryable<Article> source, string? orderBy)
+        public static IQueryable<Category> OrderQuery(this IQueryable<Category> source, string? orderBy)
         {
-            if(string.IsNullOrWhiteSpace(orderBy))
+            if (string.IsNullOrWhiteSpace(orderBy))
                 return source;
 
             switch (orderBy.Trim())
