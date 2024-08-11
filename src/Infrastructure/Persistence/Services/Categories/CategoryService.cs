@@ -8,10 +8,12 @@ using Application.Models.Constants.MessageBrokers;
 using Application.Models.DTOs.Categories;
 using Application.Models.DTOs.Commons.Results;
 using Application.Models.MessageBrokers.Events;
+using Application.Models.RequestParameters.Categories;
 using Application.Models.RequestParameters.Commons;
 using Application.Utilities.Pagination;
 using AutoMapper;
 using Domain.Entities;
+using Persistence.Repositories.Categories.Extensions;
 using Persistence.Services.Commons;
 using System.Text.Json;
 
@@ -51,8 +53,8 @@ namespace Persistence.Services.Categories
             }
 
             PaginatedListDto<CategoryItemDto> data = await UnitOfWork.CategoryReadRepository.Table
-            .Select(x => Mapper.Map<CategoryItemDto>(x))
-            .ToPaginatedListDtoAsync(pageIndex, pageSize, 200);
+                .Select(x => Mapper.Map<CategoryItemDto>(x))
+                .ToPaginatedListDtoAsync(pageIndex, pageSize, 200);
 
             if (pageIndex < 5 && pageSize == 20)
                 await Cache.AddAsync(CachePrefix.Categories.GetAllWithPagination(pageIndex, pageSize), data);
@@ -62,6 +64,16 @@ namespace Persistence.Services.Categories
 
         public async Task<IPaginatedDataResult<CategoryItemDto>> GetAllAsync(BasePaginationRequestParameter pagination) => 
             await GetAllAsync(pagination.PageIndex, pagination.PageSize);
+
+        public async Task<IPaginatedDataResult<CategoryItemDto>> GetAllAsync(CategoryRequestParameter parameter, BasePaginationRequestParameter pagination)
+        {
+            PaginatedListDto<CategoryItemDto> data = await UnitOfWork.CategoryReadRepository.Table
+                .Filter(parameter)
+                .Select(x => Mapper.Map<CategoryItemDto>(x))
+                .ToPaginatedListDtoAsync(pagination);
+
+            return data;
+        }
 
         public async Task<IDataResult<CategoryItemDto>> GetByIdAsync(string id)
         {

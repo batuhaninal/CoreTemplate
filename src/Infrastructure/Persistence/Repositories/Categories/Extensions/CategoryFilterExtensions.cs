@@ -1,4 +1,4 @@
-﻿using Application.Models.RequestParameters.Articles;
+﻿using Application.Models.RequestParameters.Categories;
 using Application.Utilities.Helpers;
 using Domain.Entities;
 
@@ -6,7 +6,7 @@ namespace Persistence.Repositories.Categories.Extensions
 {
     public static class CategoryFilterExtensions
     {
-        public static IQueryable<Category> Filter(this IQueryable<Category> source, ArticleRequestParameter parameter)
+        public static IQueryable<Category> Filter(this IQueryable<Category> source, CategoryRequestParameter parameter)
         {
             var predicate = PredicateBuilderHelper.True<Category>();
 

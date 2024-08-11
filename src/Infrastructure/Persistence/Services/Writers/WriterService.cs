@@ -9,10 +9,12 @@ using Application.Models.DTOs.Commons.Results;
 using Application.Models.DTOs.Writers;
 using Application.Models.MessageBrokers.Events;
 using Application.Models.RequestParameters.Commons;
+using Application.Models.RequestParameters.Writers;
 using Application.Utilities.Pagination;
 using AutoMapper;
 using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Persistence.Repositories.Writers.Extensions;
 using Persistence.Services.Commons;
 using System.Text.Json;
 
@@ -42,16 +44,29 @@ namespace Persistence.Services.Writers
 
         public async Task<IPaginatedDataResult<WriterItemDto>> GetAllAsync(BasePaginationRequestParameter pagination)
         {
-            string? cache = await Cache.GetAsync(CachePrefix.Writer.CreatePaginationPrefix("GetAllAsync", pagination.PageIndex, pagination.PageSize));
-            if (!string.IsNullOrEmpty(cache))
-                return JsonSerializer.Deserialize<PaginatedListDto<WriterItemDto>>(cache)!;
+            if(pagination.PageIndex <= 5 && (pagination.PageSize == 20 || pagination.PageSize == 50 || pagination.PageSize == 100))
+            {
+                string? cache = await Cache.GetAsync(CachePrefix.Writer.CreatePaginationPrefix("GetAllAsync", pagination.PageIndex, pagination.PageSize));
+                if (!string.IsNullOrEmpty(cache))
+                    return JsonSerializer.Deserialize<PaginatedListDto<WriterItemDto>>(cache)!;
+            }
 
             PaginatedListDto<WriterItemDto> data = await UnitOfWork.WriterReadRepository.Table
                 .Select(x=> Mapper.Map<WriterItemDto>(x))
                 .ToPaginatedListDtoAsync(pagination);
 
-            if (data != null && data.TotalCount > 0)
+            if (pagination.PageIndex <= 5 && (pagination.PageSize == 20 || pagination.PageSize == 50 || pagination.PageSize == 100) && data != null && data.TotalCount > 0)
                 await Cache.AddAsync(CachePrefix.Writer.CreatePaginationPrefix("GetAllAsync", pagination.PageIndex, pagination.PageSize), data);
+
+            return data!;
+        }
+
+        public async Task<IPaginatedDataResult<WriterItemDto>> GetAllAsync(WriterRequestParameter parameter, BasePaginationRequestParameter pagination)
+        {
+            PaginatedListDto<WriterItemDto> data = await UnitOfWork.WriterReadRepository.Table
+                .Filter(parameter)
+                .Select(x => Mapper.Map<WriterItemDto>(x))
+                .ToPaginatedListDtoAsync(pagination);
 
             return data!;
         }

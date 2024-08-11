@@ -1,14 +1,14 @@
-﻿using Application.Models.RequestParameters.Users;
+﻿using Application.Models.RequestParameters.Writers;
 using Application.Utilities.Helpers;
 using Domain.Entities;
 
-namespace Persistence.Repositories.Users.Extensions
+namespace Persistence.Repositories.Writers.Extensions
 {
-    public static class UserFilterExtensions
+    public static class WriterFilterExtensions
     {
-        public static IQueryable<User> Filter(this IQueryable<User> source, UserRequestParameter parameter)
+        public static IQueryable<Writer> Filter(this IQueryable<Writer> source, WriterRequestParameter parameter)
         {
-            var predicate = PredicateBuilderHelper.True<User>();
+            var predicate = PredicateBuilderHelper.True<Writer>();
 
             if (parameter.IsActive is not null)
                 predicate = predicate.And(x => x.IsActive == parameter.IsActive);
@@ -26,7 +26,7 @@ namespace Persistence.Repositories.Users.Extensions
             return source.OrderQuery(parameter.OrderBy);
         }
 
-        public static IQueryable<User> Search(this IQueryable<User> source, string? condition)
+        public static IQueryable<Writer> Search(this IQueryable<Writer> source, string? condition)
         {
             if (string.IsNullOrWhiteSpace(condition))
                 return source;
@@ -34,37 +34,44 @@ namespace Persistence.Repositories.Users.Extensions
             string normalizedCondition = condition.TrimStart().TrimEnd().ToUpper();
 
             return source.Where(s =>
-                s.FirstName.ToUpper().Contains(normalizedCondition) || 
-                s.LastName.ToUpper().Contains(normalizedCondition) || 
-                s.Email.ToUpper().Contains(normalizedCondition) || 
-                string.Join(' ', s.FirstName.ToUpper(), s.LastName.ToUpper()).Contains(normalizedCondition)
+                s.Nick.ToUpper().Contains(normalizedCondition) ||
+                s.User!.FirstName.ToUpper().Contains(normalizedCondition) ||
+                s.User.LastName.ToUpper().Contains(normalizedCondition) ||
+                s.User.Email.ToUpper().Contains(normalizedCondition) ||
+                (s.User != null ? string.Join(' ', s.User.FirstName.ToUpper(), s.User.LastName.ToUpper()).Contains(normalizedCondition) : 1 == 0)
             );
         }
 
-        public static IQueryable<User> OrderQuery(this IQueryable<User> source, string? orderBy)
+        public static IQueryable<Writer> OrderQuery(this IQueryable<Writer> source, string? orderBy)
         {
             if (string.IsNullOrWhiteSpace(orderBy))
                 return source;
 
             switch (orderBy.Trim())
             {
+                case "nick":
+                    source = source.OrderBy(x => x.Nick);
+                    break;
+                case "nick_desc":
+                    source = source.OrderByDescending(x => x.Nick);
+                    break;
                 case "name":
-                    source = source.OrderBy(x => x.FirstName);
+                    source = source.OrderBy(x => x.User!.FirstName);
                     break;
                 case "name_desc":
-                    source = source.OrderByDescending(x => x.FirstName);
+                    source = source.OrderByDescending(x => x.User!.FirstName);
                     break;
                 case "fname":
-                    source = source.OrderBy(x => string.Join(' ', x.FirstName, x.LastName));
+                    source = source.OrderBy(x => string.Join(' ', x.User!.FirstName, x.User.LastName));
                     break;
                 case "fname_desc":
-                    source = source.OrderByDescending(x => string.Join(' ', x.FirstName, x.LastName));
+                    source = source.OrderByDescending(x => string.Join(' ', x.User!.FirstName, x.User.LastName));
                     break;
                 case "lname":
-                    source = source.OrderBy(x => x.LastName);
+                    source = source.OrderBy(x => x.User!.LastName);
                     break;
                 case "lname_desc":
-                    source = source.OrderByDescending(x => x.LastName);
+                    source = source.OrderByDescending(x => x.User!.LastName);
                     break;
                 case "created":
                     source = source.OrderBy(x => x.CreatedDate);

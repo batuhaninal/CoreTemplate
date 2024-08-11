@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions.Commons.Results;
 using Application.Models.DTOs.Categories;
+using Application.Models.RequestParameters.Categories;
 using Application.Models.RequestParameters.Commons;
 
 namespace Application.Abstractions.Services.Categories
@@ -11,6 +12,7 @@ namespace Application.Abstractions.Services.Categories
         Task<IBaseResult> RemoveAsync(string id);
         Task<IPaginatedDataResult<CategoryItemDto>> GetAllAsync(int pageIndex = 1, int pageSize = 20);
         Task<IPaginatedDataResult<CategoryItemDto>> GetAllAsync(BasePaginationRequestParameter pagination);
+        Task<IPaginatedDataResult<CategoryItemDto>> GetAllAsync(CategoryRequestParameter parameter, BasePaginationRequestParameter pagination);
         Task<IDataResult<CategoryItemDto>> GetByIdAsync(string id);
     }
 }
