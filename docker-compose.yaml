@@ -1,9 +1,9 @@
-version: '3.3'
+version: '3.8'
 
 services:
   postgre:
     image: postgres
-    container_name: postgre
+    container_name: core-postgre
     environment:
        POSTGRES_PASSWORD: Passw0rd!
        POSTGRES_USER: postgres
@@ -15,10 +15,10 @@ services:
     networks:
       - app-network
 
-  redisdb:
+  redis:
     image: redis:6.2-alpine
     restart: always
-    container_name: redisdb
+    container_name: core-redis
     environment:
         REDIS_PASSWORD: Unravel!
     command: redis-server --save 20 1 --loglevel warning --requirepass Unravel!
@@ -46,7 +46,7 @@ services:
 
   jaeger:
     image: jaegertracing/all-in-one:1.49  
-    container_name: "jaeger_container"
+    container_name: core-jaeger
     ports: 
         - 4317:4317 # gRPC
         - 4318:4318 # HTTP
@@ -54,7 +54,7 @@ services:
 
   elasticsearch:
      image: elasticsearch:8.15.0
-     container_name: elasticsearch
+     container_name: core-elk
      ports: 
         - 9200:9200
         - 9300:9300
@@ -71,7 +71,7 @@ services:
 
   kibana: 
      image: kibana:8.15.0
-     container_name: kibana
+     container_name: core-kibana
      ports:
         - 5601:5601
      environment:
