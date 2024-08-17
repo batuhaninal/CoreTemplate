@@ -1,4 +1,5 @@
-﻿using Application.Models.RequestParameters.Categories;
+﻿using System.Linq.Expressions;
+using Application.Models.RequestParameters.Categories;
 using Application.Utilities.Helpers;
 using Domain.Entities;
 
@@ -43,24 +44,21 @@ namespace Persistence.Repositories.Categories.Extensions
             if (string.IsNullOrWhiteSpace(orderBy))
                 return source;
 
-            switch (orderBy.Trim())
+            string normalizedConditiom = orderBy.TrimStart().TrimEnd().ToLower();
+            
+            string[] orderByQuery = orderBy.Split('_');
+
+            Expression<Func<Category, object>> keySelector = orderByQuery[0] switch
             {
-                case "title":
-                    source = source.OrderBy(x => x.Title);
-                    break;
-                case "title_desc":
-                    source = source.OrderByDescending(x => x.Title);
-                    break;
-                case "created":
-                    source = source.OrderBy(x => x.CreatedDate);
-                    break;
-                case "created_desc":
-                    source = source.OrderByDescending(x => x.CreatedDate);
-                    break;
-                default:
-                    source = source.OrderByDescending(x => x.CreatedDate);
-                    break;
-            }
+                "title" => category => category.Title,
+                "created" => category => category.CreatedDate,
+                _ => category => category.Id
+            };
+
+            if(normalizedConditiom.Contains("_desc"))
+                source = source.OrderByDescending(keySelector);
+            else
+                source = source.OrderBy(keySelector);
 
             return source;
         }

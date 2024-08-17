@@ -1,4 +1,5 @@
-﻿using Application.Models.RequestParameters.Users;
+﻿using System.Linq.Expressions;
+using Application.Models.RequestParameters.Users;
 using Application.Utilities.Helpers;
 using Domain.Entities;
 
@@ -46,37 +47,26 @@ namespace Persistence.Repositories.Users.Extensions
             if (string.IsNullOrWhiteSpace(orderBy))
                 return source;
 
-            switch (orderBy.Trim())
-            {
-                case "name":
-                    source = source.OrderBy(x => x.FirstName);
-                    break;
-                case "name_desc":
-                    source = source.OrderByDescending(x => x.FirstName);
-                    break;
-                case "fname":
-                    source = source.OrderBy(x => string.Join(' ', x.FirstName, x.LastName));
-                    break;
-                case "fname_desc":
-                    source = source.OrderByDescending(x => string.Join(' ', x.FirstName, x.LastName));
-                    break;
-                case "lname":
-                    source = source.OrderBy(x => x.LastName);
-                    break;
-                case "lname_desc":
-                    source = source.OrderByDescending(x => x.LastName);
-                    break;
-                case "created":
-                    source = source.OrderBy(x => x.CreatedDate);
-                    break;
-                case "created_desc":
-                    source = source.OrderByDescending(x => x.CreatedDate);
-                    break;
-                default:
-                    source = source.OrderByDescending(x => x.CreatedDate);
-                    break;
-            }
+            
+            string normalizedConditiom = orderBy.TrimStart().TrimEnd().ToLower();
 
+            string[] orderByQUery = orderBy.Split('_');
+
+            Expression<Func<User, object>> keySelector = orderByQUery[0] switch
+            {
+                "fname" => user => user.FirstName,
+                "lname" => user => user.LastName,
+                "email" => user => user.Email,
+                "name" => user => string.Join(' ', user.FirstName, user.LastName),
+                "created" => user => user.CreatedDate,
+                _ => user => user.Id
+            };
+
+            if(normalizedConditiom.Contains("_desc"))
+                source = source.OrderByDescending(keySelector);
+            else
+                source = source.OrderBy(keySelector);
+            
             return source;
         }
     }

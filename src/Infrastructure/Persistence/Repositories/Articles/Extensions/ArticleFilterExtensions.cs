@@ -1,4 +1,5 @@
-﻿using Application.Models.RequestParameters.Articles;
+﻿using System.Linq.Expressions;
+using Application.Models.RequestParameters.Articles;
 using Application.Utilities.Helpers;
 using Domain.Entities;
 
@@ -47,24 +48,40 @@ namespace Persistence.Repositories.Articles.Extensions
             if(string.IsNullOrWhiteSpace(orderBy))
                 return source;
 
-            switch (orderBy.Trim())
+            string normalizedConditiom = orderBy.TrimStart().TrimEnd().ToLower();
+
+            string[] orderByCondtion = orderBy.Split('_');
+
+            Expression<Func<Article, object>> keySelector = orderByCondtion[0] switch 
             {
-                case "title":
-                    source = source.OrderBy(x => x.Title);
-                    break;
-                case "title_desc":
-                    source = source.OrderByDescending(x => x.Title);
-                    break;
-                case "created":
-                    source = source.OrderBy(x => x.CreatedDate);
-                    break;
-                case "created_desc":
-                    source = source.OrderByDescending(x => x.CreatedDate);
-                    break;
-                default:
-                    source = source.OrderByDescending(x => x.CreatedDate);
-                    break;
-            }
+                "title" => article => article.Title,
+                "created" => article => article.CreatedDate,
+                _ => article=> article.Id
+            };
+
+            if(normalizedConditiom.Contains("_desc"))
+                source = source.OrderByDescending(keySelector);
+            else
+                source = source.OrderBy(keySelector);
+
+            // switch (orderBy.Trim())
+            // {
+            //     case "title":
+            //         source = source.OrderBy(x => x.Title);
+            //         break;
+            //     case "title_desc":
+            //         source = source.OrderByDescending(x => x.Title);
+            //         break;
+            //     case "created":
+            //         source = source.OrderBy(x => x.CreatedDate);
+            //         break;
+            //     case "created_desc":
+            //         source = source.OrderByDescending(x => x.CreatedDate);
+            //         break;
+            //     default:
+            //         source = source.OrderByDescending(x => x.CreatedDate);
+            //         break;
+            // }
 
             return source;
         }

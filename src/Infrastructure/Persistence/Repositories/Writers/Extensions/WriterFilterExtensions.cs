@@ -1,4 +1,5 @@
-﻿using Application.Models.RequestParameters.Writers;
+﻿using System.Linq.Expressions;
+using Application.Models.RequestParameters.Writers;
 using Application.Utilities.Helpers;
 using Domain.Entities;
 
@@ -50,42 +51,25 @@ namespace Persistence.Repositories.Writers.Extensions
             if (string.IsNullOrWhiteSpace(orderBy))
                 return source;
 
-            switch (orderBy.Trim())
+            string normalizedConditiom = orderBy.TrimStart().TrimEnd().ToLower();
+
+            string[] orderByQuery = orderBy.Split('_');
+
+            Expression<Func<Writer, object>> keySelector = orderByQuery[0] switch 
             {
-                case "nick":
-                    source = source.OrderBy(x => x.Nick);
-                    break;
-                case "nick_desc":
-                    source = source.OrderByDescending(x => x.Nick);
-                    break;
-                case "name":
-                    source = source.OrderBy(x => x.User!.FirstName);
-                    break;
-                case "name_desc":
-                    source = source.OrderByDescending(x => x.User!.FirstName);
-                    break;
-                case "fname":
-                    source = source.OrderBy(x => string.Join(' ', x.User!.FirstName, x.User.LastName));
-                    break;
-                case "fname_desc":
-                    source = source.OrderByDescending(x => string.Join(' ', x.User!.FirstName, x.User.LastName));
-                    break;
-                case "lname":
-                    source = source.OrderBy(x => x.User!.LastName);
-                    break;
-                case "lname_desc":
-                    source = source.OrderByDescending(x => x.User!.LastName);
-                    break;
-                case "created":
-                    source = source.OrderBy(x => x.CreatedDate);
-                    break;
-                case "created_desc":
-                    source = source.OrderByDescending(x => x.CreatedDate);
-                    break;
-                default:
-                    source = source.OrderByDescending(x => x.CreatedDate);
-                    break;
-            }
+                "nick" => writer => writer.Nick,
+                "name" => writer => string.Join(' ', writer.User!.FirstName, writer.User!.LastName),
+                "fname" => writer => writer.User!.FirstName,
+                "lname" => writer => writer.User!.LastName,
+                "email" => writer => writer.User!.Email,
+                "created" => writer => writer.CreatedDate,
+                _ => writer => writer.Id
+            };
+
+            if(normalizedConditiom.Contains("_desc"))
+                source = source.OrderByDescending(keySelector);
+            else
+                source = source.OrderBy(keySelector); 
 
             return source;
         }
