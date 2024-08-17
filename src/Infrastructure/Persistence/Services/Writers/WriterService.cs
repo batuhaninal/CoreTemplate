@@ -52,6 +52,7 @@ namespace Persistence.Services.Writers
             }
 
             PaginatedListDto<WriterItemDto> data = await UnitOfWork.WriterReadRepository.Table
+                .Include(x=> x.User)
                 .Select(x=> Mapper.Map<WriterItemDto>(x))
                 .ToPaginatedListDtoAsync(pagination);
 
@@ -64,6 +65,7 @@ namespace Persistence.Services.Writers
         public async Task<IPaginatedDataResult<WriterItemDto>> GetAllAsync(WriterRequestParameter parameter, BasePaginationRequestParameter pagination)
         {
             PaginatedListDto<WriterItemDto> data = await UnitOfWork.WriterReadRepository.Table
+                .Include(x=> x.User)
                 .Filter(parameter)
                 .Select(x => Mapper.Map<WriterItemDto>(x))
                 .ToPaginatedListDtoAsync(pagination);

@@ -18,7 +18,7 @@ namespace Adapter.Services.MessageBrokers
             {
                 HostName = _rabbitmqOptions.Host,
                 Port = _rabbitmqOptions.Port,
-                UserName = _rabbitmqOptions.UserName,
+                UserName = _rabbitmqOptions.Username,
                 Password = _rabbitmqOptions.Password,
                 DispatchConsumersAsync = true
             };

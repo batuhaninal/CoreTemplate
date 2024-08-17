@@ -17,6 +17,8 @@ namespace Application.Utilities.MappingProfiles
 
             CreateMap<Writer, WriterItemDto>()
                 .ForMember(dest => dest.WriterId, src => src.MapFrom(x => x.Id))
+                // .ForMember(dest => dest.Email, src => src.MapFrom(x => x.User!.Email))
+                // .ForMember(dest => dest.FullName, src => src.MapFrom(x => string.Join(' ', x.User!.FirstName, x.User!.LastName)))
                 .ForMember(dest => dest.Level, src => src.MapFrom(x => EnumConverters.ConvertWriterLevelToString((WriterLevel)x.Level)));
 
             CreateMap<RegisterWriterDto, RegisterDto>();

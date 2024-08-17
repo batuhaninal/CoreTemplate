@@ -1,5 +1,4 @@
-﻿using Application.Abstractions.Commons.Security;
-using Application.Abstractions.Repositories.Commons;
+﻿using Application.Abstractions.Repositories.Commons;
 using Application.Abstractions.Services.Articles;
 using Application.Abstractions.Services.Auths;
 using Application.Abstractions.Services.Categories;
@@ -20,7 +19,7 @@ namespace Persistence
 {
     public static class ServiceRegistration
     {
-        public static async void BindPersistenceServices(this IServiceCollection services, IConfiguration configuration)
+        public static void BindPersistenceServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<TemplateContext>(options => options.UseNpgsql(configuration.GetConnectionString("PgSQL")));
 
@@ -56,6 +55,9 @@ namespace Persistence
             services.AddScoped<IWriterService, WriterService>();
 
             services.AddScoped<IUserService, UserService>();
+
+            services.AddHealthChecks()
+                .AddNpgSql(configuration.GetConnectionString("PgSQL")!);
         }
     }
 }

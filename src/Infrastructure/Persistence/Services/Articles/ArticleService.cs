@@ -71,6 +71,7 @@ namespace Persistence.Services.Articles
                 .Table
                 .Include(x=> x.Category)
                 .Include(x=> x.Writer)
+                    .ThenInclude(w=> w!.User)
                 .Select(x => Mapper.Map<ArticleItemDto>(x))
                 .ToPaginatedListDtoAsync(pageIndex, pageSize);
 
@@ -148,7 +149,8 @@ namespace Persistence.Services.Articles
             //var data = await UnitOfWork.ArticleReadRepository
             //    .Table
             //    .Include(x => x.Category)
-            //    .Include(x => x.Writer)
+            //    .Include(x=> x.Writer)
+            //        .ThenInclude(w=> w!.User)
             //    .Filter(articleRequest)
             //    .ProjectTo<ArticleItemDto>(Mapper.ConfigurationProvider)
             //    .ToPaginatedListDtoAsync(pagination);
@@ -168,7 +170,8 @@ namespace Persistence.Services.Articles
             var data = await UnitOfWork.ArticleReadRepository
                 .Table
                 .Include(x => x.Category)
-                .Include(x => x.Writer)
+                .Include(x=> x.Writer)
+                    .ThenInclude(w=> w!.User)
                 .Filter(articleRequest)
                 .Select(x => Mapper.Map<ArticleItemDto>(x))
                 .ToPaginatedListDtoAsync(pagination);

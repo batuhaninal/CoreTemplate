@@ -59,8 +59,8 @@ namespace Persistence.Repositories.Writers.Extensions
             {
                 "nick" => writer => writer.Nick,
                 "name" => writer => string.Join(' ', writer.User!.FirstName, writer.User!.LastName),
-                "fname" => writer => writer.User!.FirstName,
-                "lname" => writer => writer.User!.LastName,
+                // "fname" => writer => writer.User!.FirstName,
+                // "lname" => writer => writer.User!.LastName,
                 "email" => writer => writer.User!.Email,
                 "created" => writer => writer.CreatedDate,
                 _ => writer => writer.Id

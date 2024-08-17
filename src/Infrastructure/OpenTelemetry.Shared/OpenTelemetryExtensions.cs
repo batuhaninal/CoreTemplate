@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using HealthChecks.OpenTelemetry.Instrumentation;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -60,6 +61,14 @@ namespace OpenTelemetry.Shared
 
                         options.AddOtlpExporter();
                     });
+                    //.WithMetrics(builder=>
+                    //{
+                    //    builder.AddHealthChecksInstrumentation(opt=>
+                    //    {
+                    //        opt.StatusGaugeName = $"{openTelemetryConstant.ServiceName}.health";
+                    //        opt.IncludeHealthCheckMetadata = true;
+                    //    });
+                    //});
 
                 ActivitySourceProvider.Source = new ActivitySource(openTelemetryConstant.ActivitySourceName);
 

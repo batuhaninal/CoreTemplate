@@ -6,6 +6,7 @@ using FluentValidation.AspNetCore;
 using Persistence;
 using OpenTelemetry.Shared;
 using API.Middlewares;
+using HealthChecks.UI.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,6 +49,10 @@ app.UseMiddleware<CustomExceptionMiddleware>();
 await app.ConfigureMigrationAsync();
 
 app.UseHttpsRedirection();
+
+app.MapHealthChecks("health", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions {
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
 
 app.UseAuthentication();
 
