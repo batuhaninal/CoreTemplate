@@ -5,11 +5,15 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Persistence.Contexts;
+using Serilog;
 using System.Net.Mime;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using System.Threading.RateLimiting;
+using Serilog.Formatting.Elasticsearch;
+using Serilog.Core;
+using Serilog.Sinks.Elasticsearch;
 
 namespace API.Extensions
 {
@@ -103,6 +107,39 @@ namespace API.Extensions
                     cfgOptions.Window = TimeSpan.FromMinutes(1);
                 });
             });
+        }
+
+        public static void ConfigureSerilog(this WebApplicationBuilder builder)
+        {
+            Logger log = new LoggerConfiguration()
+            .WriteTo.Console()
+            // Dosyaya yazma
+            //.WriteTo.File("logs/log.txt")
+            // PostgreSQL log configuration
+            //.WriteTo.PostgreSQL(builder.Configuration.GetConnectionString("PgSQL"), "logs", needAutoCreateTable: true,
+            //columnOptions: new Dictionary<string, ColumnWriterBase>
+            //{
+            //    { "message", new RenderedMessageColumnWriter() },
+            //    { "message_template", new MessageTemplateColumnWriter() },
+            //    { "level", new LevelColumnWriter() },
+            //    { "time_stamp", new TimestampColumnWriter() },
+            //    { "exception", new ExceptionColumnWriter() },
+            //    { "log_event", new LogEventSerializedColumnWriter() },
+            //    { "user_name", new UsernameColumnWriter() }
+            //})
+            .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(builder.Configuration["Elastic:Url"]!))
+            {
+                AutoRegisterTemplate = true,
+                AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv8,
+                IndexFormat = $"{builder.Configuration["Elastic:IndexName"]!}-{builder.Environment.EnvironmentName}-logs-" + "{0:yyy.MM.dd}",
+                ModifyConnectionSettings = x => x.BasicAuthentication(builder.Configuration["Elastic:Username"]!, builder.Configuration["Elastic:Password"]!),
+                CustomFormatter = new ElasticsearchJsonFormatter()
+            })
+            .Enrich.FromLogContext()
+            .MinimumLevel.Information()
+            .CreateLogger();
+
+            builder.Host.UseSerilog(log);
         }
 
         public static async Task ConfigureMigrationAsync(this WebApplication app)

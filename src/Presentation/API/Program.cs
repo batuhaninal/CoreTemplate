@@ -7,8 +7,11 @@ using Persistence;
 using OpenTelemetry.Shared;
 using API.Middlewares;
 using HealthChecks.UI.Client;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.ConfigureSerilog();
 
 // Add services to the container.
 builder.Services.BindApplicationServices(builder.Configuration);
@@ -49,6 +52,10 @@ app.UseMiddleware<CustomExceptionMiddleware>();
 await app.ConfigureMigrationAsync();
 
 app.UseHttpsRedirection();
+
+app.UseMiddleware<RequestLogContextMiddleware>();
+
+app.UseSerilogRequestLogging();
 
 app.MapHealthChecks("health", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions {
     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
