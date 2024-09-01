@@ -11,6 +11,8 @@ using Serilog;
 using Asp.Versioning;
 using API.OpenApi;
 using Asp.Versioning.ApiExplorer;
+using Asp.Versioning.Builder;
+using API.Controllers.v2;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,7 +42,7 @@ builder.Services.AddOpenTelemetryExtension(builder.Configuration);
 
 builder.Services.AddApiVersioning(options =>
 {
-    options.DefaultApiVersion = new Asp.Versioning.ApiVersion(1);
+    options.DefaultApiVersion = new Asp.Versioning.ApiVersion(2);
     options.ReportApiVersions = true;
     options.AssumeDefaultVersionWhenUnspecified = true;
     options.ApiVersionReader = ApiVersionReader.Combine(
@@ -101,5 +103,14 @@ app.UseAuthorization();
 app.UseRateLimiter();
 
 app.MapControllers();
+
+ApiVersionSet v2Set = app.NewApiVersionSet()
+                .HasApiVersion(new ApiVersion(2))
+                .ReportApiVersions()
+                .Build();
+
+var group = app.MapGroup("api/v{v:apiVersion}").WithApiVersionSet(v2Set);
+
+group.MapArticlesEndpoints();
 
 app.Run();

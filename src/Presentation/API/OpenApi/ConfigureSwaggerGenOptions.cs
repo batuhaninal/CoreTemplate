@@ -33,7 +33,7 @@ namespace API.OpenApi
 
         public void Configure(SwaggerGenOptions options)
         {
-            Configure(options);
+            Configure(null, options);
         }
     }
 }
