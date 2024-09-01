@@ -23,6 +23,9 @@ namespace API.Extensions
         {
             services.AddSwaggerGen(options =>
             {
+                //options.SwaggerDoc("v1", new OpenApiInfo() { Title = "Core Template v1", Version = "v1", Description = "Core Template Web API", TermsOfService = new Uri("https://www.youtube.com/watch?v=dQw4w9WgXcQ"), Contact = new OpenApiContact() { Name = "Batuhan Inal", Email = "npbatukan@gmail.com", Url = new Uri("https://www.youtube.com/watch?v=dQw4w9WgXcQ") } });
+                //options.SwaggerDoc("v2", new OpenApiInfo() { Title = "Core Template v2", Version = "v2", Description = "Core Template Web API" });
+
                 options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     In = ParameterLocation.Header,

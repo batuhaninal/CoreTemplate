@@ -1,13 +1,12 @@
-﻿using Application.Abstractions.Repositories.Categories;
-using Application.Abstractions.Repositories.Commons;
-using Application.Abstractions.Services.Categories;
+﻿using Application.Abstractions.Services.Categories;
+using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
-namespace API.Controllers
+namespace API.Controllers.v1
 {
-    [Route("api/[controller]")]
+    [Route("api/v{v:apiVersion}/[controller]")]
     [ApiController]
+    [ApiVersion(1)]
     public class TestsController : ControllerBase
     {
         private readonly ICategoryService _categoryService;
@@ -17,6 +16,7 @@ namespace API.Controllers
             _categoryService = categoryService;
         }
 
+        [MapToApiVersion(1)]
         [HttpGet]
         public async Task<IActionResult> GetAllCategories([FromQuery] int pageIndex, [FromQuery] int pageSize)
         {

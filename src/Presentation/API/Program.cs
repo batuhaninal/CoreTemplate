@@ -8,6 +8,9 @@ using OpenTelemetry.Shared;
 using API.Middlewares;
 using HealthChecks.UI.Client;
 using Serilog;
+using Asp.Versioning;
+using API.OpenApi;
+using Asp.Versioning.ApiExplorer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,13 +38,43 @@ builder.Services.ConfigureJwtAuth(builder.Configuration);
 
 builder.Services.AddOpenTelemetryExtension(builder.Configuration);
 
+builder.Services.AddApiVersioning(options =>
+{
+    options.DefaultApiVersion = new Asp.Versioning.ApiVersion(1);
+    options.ReportApiVersions = true;
+    options.AssumeDefaultVersionWhenUnspecified = true;
+    options.ApiVersionReader = ApiVersionReader.Combine(
+                new UrlSegmentApiVersionReader(),
+                new HeaderApiVersionReader("X-Api-Version")
+            );
+})
+    .AddMvc()
+    .AddApiExplorer(options =>
+    {
+        options.GroupNameFormat = "'v'V";
+        options.SubstituteApiVersionInUrl = true;
+    });
+
+builder.Services.ConfigureOptions<ConfigureSwaggerGenOptions>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(options =>
+    {
+        IReadOnlyList<ApiVersionDescription> descriptions = app.DescribeApiVersions();
+
+        foreach (var item in descriptions)
+        {
+            string url = $"/swagger/{item.GroupName}/swagger.json";
+            string name = item.GroupName.ToUpperInvariant();
+
+            options.SwaggerEndpoint(url, name);
+        }
+    });
 }
 
 app.UseMiddleware<RequestResponseActivityMiddleware>();
