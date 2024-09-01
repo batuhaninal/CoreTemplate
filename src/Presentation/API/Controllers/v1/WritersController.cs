@@ -30,7 +30,7 @@ namespace API.Controllers.v1
 
         [MapToApiVersion(1)]
         [HttpGet("{writerid}")]
-        public async Task<IActionResult> GetAll([FromRoute(Name = "writerid")] string writerId) =>
+        public async Task<IActionResult> GetById([FromRoute(Name = "writerid")] string writerId) =>
              CreateResponse(await _writerService.GetByIdAsync(writerId));
     }
 }

@@ -3,9 +3,8 @@ using Application.Models.DTOs.Articles;
 using Application.Models.RequestParameters;
 using Application.Models.RequestParameters.Articles;
 using Microsoft.AspNetCore.Mvc;
-using Persistence.Services.Articles;
 
-namespace API.Endpoints
+namespace API.Endpoints.v2
 {
     public static class ArticleEndpoints
     {

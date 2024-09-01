@@ -113,8 +113,14 @@ ApiVersionSet v2Set = app.NewApiVersionSet()
                 .ReportApiVersions()
                 .Build();
 
-var group = app.MapGroup("api/v{v:apiVersion}").WithApiVersionSet(v2Set);
+var group = app.MapGroup("api/v{v:apiVersion}")
+    .RequireCors("DefaultCorsPolicy")
+    .WithApiVersionSet(v2Set);
 
-group.MapArticlesEndpoints();
+group.MapArticleEndpoints();
+group.MapAuthEndpoints();
+group.MapCategoryEndpoints();
+group.MapUserEndpoints();
+group.MapWriterEndpoints();
 
 app.Run();
