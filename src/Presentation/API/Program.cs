@@ -40,6 +40,8 @@ builder.Services.ConfigureJwtAuth(builder.Configuration);
 
 builder.Services.AddOpenTelemetryExtension(builder.Configuration);
 
+builder.Services.ConfigureCors();
+
 builder.Services.AddApiVersioning(options =>
 {
     options.DefaultApiVersion = new Asp.Versioning.ApiVersion(2);
@@ -101,6 +103,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseRateLimiter();
+
+app.UseCors("DefaultCorsPolicy");
 
 app.MapControllers();
 

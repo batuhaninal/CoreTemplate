@@ -44,7 +44,8 @@ namespace API.Extensions
                             {
                                 Type = ReferenceType.SecurityScheme,
                                 Id = "Bearer"
-                            }
+                            },
+                            Name = "Bearer"
                         },
                         new List<string>()
                     }
@@ -150,6 +151,19 @@ namespace API.Extensions
             using var scope = app.Services.CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<TemplateContext>();
             await context.Database.MigrateAsync();
+        }
+
+        public static void ConfigureCors(this IServiceCollection services)
+        {
+            services.AddCors(options =>
+            {
+                options.AddPolicy("DefaultCorsPolicy", builder =>
+                {
+                    builder.AllowAnyOrigin();
+                    builder.AllowAnyMethod();
+                    builder.AllowAnyHeader();
+                });
+            });
         }
     }
 }
