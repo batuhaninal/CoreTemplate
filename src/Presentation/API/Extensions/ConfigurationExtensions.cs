@@ -14,6 +14,7 @@ using System.Threading.RateLimiting;
 using Serilog.Formatting.Elasticsearch;
 using Serilog.Core;
 using Serilog.Sinks.Elasticsearch;
+using Asp.Versioning;
 
 namespace API.Extensions
 {
@@ -164,6 +165,26 @@ namespace API.Extensions
                     builder.AllowAnyHeader();
                 });
             });
+        }
+
+        public static void ConfigureApiVersioning(this IServiceCollection services)
+        {
+            services.AddApiVersioning(options =>
+            {
+                options.DefaultApiVersion = new Asp.Versioning.ApiVersion(2);
+                options.ReportApiVersions = true;
+                options.AssumeDefaultVersionWhenUnspecified = true;
+                options.ApiVersionReader = ApiVersionReader.Combine(
+                            new UrlSegmentApiVersionReader(),
+                            new HeaderApiVersionReader("X-Api-Version")
+                        );
+            })
+                .AddMvc()
+                .AddApiExplorer(options =>
+                {
+                    options.GroupNameFormat = "'v'V";
+                    options.SubstituteApiVersionInUrl = true;
+                });
         }
     }
 }

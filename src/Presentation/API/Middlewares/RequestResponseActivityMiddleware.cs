@@ -22,7 +22,7 @@ namespace API.Middlewares
                 .Metadata
                 .GetMetadata<ControllerActionDescriptor>();
 
-            bool? b = actionDescriptor?.MethodInfo.CustomAttributes.Any( x=> x.AttributeType == typeof(SecureOperationAttribute));
+            bool? isSecureData = actionDescriptor?.MethodInfo.CustomAttributes.Any( x=> x.AttributeType == typeof(SecureOperationAttribute));
 
             // Token bilgisi sizma durumu icin
 
@@ -36,7 +36,7 @@ namespace API.Middlewares
             //    await _next(context);
             //}
 
-            if (b.HasValue && !b.Value)
+            if (isSecureData.HasValue && !isSecureData.Value)
             {
                 await AddRequestBodyContentToActivityTagAsync(context);
             }

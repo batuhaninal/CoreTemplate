@@ -40,22 +40,7 @@ builder.Services.AddOpenTelemetryExtension(builder.Configuration);
 
 builder.Services.ConfigureCors();
 
-builder.Services.AddApiVersioning(options =>
-{
-    options.DefaultApiVersion = new Asp.Versioning.ApiVersion(2);
-    options.ReportApiVersions = true;
-    options.AssumeDefaultVersionWhenUnspecified = true;
-    options.ApiVersionReader = ApiVersionReader.Combine(
-                new UrlSegmentApiVersionReader(),
-                new HeaderApiVersionReader("X-Api-Version")
-            );
-})
-    .AddMvc()
-    .AddApiExplorer(options =>
-    {
-        options.GroupNameFormat = "'v'V";
-        options.SubstituteApiVersionInUrl = true;
-    });
+builder.Services.ConfigureApiVersioning();
 
 builder.Services.ConfigureOptions<ConfigureSwaggerGenOptions>();
 
