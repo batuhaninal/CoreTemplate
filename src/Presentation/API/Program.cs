@@ -1,8 +1,6 @@
 using Adapter;
 using API.Extensions;
 using Application;
-using Application.Utilities.FluentValidations.Categories;
-using FluentValidation.AspNetCore;
 using Persistence;
 using OpenTelemetry.Shared;
 using API.Middlewares;
@@ -23,8 +21,8 @@ builder.Services.BindApplicationServices(builder.Configuration);
 builder.Services.BindAdapterServices(builder.Configuration);
 builder.Services.BindPersistenceServices(builder.Configuration);
 
-builder.Services.AddControllers()
-    .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<UpdateCategoryDtoValidator>());
+builder.Services.AddControllers();
+    //.AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<UpdateCategoryDtoValidator>());
 
 
 builder.Services.ConfigureRateLimiting();
