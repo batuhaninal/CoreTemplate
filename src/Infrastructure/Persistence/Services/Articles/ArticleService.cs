@@ -178,5 +178,37 @@ namespace Persistence.Services.Articles
 
             return data;
         }
+
+        public async Task<Article?> Test1(string articleId) =>
+            await UnitOfWork.ArticleReadRepository.GetArticleByIdWithNoTrackingAsync(articleId);
+
+        public async Task<Article?> Test2(string articleId) =>
+            await UnitOfWork.ArticleReadRepository.Table
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x=> x.Id == Guid.Parse(articleId));
+
+        public async Task<Article?> Test3(string articleId) =>
+            await UnitOfWork.ArticleReadRepository.GetArticleByIdWithTrackingAsync(articleId);
+
+        public async Task<Article?> Test4(string articleId) =>
+            await UnitOfWork.ArticleReadRepository.Table
+            .FirstOrDefaultAsync(x=> x.Id == Guid.Parse(articleId));
+
+        public Article? Test5(string articleId) =>
+            UnitOfWork.ArticleReadRepository
+                .GetArticleByIdWithNoTracking(articleId);
+
+        public Article? Test6(string articleId) =>
+            UnitOfWork.ArticleReadRepository.Table
+                .AsNoTracking()
+                .FirstOrDefault(x=> x.Id == Guid.Parse(articleId));
+
+        public Article? Test7(string articleId) => 
+            UnitOfWork.ArticleReadRepository
+                .GetArticleByIdWithTracking(articleId);
+
+        public Article? Test8(string articleId) =>
+            UnitOfWork.ArticleReadRepository.Table
+            .FirstOrDefault(x=> x.Id == Guid.Parse(articleId));
     }
 }
