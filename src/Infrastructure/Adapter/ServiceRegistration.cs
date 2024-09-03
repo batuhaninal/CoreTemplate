@@ -55,6 +55,9 @@ namespace Adapter
             services.AddSingleton<IRabbitMQPublisherService, RabbitMQPublisherService>();
 
             services.AddHostedService<CacheRemovedEventConsumer>();
+            services.AddHostedService<ArticleCreatedEventConsumer>();
+            services.AddHostedService<ArticleUpdatedEventConsumer>();
+            services.AddHostedService<ArticleRemovedEventConsumer>();
 
             RabbitMQOptions rbmq = configuration.GetSection("RabbitMQOptions").Get<RabbitMQOptions>()!;
 

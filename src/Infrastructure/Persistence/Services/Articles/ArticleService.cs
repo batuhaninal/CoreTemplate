@@ -36,10 +36,14 @@ namespace Persistence.Services.Articles
 
         public async Task<IBaseResult> CreateAsync(CreateArticleDto createArticleDto)
         {
-            var t = await UnitOfWork.ArticleWriteRepository.CreateAsync(Mapper.Map<Article>(createArticleDto)!);
+            var createdArticle = await UnitOfWork.ArticleWriteRepository.CreateAsync(Mapper.Map<Article>(createArticleDto)!);
             await UnitOfWork.SaveChangesAsync();
 
-            await _elasticsearchWriteRepository.CreateAsync("articles", t);
+            Publisher.Publish(QueueNames.CreateArticleElastic, ExchangeNames.Elastic, new ArticleCreatedEvent()
+            {
+                IndexName = "articles",
+                Model = JsonSerializer.Serialize(createdArticle)
+            });
 
             // Eski cache sistemi
             //await Cache.DeleteAllWithPrefixAsync(CachePrefix.Articles.All);
@@ -57,7 +61,11 @@ namespace Persistence.Services.Articles
 
             await UnitOfWork.SaveChangesAsync();
 
-            await _elasticsearchWriteRepository.DeleteAsync("articles", articleId);
+            Publisher.Publish(QueueNames.RemoveArticleElastic, ExchangeNames.Elastic, new ArticleRemovedEvent()
+            {
+                IndexName = "articles",
+                ArticleId = articleId
+            });
 
             RemoveCachePrefixes();
 
@@ -116,7 +124,12 @@ namespace Persistence.Services.Articles
 
             await UnitOfWork.SaveChangesAsync();
 
-            await _elasticsearchWriteRepository.UpdateAsync("articles", articleId, oldArticle);
+            Publisher.Publish(QueueNames.UpdateArticleElastic, ExchangeNames.Elastic, new ArticleUpdatedEvent()
+            {
+                IndexName = "articles",
+                ArticleId = articleId,
+                Model = JsonSerializer.Serialize(oldArticle)
+            });
 
             RemoveCachePrefixes();
 
