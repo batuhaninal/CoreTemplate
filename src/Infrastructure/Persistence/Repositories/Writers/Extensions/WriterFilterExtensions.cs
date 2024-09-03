@@ -35,14 +35,14 @@ namespace Persistence.Repositories.Writers.Extensions
             if (string.IsNullOrWhiteSpace(condition))
                 return source;
 
-            string normalizedCondition = condition.TrimStart().TrimEnd().ToUpper();
+            string normalizedCondition = condition.TrimStart().TrimEnd().ToLower();
 
             return source.Where(s =>
-                s.Nick.ToUpper().Contains(normalizedCondition) ||
-                s.User!.FirstName.ToUpper().Contains(normalizedCondition) ||
-                s.User.LastName.ToUpper().Contains(normalizedCondition) ||
-                s.User.Email.ToUpper().Contains(normalizedCondition) ||
-                (s.User != null ? string.Join(' ', s.User.FirstName.ToUpper(), s.User.LastName.ToUpper()).Contains(normalizedCondition) : 1 == 0)
+                s.Nick.ToLower().Contains(normalizedCondition) ||
+                s.User!.FirstName.ToLower().Contains(normalizedCondition) ||
+                s.User.LastName.ToLower().Contains(normalizedCondition) ||
+                s.User.Email.ToLower().Contains(normalizedCondition) ||
+                (s.User != null ? string.Join(' ', s.User.FirstName.ToLower(), s.User.LastName.ToLower()).Contains(normalizedCondition) : 1 == 0)
             );
         }
 

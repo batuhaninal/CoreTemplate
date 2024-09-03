@@ -24,10 +24,10 @@ namespace Persistence.Repositories.Commons
         public IDatabaseTransaction BeginTransaction() =>
             new DatabaseTransaction(_context);
 
-        public async Task<Guid> CreateAsync(T entity)
+        public async Task<T> CreateAsync(T entity)
         {
             EntityEntry<T> entityEntry = await Table.AddAsync(entity);
-            return entityEntry.Entity.Id;
+            return entityEntry.Entity;
         }
 
         public bool Remove(T? model)

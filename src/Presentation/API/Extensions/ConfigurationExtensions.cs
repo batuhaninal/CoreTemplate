@@ -20,6 +20,7 @@ namespace API.Extensions
 {
     public static class ConfigurationExtensions
     {
+
         public static void ConfigureSwagger(this IServiceCollection services)
         {
             services.AddSwaggerGen(options =>

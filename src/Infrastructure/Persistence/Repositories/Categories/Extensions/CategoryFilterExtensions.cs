@@ -32,10 +32,10 @@ namespace Persistence.Repositories.Categories.Extensions
             if (string.IsNullOrWhiteSpace(condition))
                 return source;
 
-            string normalizedCondition = condition.TrimStart().TrimEnd().ToUpper();
+            string normalizedCondition = condition.TrimStart().TrimEnd().ToLower();
 
             return source.Where(s =>
-                s.Title.ToUpper().Contains(normalizedCondition)
+                s.Title.ToLower().Contains(normalizedCondition)
             );
         }
 

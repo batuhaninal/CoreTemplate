@@ -32,14 +32,14 @@ namespace Persistence.Repositories.Articles.Extensions
             if (string.IsNullOrWhiteSpace(condition))
                 return source;
 
-            string normalizedCondition = condition.TrimStart().TrimEnd().ToUpper();
+            string normalizedCondition = condition.TrimStart().TrimEnd().ToLower();
 
             return source.Where(s=> 
-                s.Title.ToUpper().Contains(normalizedCondition) ||
-                s.Writer!.Nick.ToUpper().Contains(normalizedCondition) ||
-                s.Writer!.User!.FirstName.ToUpper().Contains(normalizedCondition) ||
-                s.Writer.User.LastName.ToUpper().Contains(normalizedCondition) ||
-                s.Writer.User.Email.ToUpper().Contains(normalizedCondition)
+                s.Title.ToLower().Contains(normalizedCondition) ||
+                s.Writer!.Nick.ToLower().Contains(normalizedCondition) ||
+                s.Writer!.User!.FirstName.ToLower().Contains(normalizedCondition) ||
+                s.Writer.User.LastName.ToLower().Contains(normalizedCondition) ||
+                s.Writer.User.Email.ToLower().Contains(normalizedCondition)
             );
         }
 

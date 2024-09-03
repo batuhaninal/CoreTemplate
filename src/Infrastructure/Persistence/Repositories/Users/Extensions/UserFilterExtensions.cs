@@ -32,13 +32,13 @@ namespace Persistence.Repositories.Users.Extensions
             if (string.IsNullOrWhiteSpace(condition))
                 return source;
 
-            string normalizedCondition = condition.TrimStart().TrimEnd().ToUpper();
+            string normalizedCondition = condition.TrimStart().TrimEnd().ToLower();
 
             return source.Where(s =>
-                s.FirstName.ToUpper().Contains(normalizedCondition) || 
-                s.LastName.ToUpper().Contains(normalizedCondition) || 
-                s.Email.ToUpper().Contains(normalizedCondition) || 
-                string.Join(' ', s.FirstName.ToUpper(), s.LastName.ToUpper()).Contains(normalizedCondition)
+                s.FirstName.ToLower().Contains(normalizedCondition) || 
+                s.LastName.ToLower().Contains(normalizedCondition) || 
+                s.Email.ToLower().Contains(normalizedCondition) || 
+                string.Join(' ', s.FirstName.ToLower(), s.LastName.ToLower()).Contains(normalizedCondition)
             );
         }
 

@@ -4,6 +4,8 @@ using Application.Abstractions.Services.Auths;
 using Application.Abstractions.Services.Categories;
 using Application.Abstractions.Services.Users;
 using Application.Abstractions.Services.Writers;
+using Elastic.Clients.Elasticsearch;
+using Elastic.Transport;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -55,6 +57,15 @@ namespace Persistence
             services.AddScoped<IWriterService, WriterService>();
 
             services.AddScoped<IUserService, UserService>();
+
+            var settings = new ElasticsearchClientSettings(new Uri(configuration.GetSection("Elastic")["Url"]!))
+                .Authentication(new BasicAuthentication(configuration.GetSection("Elastic")["Username"]!, configuration.GetSection("Elastic")["Password"]!));
+
+            var client = new ElasticsearchClient(settings);
+
+            services.AddSingleton(client);
+
+            services.AddScoped<IElasticSearchWriteRepository, ElasticSearchWriteRepository>();
 
             services.AddHealthChecks()
                 .AddNpgSql(configuration.GetConnectionString("PgSQL")!);

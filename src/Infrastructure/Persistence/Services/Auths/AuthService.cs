@@ -71,7 +71,7 @@ namespace Persistence.Services.Auths
 
                     await UnitOfWork.UserRoleWriteRepository.CreateAsync(new UserRole()
                     {
-                        UserId = userId,
+                        UserId = userId.Id,
                         RoleId = Guid.Parse(AppRoles.User)
                     });
 
@@ -113,12 +113,12 @@ namespace Persistence.Services.Auths
 
                     await UnitOfWork.UserRoleWriteRepository.CreateAsync(new UserRole()
                     {
-                        UserId = userId,
+                        UserId = userId.Id,
                         RoleId = Guid.Parse(AppRoles.Writer)
                     });
 
                     Writer newWriter = Mapper.Map<Writer>(registerWriterDto);
-                    newWriter.UserId = userId;
+                    newWriter.UserId = userId.Id;
 
                     await UnitOfWork.WriterWriteRepository.CreateAsync(newWriter);
 

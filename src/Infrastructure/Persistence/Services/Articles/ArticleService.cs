@@ -26,16 +26,20 @@ namespace Persistence.Services.Articles
     public class ArticleService : BaseService, IArticleService
     {
         private readonly ArticleBusinessRule _businessRule;
+        private readonly IElasticSearchWriteRepository _elasticsearchWriteRepository;
 
-        public ArticleService(IUnitOfWork unitOfWork, IMapper mapper, ICacheService cache, IRabbitMQPublisherService rabbitMQPublisherService) : base(unitOfWork, mapper, cache, rabbitMQPublisherService)
+        public ArticleService(IUnitOfWork unitOfWork, IMapper mapper, ICacheService cache, IRabbitMQPublisherService rabbitMQPublisherService, IElasticSearchWriteRepository elasticsearchWriteRepository) : base(unitOfWork, mapper, cache, rabbitMQPublisherService)
         {
             _businessRule = new ArticleBusinessRule(unitOfWork.ArticleReadRepository, unitOfWork.ArticleFavoriteReadRepository);
+            _elasticsearchWriteRepository = elasticsearchWriteRepository;
         }
 
         public async Task<IBaseResult> CreateAsync(CreateArticleDto createArticleDto)
         {
-            await UnitOfWork.ArticleWriteRepository.CreateAsync(Mapper.Map<Article>(createArticleDto)!);
+            var t = await UnitOfWork.ArticleWriteRepository.CreateAsync(Mapper.Map<Article>(createArticleDto)!);
             await UnitOfWork.SaveChangesAsync();
+
+            await _elasticsearchWriteRepository.CreateAsync("articles", t);
 
             // Eski cache sistemi
             //await Cache.DeleteAllWithPrefixAsync(CachePrefix.Articles.All);
@@ -52,6 +56,8 @@ namespace Persistence.Services.Articles
             await UnitOfWork.ArticleWriteRepository.RemoveAsync(articleId);
 
             await UnitOfWork.SaveChangesAsync();
+
+            await _elasticsearchWriteRepository.DeleteAsync("articles", articleId);
 
             RemoveCachePrefixes();
 
@@ -109,6 +115,8 @@ namespace Persistence.Services.Articles
             Mapper.Map(updateArticleDto, oldArticle);
 
             await UnitOfWork.SaveChangesAsync();
+
+            await _elasticsearchWriteRepository.UpdateAsync("articles", articleId, oldArticle);
 
             RemoveCachePrefixes();
 
