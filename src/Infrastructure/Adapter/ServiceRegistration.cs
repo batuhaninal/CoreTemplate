@@ -67,6 +67,10 @@ namespace Adapter
             services.AddHostedService<WriterUpdatedEventConsumer>();
             services.AddHostedService<WriterRemovedEventConsumer>();
 
+            services.AddHostedService<UserCreatedEventConsumer>();
+            services.AddHostedService<UserUpdatedEventConsumer>();
+            services.AddHostedService<UserRemovedEventConsumer>();
+
             RabbitMQOptions rbmq = configuration.GetSection("RabbitMQOptions").Get<RabbitMQOptions>()!;
 
             services.AddHealthChecks()

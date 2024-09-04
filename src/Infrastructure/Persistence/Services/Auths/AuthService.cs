@@ -5,10 +5,15 @@ using Application.Abstractions.Commons.Security;
 using Application.Abstractions.Commons.Tokens;
 using Application.Abstractions.Repositories.Commons;
 using Application.Abstractions.Services.Auths;
+using Application.Models.Constants.Elastics;
+using Application.Models.Constants.MessageBrokers;
 using Application.Models.Constants.Roles;
 using Application.Models.DTOs.Auths;
 using Application.Models.DTOs.Commons.Results;
+using Application.Models.DTOs.Users;
 using Application.Models.DTOs.Writers;
+using Application.Models.MessageBrokers.Events.Users;
+using Application.Models.MessageBrokers.Events.Writers;
 using Application.Models.Messages;
 using Application.Models.Tokens;
 using Application.Utilities.Exceptions.Commons;
@@ -18,6 +23,7 @@ using Microsoft.EntityFrameworkCore;
 using Persistence.Services.Commons;
 using Persistence.Services.Users;
 using Persistence.Services.Writers;
+using System.Text.Json;
 
 namespace Persistence.Services.Auths
 {
@@ -67,17 +73,23 @@ namespace Persistence.Services.Auths
                     newUser.PasswordHash = passwordHash;
                     newUser.PasswordSalt = passwordSalt;
 
-                    var userId = await UnitOfWork.UserWriteRepository.CreateAsync(newUser);
+                    var user = await UnitOfWork.UserWriteRepository.CreateAsync(newUser);
 
                     await UnitOfWork.UserRoleWriteRepository.CreateAsync(new UserRole()
                     {
-                        UserId = userId.Id,
+                        UserId = user.Id,
                         RoleId = Guid.Parse(AppRoles.User)
                     });
 
                     await UnitOfWork.SaveChangesAsync();
 
                     await transaction.CommitAsync();
+
+                    Publisher.Publish(QueueNames.CreateUserElastic, ExchangeNames.Elastic, new UserCreatedEvent()
+                    {
+                        IndexName = ElasticIndexes.UserIndex,
+                        Model = JsonSerializer.Serialize(new SecuredUserDto(user)),
+                    });
 
                     return new SuccessResultDto(201, "User has been created. Please sign in.");
                 }
@@ -107,22 +119,35 @@ namespace Persistence.Services.Auths
                     newUser.PasswordHash = passwordHash;
                     newUser.PasswordSalt = passwordSalt;
 
-                    var userId = await UnitOfWork.UserWriteRepository.CreateAsync(newUser);
+                    var user = await UnitOfWork.UserWriteRepository.CreateAsync(newUser);
 
-                    await _writerBusinessRules.CheckUserIdAvailable(userId.ToString());
+                    await _writerBusinessRules.CheckUserIdAvailable(user.Id.ToString());
 
                     await UnitOfWork.UserRoleWriteRepository.CreateAsync(new UserRole()
                     {
-                        UserId = userId.Id,
+                        UserId = user.Id,
                         RoleId = Guid.Parse(AppRoles.Writer)
                     });
 
                     Writer newWriter = Mapper.Map<Writer>(registerWriterDto);
-                    newWriter.UserId = userId.Id;
+                    newWriter.UserId = user.Id;
 
-                    await UnitOfWork.WriterWriteRepository.CreateAsync(newWriter);
+                    var createdWriter = await UnitOfWork.WriterWriteRepository.CreateAsync(newWriter);
 
                     await UnitOfWork.SaveChangesAsync();
+
+                    Publisher.Publish(QueueNames.CreateUserElastic, ExchangeNames.Elastic, new UserCreatedEvent()
+                    {
+                        IndexName = ElasticIndexes.UserIndex,
+                        Model = JsonSerializer.Serialize(new SecuredUserDto(user)),
+                    });
+
+                    // Duzeltilmeli
+                    Publisher.Publish(QueueNames.CreateWriterElastic, ExchangeNames.Elastic, new WriterCreatedEvent()
+                    {
+                        IndexName = ElasticIndexes.UserIndex,
+                        Model = JsonSerializer.Serialize(createdWriter),
+                    });
 
                     await transaction.CommitAsync();
 

@@ -17,6 +17,10 @@
         public const string CreateWriterElastic = "create-writer-elastic-queue";
         public const string UpdateWriterElastic = "update-writer-elastic-queue";
         public const string RemoveWriterElastic = "remove-writer-elastic-queue";
+
+        public const string CreateUserElastic = "create-user-elastic-queue";
+        public const string UpdateUserElastic = "update-user-elastic-queue";
+        public const string RemoveUserElastic = "remove-user-elastic-queue";
     }
 
     public static class ExchangeNames
