@@ -13,7 +13,6 @@ using Application.Models.Constants.Options;
 using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using RabbitMQ.Client;
 using StackExchange.Redis;
 
 namespace Adapter
@@ -63,6 +62,10 @@ namespace Adapter
             services.AddHostedService<CategoryCreatedEventConsumer>();
             services.AddHostedService<CategoryUpdatedEventConsumer>();
             services.AddHostedService<CategoryRemovedEventConsumer>();
+
+            services.AddHostedService<WriterCreatedEventConsumer>();
+            services.AddHostedService<WriterUpdatedEventConsumer>();
+            services.AddHostedService<WriterRemovedEventConsumer>();
 
             RabbitMQOptions rbmq = configuration.GetSection("RabbitMQOptions").Get<RabbitMQOptions>()!;
 

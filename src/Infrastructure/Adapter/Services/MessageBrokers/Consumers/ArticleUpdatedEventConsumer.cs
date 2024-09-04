@@ -42,14 +42,14 @@ namespace Adapter.Services.MessageBrokers.Consumers
         {
             var consumer = new AsyncEventingBasicConsumer(_channel);
 
-            consumer.Received += UpdateArticle;
+            consumer.Received += Update_Article;
 
             _channel.BasicConsume(QueueNames.UpdateArticleElastic, false, consumer);
 
             return Task.CompletedTask;
         }
 
-        private async Task UpdateArticle(object sender, BasicDeliverEventArgs @event)
+        private async Task Update_Article(object sender, BasicDeliverEventArgs @event)
         {
             try
             {

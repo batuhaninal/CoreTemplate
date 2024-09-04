@@ -4,10 +4,12 @@ using Application.Abstractions.Commons.Results;
 using Application.Abstractions.Repositories.Commons;
 using Application.Abstractions.Services.Writers;
 using Application.Models.Constants.CachePrefixes;
+using Application.Models.Constants.Elastics;
 using Application.Models.Constants.MessageBrokers;
 using Application.Models.DTOs.Commons.Results;
 using Application.Models.DTOs.Writers;
 using Application.Models.MessageBrokers.Events;
+using Application.Models.MessageBrokers.Events.Writers;
 using Application.Models.RequestParameters.Commons;
 using Application.Models.RequestParameters.Writers;
 using Application.Utilities.Pagination;
@@ -34,8 +36,14 @@ namespace Persistence.Services.Writers
             await _writerBusinessRules.CheckUserIdAvailable(createWriterDto.UserId);
 
             Writer toCreateEntity = Mapper.Map<Writer>(createWriterDto);
-            await UnitOfWork.WriterWriteRepository.CreateAsync(toCreateEntity);
+            var createdWriter = await UnitOfWork.WriterWriteRepository.CreateAsync(toCreateEntity);
             await UnitOfWork.SaveChangesAsync();
+
+            Publisher.Publish(QueueNames.CreateWriterElastic, ExchangeNames.Elastic, new WriterCreatedEvent()
+            {
+                IndexName = ElasticIndexes.WriterIndex,
+                Model = JsonSerializer.Serialize(createdWriter)
+            });
 
             RemoveCachePrefixes();
 
@@ -91,6 +99,12 @@ namespace Persistence.Services.Writers
             await _writerBusinessRules.CheckWriterExistById(writerId);
 
             await UnitOfWork.WriterWriteRepository.RemoveAsync(writerId);
+
+            Publisher.Publish(QueueNames.RemoveWriterElastic, ExchangeNames.Elastic, new WriterRemovedEvent()
+            {
+                IndexName = ElasticIndexes.WriterIndex,
+                WriterId = writerId
+            });
 
             RemoveCachePrefixes();
 

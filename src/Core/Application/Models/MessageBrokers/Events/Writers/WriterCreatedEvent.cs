@@ -1,6 +1,6 @@
-﻿namespace Application.Models.MessageBrokers.Events.Categories
+﻿namespace Application.Models.MessageBrokers.Events.Writers
 {
-    public record CategoryCreatedEvent 
+    public record WriterCreatedEvent
     {
         public string IndexName { get; init; } = null!;
         public string Model { get; init; } = null!;

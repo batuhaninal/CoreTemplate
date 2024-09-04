@@ -22,7 +22,7 @@ namespace Persistence.Repositories.Commons
                 throw new BusinessException("Elastic search create error");
         }
 
-        public async Task DeleteAsync<T>(string indexName, string id)
+        public async Task RemoveAsync<T>(string indexName, string id)
         {
             var response = await _client.DeleteAsync<T>(id, x=> x.Index(indexName));
 

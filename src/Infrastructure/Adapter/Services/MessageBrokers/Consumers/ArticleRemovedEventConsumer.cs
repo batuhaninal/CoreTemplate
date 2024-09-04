@@ -42,14 +42,14 @@ namespace Adapter.Services.MessageBrokers.Consumers
         {
             var consumer = new AsyncEventingBasicConsumer(_channel);
 
-            consumer.Received += RemoveArticle;
+            consumer.Received += Remove_Article;
 
             _channel.BasicConsume(QueueNames.RemoveArticleElastic, false, consumer);
 
             return Task.CompletedTask;
         }
 
-        private async Task RemoveArticle(object sender, BasicDeliverEventArgs @event)
+        private async Task Remove_Article(object sender, BasicDeliverEventArgs @event)
         {
             try
             {
@@ -60,7 +60,7 @@ namespace Adapter.Services.MessageBrokers.Consumers
 
                     var elasticService = scope.ServiceProvider.GetRequiredService<IElasticSearchWriteRepository>();
 
-                    await elasticService.DeleteAsync<Article>(articleRemovedEvent.IndexName, articleRemovedEvent.ArticleId);
+                    await elasticService.RemoveAsync<Article>(articleRemovedEvent.IndexName, articleRemovedEvent.ArticleId);
 
                     _channel.BasicAck(@event.DeliveryTag, false);
                 }

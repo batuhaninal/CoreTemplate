@@ -1,7 +1,7 @@
 ﻿using Application.Abstractions.Commons.MessageBrokers;
 using Application.Abstractions.Repositories.Commons;
 using Application.Models.Constants.MessageBrokers;
-using Application.Models.MessageBrokers.Events.Categories;
+using Application.Models.MessageBrokers.Events.Writers;
 using Domain.Entities;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -12,67 +12,66 @@ using System.Text.Json;
 
 namespace Adapter.Services.MessageBrokers.Consumers
 {
-    public class CategoryRemovedEventConsumer : BackgroundService
+    public class WriterRemovedEventConsumer : BackgroundService
     {
         private readonly IServiceProvider _serviceProvider;
-        private readonly IRabbitMQService _rabbitMQService;
-        private IConnection _connection;
+        private readonly ILogger<WriterRemovedEventConsumer> _logger;
+        private readonly IRabbitMQService _rabbitmqService;
         private IModel _model;
-        private readonly ILogger<CategoryRemovedEventConsumer> _logger;
+        private IConnection _connection;
 
-        public CategoryRemovedEventConsumer(IServiceProvider serviceProvider, IRabbitMQService rabbitMQService, ILogger<CategoryRemovedEventConsumer> logger)
+        public WriterRemovedEventConsumer(IServiceProvider serviceProvider, ILogger<WriterRemovedEventConsumer> logger, IRabbitMQService rabbitmqService)
         {
             _serviceProvider = serviceProvider;
-            _rabbitMQService = rabbitMQService;
             _logger = logger;
+            _rabbitmqService = rabbitmqService;
         }
 
         public override Task StartAsync(CancellationToken cancellationToken)
         {
-            _connection = _rabbitMQService.GetRabbitMQConnection();
+            _connection = _rabbitmqService.GetRabbitMQConnection();
 
             _model = _connection.CreateModel();
             _model.ExchangeDeclare(ExchangeNames.Elastic, ExchangeType.Direct, true, false);
-            _model.QueueDeclare(QueueNames.RemoveCategoryElastic, true, false, false);
-            _model.QueueBind(QueueNames.RemoveCategoryElastic, ExchangeNames.Elastic, QueueNames.RemoveCategoryElastic);
+            _model.QueueDeclare(QueueNames.RemoveWriterElastic, true, false, false);
+            _model.QueueBind(QueueNames.RemoveWriterElastic, ExchangeNames.Elastic, QueueNames.RemoveWriterElastic);
 
             _model.BasicQos(0, 1, false);
 
             return base.StartAsync(cancellationToken);
         }
 
-
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
             var consumer = new AsyncEventingBasicConsumer(_model);
 
-            consumer.Received += Remove_Category;
+            consumer.Received += Remove_Writer;
 
-            _model.BasicConsume(QueueNames.RemoveCategoryElastic, false, consumer);
+            _model.BasicConsume(QueueNames.RemoveWriterElastic, false, consumer);
 
             return Task.CompletedTask;
         }
 
-        private async Task Remove_Category(object sender, BasicDeliverEventArgs @event)
+        private async Task Remove_Writer(object sender, BasicDeliverEventArgs @event)
         {
             try
             {
-                using(var scope = _serviceProvider.CreateScope())
+                using (var scope = _serviceProvider.CreateScope())
                 {
                     byte[] body = @event.Body.ToArray();
 
-                    var categoryRemovedEvent = JsonSerializer.Deserialize<CategoryRemovedEvent>(body)!;
+                    var writerRemovedEvent = JsonSerializer.Deserialize<WriterRemovedEvent>(body)!;
 
                     var elasticService = scope.ServiceProvider.GetRequiredService<IElasticSearchWriteRepository>();
 
-                    await elasticService.RemoveAsync<Category>(categoryRemovedEvent.IndexName, categoryRemovedEvent.CategoryId);
+                    await elasticService.RemoveAsync<Writer>(writerRemovedEvent.IndexName, writerRemovedEvent.WriterId);
 
                     _model.BasicAck(@event.DeliveryTag, false);
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError($"{nameof(CategoryRemovedEventConsumer)} service error: {ex.Message}");
+                _logger.LogError($"{nameof(WriterRemovedEventConsumer)} service error: {ex.Message}");
                 throw;
             }
         }

@@ -1,9 +1,9 @@
 ﻿namespace Application.Models.MessageBrokers.Events.Categories
 {
-    public class CategoryUpdatedEvent
+    public record CategoryUpdatedEvent
     {
-        public string IndexName { get; set; } = null!;
-        public string CategoryId { get; set; } = null!;
-        public string Model { get; set; } = null!;
+        public string IndexName { get; init; } = null!;
+        public string CategoryId { get; init; } = null!;
+        public string Model { get; init; } = null!;
     }
 }
