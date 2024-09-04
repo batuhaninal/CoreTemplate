@@ -4,6 +4,7 @@ using Application.Abstractions.Commons.Results;
 using Application.Abstractions.Repositories.Commons;
 using Application.Abstractions.Services.Articles;
 using Application.Models.Constants.CachePrefixes;
+using Application.Models.Constants.Elastics;
 using Application.Models.Constants.MessageBrokers;
 using Application.Models.DTOs.Articles;
 using Application.Models.DTOs.Commons.Results;
@@ -26,12 +27,12 @@ namespace Persistence.Services.Articles
     public class ArticleService : BaseService, IArticleService
     {
         private readonly ArticleBusinessRule _businessRule;
-        private readonly IElasticSearchWriteRepository _elasticsearchWriteRepository;
+        //private readonly IElasticSearchWriteRepository _elasticsearchWriteRepository;
 
-        public ArticleService(IUnitOfWork unitOfWork, IMapper mapper, ICacheService cache, IRabbitMQPublisherService rabbitMQPublisherService, IElasticSearchWriteRepository elasticsearchWriteRepository) : base(unitOfWork, mapper, cache, rabbitMQPublisherService)
+        public ArticleService(IUnitOfWork unitOfWork, IMapper mapper, ICacheService cache, IRabbitMQPublisherService rabbitMQPublisherService) : base(unitOfWork, mapper, cache, rabbitMQPublisherService)
         {
             _businessRule = new ArticleBusinessRule(unitOfWork.ArticleReadRepository, unitOfWork.ArticleFavoriteReadRepository);
-            _elasticsearchWriteRepository = elasticsearchWriteRepository;
+            //_elasticsearchWriteRepository = elasticsearchWriteRepository;
         }
 
         public async Task<IBaseResult> CreateAsync(CreateArticleDto createArticleDto)
@@ -41,7 +42,7 @@ namespace Persistence.Services.Articles
 
             Publisher.Publish(QueueNames.CreateArticleElastic, ExchangeNames.Elastic, new ArticleCreatedEvent()
             {
-                IndexName = "articles",
+                IndexName = ElasticIndexes.ArticleIndex,
                 Model = JsonSerializer.Serialize(createdArticle)
             });
 
@@ -63,7 +64,7 @@ namespace Persistence.Services.Articles
 
             Publisher.Publish(QueueNames.RemoveArticleElastic, ExchangeNames.Elastic, new ArticleRemovedEvent()
             {
-                IndexName = "articles",
+                IndexName = ElasticIndexes.ArticleIndex,
                 ArticleId = articleId
             });
 
@@ -126,7 +127,7 @@ namespace Persistence.Services.Articles
 
             Publisher.Publish(QueueNames.UpdateArticleElastic, ExchangeNames.Elastic, new ArticleUpdatedEvent()
             {
-                IndexName = "articles",
+                IndexName = ElasticIndexes.ArticleIndex,
                 ArticleId = articleId,
                 Model = JsonSerializer.Serialize(oldArticle)
             });

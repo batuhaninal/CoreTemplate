@@ -4,10 +4,12 @@ using Application.Abstractions.Commons.Results;
 using Application.Abstractions.Repositories.Commons;
 using Application.Abstractions.Services.Categories;
 using Application.Models.Constants.CachePrefixes;
+using Application.Models.Constants.Elastics;
 using Application.Models.Constants.MessageBrokers;
 using Application.Models.DTOs.Categories;
 using Application.Models.DTOs.Commons.Results;
 using Application.Models.MessageBrokers.Events;
+using Application.Models.MessageBrokers.Events.Categories;
 using Application.Models.RequestParameters.Categories;
 using Application.Models.RequestParameters.Commons;
 using Application.Utilities.Pagination;
@@ -31,9 +33,15 @@ namespace Persistence.Services.Categories
         {
             await _businessRules.CheckTitleDuplicate(createCategoryDto.Title);
 
-            await UnitOfWork.CategoryWriteRepository.CreateAsync(Mapper.Map<Category>(createCategoryDto));
+            var createdCategory = await UnitOfWork.CategoryWriteRepository.CreateAsync(Mapper.Map<Category>(createCategoryDto));
 
             await UnitOfWork.SaveChangesAsync();
+
+            Publisher.Publish(QueueNames.CreateCategoryElastic, ExchangeNames.Elastic, new CategoryCreatedEvent()
+            {
+                IndexName = ElasticIndexes.CategoryIndex,
+                Model = JsonSerializer.Serialize(createdCategory)   
+            });
 
             // Eski cache sistemi
             //await Cache.DeleteAllWithPrefixAsync(CachePrefix.Categories.All);
@@ -92,6 +100,12 @@ namespace Persistence.Services.Categories
 
             await UnitOfWork.SaveChangesAsync();
 
+            Publisher.Publish(QueueNames.RemoveCategoryElastic, ExchangeNames.Elastic, new CategoryRemovedEvent()
+            {
+                IndexName = ElasticIndexes.CategoryIndex,
+                CategoryId = id
+            });
+
             RemoveCachePrefixes();
 
             return new SuccessResultDto(204);
@@ -108,6 +122,13 @@ namespace Persistence.Services.Categories
 
             Mapper.Map(updateCategoryDto, oldCategory);
             await UnitOfWork.SaveChangesAsync();
+
+            Publisher.Publish(QueueNames.UpdateCategoryElastic, ExchangeNames.Elastic, new CategoryUpdatedEvent()
+            {
+                IndexName = ElasticIndexes.CategoryIndex,
+                Model = JsonSerializer.Serialize(oldCategory),
+                CategoryId = categoryId
+            });
 
             RemoveCachePrefixes();
 
