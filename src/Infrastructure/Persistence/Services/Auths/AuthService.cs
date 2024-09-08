@@ -142,6 +142,9 @@ namespace Persistence.Services.Auths
                         Model = JsonSerializer.Serialize(new SecuredUserDto(user)),
                     });
 
+                    createdWriter.User = null;
+                    createdWriter.Articles = null;
+
                     // Duzeltilmeli
                     Publisher.Publish(QueueNames.CreateWriterElastic, ExchangeNames.Elastic, new WriterCreatedEvent()
                     {

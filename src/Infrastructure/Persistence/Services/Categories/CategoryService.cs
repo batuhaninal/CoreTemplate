@@ -111,6 +111,11 @@ namespace Persistence.Services.Categories
             return new SuccessResultDto(204);
         }
 
+        public Task<IDataResult<IList<SearchCategoryDto>>> SearchAsync(string condition, int size = 10)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<IBaseResult> UpdateAsync(string categoryId, UpdateCategoryDto updateCategoryDto)
         {
             if (!categoryId.Equals(updateCategoryDto.CategoryId))

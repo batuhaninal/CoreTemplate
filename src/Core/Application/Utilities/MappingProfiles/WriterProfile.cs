@@ -31,6 +31,8 @@ namespace Application.Utilities.MappingProfiles
             CreateMap<CreateWriterDto, Writer>()
                 .ForMember(dest=> dest.Level, src=> src.MapFrom(x=> (byte)WriterLevel.Newbie));
 
+            CreateMap<Writer, SearchWriterDto>()
+                .ForMember(dest => dest.WriterId, src => src.MapFrom(x => x.Id));
         }
     }
 }

@@ -15,6 +15,7 @@ namespace Application.Abstractions.Services.Articles
         Task<IDataResult<ArticleInfoDto>> GetByIdAsync(string articleId);
         Task<IPaginatedDataResult<ArticleItemDto>> GetAllAsync(int pageIndex = 1, int pageSize = 20);
         Task<IPaginatedDataResult<ArticleItemDto>> GetAllAsync(ArticleRequestParameter articleRequest, PaginationRequestParameter pagination);
+        Task<IDataResult<IList<SearchArticleDto>>> SearchAsync(string condition, int size = 10);
         Task<Article?> Test1(string articleId);
         Task<Article?> Test2(string articleId);
         Task<Article?> Test3(string articleId);

@@ -232,5 +232,10 @@ namespace Persistence.Services.Articles
         public Article? Test8(string articleId) =>
             UnitOfWork.ArticleReadRepository.Table
             .FirstOrDefault(x=> x.Id == Guid.Parse(articleId));
+
+        public Task<IDataResult<IList<SearchArticleDto>>> SearchAsync(string condition, int size = 10)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

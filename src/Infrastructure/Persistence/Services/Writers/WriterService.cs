@@ -111,6 +111,11 @@ namespace Persistence.Services.Writers
             return new SuccessResultDto(204);
         }
 
+        public Task<IDataResult<IList<SearchWriterDto>>> SearchAsync(string condition, int size = 10)
+        {
+            throw new NotImplementedException();
+        }
+
         private void RemoveCachePrefixes()
         {
             Publisher.Publish(QueueNames.CacheRemove, ExchangeNames.Cache, new CacheRemovedEvent(new string[]

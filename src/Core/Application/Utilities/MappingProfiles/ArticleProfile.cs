@@ -16,6 +16,9 @@ namespace Application.Utilities.MappingProfiles
             CreateMap<Article, ArticleInfoDto>()
                 .ForMember(dest => dest.ArticleId, src => src.MapFrom(x => x.Id));
 
+            CreateMap<Article, SearchArticleDto>()
+                .ForMember(dest => dest.ArticleId, src => src.MapFrom(x => x.Id));
+
             // Update durumlarında eski değerlerini koruyup sadece değişen değerlerin update edilmesi için bu configurasyon kullanılabilir. Kod örneği ProductService update metodunda gösterilmiştir.
             // Dikkat! Eğer sadece değişen değirlerin update olmasını isteniyorsa EntityFramework Update senaryoları incelenmelidir. EntityState = Modified durumunda tüm alanların güncellendiği bir sql query veri tabanına yollanır. Alternatif olarak DbContext.Entry() yöntemi kullanılabilir. Bu durum değişen değerler için sql query oluşturur.
 

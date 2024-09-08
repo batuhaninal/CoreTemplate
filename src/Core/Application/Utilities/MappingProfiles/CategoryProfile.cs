@@ -21,6 +21,9 @@ namespace Application.Utilities.MappingProfiles
 
             CreateMap<Category, CategoryInfoDto>()
                 .ConstructUsing(x=> new CategoryInfoDto(x.Id.ToString(), x.Title));
+
+            CreateMap<Category, SearchCategoryDto>()
+                .ForMember(dest => dest.CategoryId, src => src.MapFrom(x => x.Id));
         }
     }
 }
