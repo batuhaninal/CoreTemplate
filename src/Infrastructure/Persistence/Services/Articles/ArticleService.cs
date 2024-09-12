@@ -1,6 +1,7 @@
 ﻿using Application.Abstractions.Commons.Caching;
 using Application.Abstractions.Commons.MessageBrokers.Publishers;
 using Application.Abstractions.Commons.Results;
+using Application.Abstractions.Repositories.Articles.Elasticsearch;
 using Application.Abstractions.Repositories.Commons;
 using Application.Abstractions.Services.Articles;
 using Application.Models.Constants.CachePrefixes;
@@ -29,13 +30,13 @@ namespace Persistence.Services.Articles
     public class ArticleService : BaseService, IArticleService
     {
         private readonly ArticleBusinessRule _businessRule;
-        private readonly ElasticsearchClient _elasticsearchClient;
         //private readonly IElasticSearchWriteRepository _elasticsearchWriteRepository;
+        private readonly IELKArticleRepository _articleRepository;
 
-        public ArticleService(IUnitOfWork unitOfWork, IMapper mapper, ICacheService cache, IRabbitMQPublisherService rabbitMQPublisherService, ElasticsearchClient elasticsearchClient) : base(unitOfWork, mapper, cache, rabbitMQPublisherService)
+        public ArticleService(IUnitOfWork unitOfWork, IMapper mapper, ICacheService cache, IRabbitMQPublisherService rabbitMQPublisherService, IELKArticleRepository articleRepository) : base(unitOfWork, mapper, cache, rabbitMQPublisherService)
         {
             _businessRule = new ArticleBusinessRule(unitOfWork.ArticleReadRepository, unitOfWork.ArticleFavoriteReadRepository);
-            _elasticsearchClient = elasticsearchClient;
+            _articleRepository = articleRepository;
             //_elasticsearchWriteRepository = elasticsearchWriteRepository;
         }
 
@@ -239,16 +240,7 @@ namespace Persistence.Services.Articles
 
         public async Task<IDataResult<IList<SearchArticleDto>>> SearchAsync(string condition, int size = 10)
         {
-            var response = await _elasticsearchClient.SearchAsync<Article>(x => x.Index("articles")
-                .From(0)
-                .Size(size)
-                .Query(q =>
-                    q.Fuzzy(f => f.Field(f => f.Title).Value(condition).Fuzziness(new Fuzziness(2)))));
-
-            if(!response.IsValidResponse)
-                return new SuccessDataResultDto<IList<SearchArticleDto>>(new List<SearchArticleDto>());
-
-            var data = response.Documents.ToList();
+            var data = await _articleRepository.FuzzySearchAsync(condition, size);
 
             return new SuccessDataResultDto<IList<SearchArticleDto>>(Mapper.Map<List<SearchArticleDto>>(data));
         }

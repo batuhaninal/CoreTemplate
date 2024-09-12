@@ -1,5 +1,6 @@
 ﻿using Application.Models.DTOs.Commons.Results;
 using Application.Models.RequestParameters.Commons;
+using Elastic.Clients.Elasticsearch;
 
 namespace Application.Utilities.Pagination
 {
@@ -22,5 +23,23 @@ namespace Application.Utilities.Pagination
 
         public static async Task<PaginatedListDto<T>> ToPaginatedListDtoAsync<T>(this IQueryable<T> source, BasePaginationRequestParameter pagination, string message) =>
             await PaginatedListDto<T>.CreateAsync(source, pagination, 200, true, message);
+
+        public static PaginatedListDto<T> ToPaginatedListDto<T>(this SearchResponse<T> response, int pageIndex, int pageSize, int statusCode, bool isSuccess, string message) =>
+            PaginatedListDto<T>.Create(response, pageIndex, pageSize, statusCode, isSuccess, message);
+
+        public static PaginatedListDto<T> ToPaginatedListDto<T>(this SearchResponse<T> response, int pageIndex, int pageSize, int statusCode) =>
+            PaginatedListDto<T>.Create(response, pageIndex, pageSize, statusCode, true);
+
+        public static PaginatedListDto<T> ToPaginatedListDto<T>(this SearchResponse<T> response, int pageIndex, int pageSize) =>
+            PaginatedListDto<T>.Create(response, pageIndex, pageSize, 200, true);
+
+        public static PaginatedListDto<T> ToPaginatedListDto<T>(this SearchResponse<T> response, int pageIndex, int pageSize, string message) =>
+            PaginatedListDto<T>.Create(response, pageIndex, pageSize, 200, true, message);
+
+        public static PaginatedListDto<T> ToPaginatedListDto<T>(this SearchResponse<T> response, BasePaginationRequestParameter pagination) =>
+            PaginatedListDto<T>.Create(response, pagination, 200, true);
+
+        public static PaginatedListDto<T> ToPaginatedListDto<T>(this SearchResponse<T> response, BasePaginationRequestParameter pagination, string message) =>
+            PaginatedListDto<T>.Create(response, pagination, 200, true, message);
     }
 }

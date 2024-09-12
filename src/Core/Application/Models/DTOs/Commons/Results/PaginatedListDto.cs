@@ -3,6 +3,7 @@ using Application.Models.Constants.Settings;
 using Application.Models.RequestParameters.Commons;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
+using Elastic.Clients.Elasticsearch;
 
 namespace Application.Models.DTOs.Commons.Results
 {
@@ -87,6 +88,44 @@ namespace Application.Models.DTOs.Commons.Results
 
         public static async Task<PaginatedListDto<T>> CreateAsync(IQueryable<T> query, BasePaginationRequestParameter pagination, int statusCode, bool isSuccess) =>
             await CreateAsync(query, pagination.PageIndex, pagination.PageSize, statusCode, isSuccess);
- 
+
+
+        public static PaginatedListDto<T> Create(SearchResponse<T> response, int pageIndex, int pageSize, int statusCode, bool isSuccess, string message)
+        {
+            if (pageIndex < 0)
+                pageIndex = 0;
+            if (pageSize < 1 || pageSize > SettingConstant.PaginationSettings.MaxPageSize)
+                pageSize = 20;
+
+            if (!response.IsValidResponse)
+                return new PaginatedListDto<T>(new List<T>(), 0, pageIndex, pageSize, statusCode, isSuccess, message);
+
+            int count = (int)response.Total;
+            var data = response.Documents.ToList();
+
+            return new PaginatedListDto<T>(data, count, pageIndex, pageSize, statusCode, isSuccess, message);
+        }
+
+        public static PaginatedListDto<T> Create(SearchResponse<T> response, int pageIndex, int pageSize, int statusCode, bool isSuccess)
+        {
+            if (pageIndex < 0)
+                pageIndex = 0;
+            if (pageSize < 1 || pageSize > SettingConstant.PaginationSettings.MaxPageSize)
+                pageSize = 20;
+
+            if (!response.IsValidResponse)
+                return new PaginatedListDto<T>(new List<T>(), 0, pageIndex, pageSize, statusCode, isSuccess);
+
+            int count = (int)response.Total;
+            var data = response.Documents.ToList();
+
+            return new PaginatedListDto<T>(data, count, pageIndex, pageSize, statusCode, isSuccess);
+        }
+
+        public static PaginatedListDto<T> Create(SearchResponse<T> response, BasePaginationRequestParameter pagination, int statusCode, bool isSuccess, string message) =>
+            Create(response, pagination.PageIndex, pagination.PageSize, statusCode, isSuccess, message);
+
+        public static PaginatedListDto<T> Create(SearchResponse<T> response, BasePaginationRequestParameter pagination, int statusCode, bool isSuccess) =>
+            Create(response, pagination.PageIndex, pagination.PageSize, statusCode, isSuccess);
     }
 } 

@@ -1,5 +1,6 @@
 ﻿using Application.Abstractions.Repositories.ArticleFavorites;
 using Application.Abstractions.Repositories.Articles;
+using Application.Abstractions.Repositories.Articles.Elasticsearch;
 using Application.Abstractions.Repositories.Categories;
 using Application.Abstractions.Repositories.Commons;
 using Application.Abstractions.Repositories.Roles;

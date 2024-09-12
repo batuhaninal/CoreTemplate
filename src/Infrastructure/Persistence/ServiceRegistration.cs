@@ -1,4 +1,7 @@
-﻿using Application.Abstractions.Repositories.Commons;
+﻿using Application.Abstractions.Repositories.Articles.Elasticsearch;
+using Application.Abstractions.Repositories.Categories.Elasticsearch;
+using Application.Abstractions.Repositories.Commons;
+using Application.Abstractions.Repositories.Writers.Elasticsearch;
 using Application.Abstractions.Services.Articles;
 using Application.Abstractions.Services.Auths;
 using Application.Abstractions.Services.Categories;
@@ -10,7 +13,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Persistence.Contexts;
+using Persistence.Repositories.Articles.Elasticsearch;
+using Persistence.Repositories.Categories.Elasticsearch;
 using Persistence.Repositories.Commons;
+using Persistence.Repositories.Writers.Elasticsearch;
 using Persistence.Services.Articles;
 using Persistence.Services.Auths;
 using Persistence.Services.Categories;
@@ -57,6 +63,10 @@ namespace Persistence
             services.AddScoped<IWriterService, WriterService>();
 
             services.AddScoped<IUserService, UserService>();
+
+            services.AddScoped<IELKArticleRepository, ELKArticleRepository>();
+            services.AddScoped<IELKCategoryRepository, ELKCategoryRepository>();
+            services.AddScoped<IELKWriterRepository, ELKWriterRepository>();
 
             var settings = new ElasticsearchClientSettings(new Uri(configuration.GetSection("Elastic")["Url"]!))
                 .Authentication(new BasicAuthentication(configuration.GetSection("Elastic")["Username"]!, configuration.GetSection("Elastic")["Password"]!));
