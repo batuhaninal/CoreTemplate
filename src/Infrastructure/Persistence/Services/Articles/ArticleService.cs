@@ -17,9 +17,11 @@ using Application.Utilities.Exceptions.Commons;
 using Application.Utilities.Pagination;
 using AutoMapper;
 using Domain.Entities;
+using Elastic.Clients.Elasticsearch;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Repositories.Articles.Extensions;
 using Persistence.Services.Commons;
+using System.Linq.Expressions;
 using System.Text.Json;
 
 namespace Persistence.Services.Articles
@@ -27,11 +29,13 @@ namespace Persistence.Services.Articles
     public class ArticleService : BaseService, IArticleService
     {
         private readonly ArticleBusinessRule _businessRule;
+        private readonly ElasticsearchClient _elasticsearchClient;
         //private readonly IElasticSearchWriteRepository _elasticsearchWriteRepository;
 
-        public ArticleService(IUnitOfWork unitOfWork, IMapper mapper, ICacheService cache, IRabbitMQPublisherService rabbitMQPublisherService) : base(unitOfWork, mapper, cache, rabbitMQPublisherService)
+        public ArticleService(IUnitOfWork unitOfWork, IMapper mapper, ICacheService cache, IRabbitMQPublisherService rabbitMQPublisherService, ElasticsearchClient elasticsearchClient) : base(unitOfWork, mapper, cache, rabbitMQPublisherService)
         {
             _businessRule = new ArticleBusinessRule(unitOfWork.ArticleReadRepository, unitOfWork.ArticleFavoriteReadRepository);
+            _elasticsearchClient = elasticsearchClient;
             //_elasticsearchWriteRepository = elasticsearchWriteRepository;
         }
 
@@ -233,9 +237,20 @@ namespace Persistence.Services.Articles
             UnitOfWork.ArticleReadRepository.Table
             .FirstOrDefault(x=> x.Id == Guid.Parse(articleId));
 
-        public Task<IDataResult<IList<SearchArticleDto>>> SearchAsync(string condition, int size = 10)
+        public async Task<IDataResult<IList<SearchArticleDto>>> SearchAsync(string condition, int size = 10)
         {
-            throw new NotImplementedException();
+            var response = await _elasticsearchClient.SearchAsync<Article>(x => x.Index("articles")
+                .From(0)
+                .Size(size)
+                .Query(q =>
+                    q.Fuzzy(f => f.Field(f => f.Title).Value(condition).Fuzziness(new Fuzziness(2)))));
+
+            if(!response.IsValidResponse)
+                return new SuccessDataResultDto<IList<SearchArticleDto>>(new List<SearchArticleDto>());
+
+            var data = response.Documents.ToList();
+
+            return new SuccessDataResultDto<IList<SearchArticleDto>>(Mapper.Map<List<SearchArticleDto>>(data));
         }
     }
 }

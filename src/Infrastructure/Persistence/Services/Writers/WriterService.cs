@@ -15,6 +15,7 @@ using Application.Models.RequestParameters.Writers;
 using Application.Utilities.Pagination;
 using AutoMapper;
 using Domain.Entities;
+using Elastic.Clients.Elasticsearch;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Repositories.Writers.Extensions;
 using Persistence.Services.Commons;
@@ -25,9 +26,11 @@ namespace Persistence.Services.Writers
     public class WriterService : BaseService, IWriterService
     {
         private readonly WriterBusinessRules _writerBusinessRules;
-        public WriterService(IUnitOfWork unitOfWork, IMapper mapper, ICacheService cache, IRabbitMQPublisherService publisher) : base(unitOfWork, mapper, cache, publisher)
+        private readonly ElasticsearchClient _elasticsearchClient;
+        public WriterService(IUnitOfWork unitOfWork, IMapper mapper, ICacheService cache, IRabbitMQPublisherService publisher, ElasticsearchClient elasticsearchClient) : base(unitOfWork, mapper, cache, publisher)
         {
             _writerBusinessRules = new WriterBusinessRules(unitOfWork.WriterReadRepository);
+            _elasticsearchClient = elasticsearchClient;
         }
 
         public async Task<IBaseResult> CreateAsync(CreateWriterDto createWriterDto)
@@ -111,9 +114,19 @@ namespace Persistence.Services.Writers
             return new SuccessResultDto(204);
         }
 
-        public Task<IDataResult<IList<SearchWriterDto>>> SearchAsync(string condition, int size = 10)
+        public async Task<IDataResult<IList<SearchWriterDto>>> SearchAsync(string condition, int size = 10)
         {
-            throw new NotImplementedException();
+            var response = await _elasticsearchClient.SearchAsync<Writer>(s => s.Index("writers")
+            .From(0)
+            .Size(size)
+            .Query(q=> q.Fuzzy(f=> f.Field(fi=> fi.Nick).Value(condition).Fuzziness(new Fuzziness(2)))));
+
+            if(!response.IsValidResponse)
+                return new SuccessDataResultDto<IList<SearchWriterDto>>(new List<SearchWriterDto>());
+
+            var data = response.Documents.ToList();
+
+            return new SuccessDataResultDto<IList<SearchWriterDto>>(Mapper.Map<List<SearchWriterDto>>(data));
         }
 
         private void RemoveCachePrefixes()

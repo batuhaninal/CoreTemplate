@@ -20,6 +20,11 @@ namespace API.Controllers.v1
 
         [MapToApiVersion(1)]
         [HttpGet]
+        public async Task<IActionResult> Search([FromQuery] string condition, [FromQuery] int size = 10) =>
+             CreateResponse(await _writerService.SearchAsync(condition, size));
+
+        [MapToApiVersion(1)]
+        [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] PaginationRequestParameter paginationRequestParameter) =>
              CreateResponse(await _writerService.GetAllAsync(paginationRequestParameter));
 

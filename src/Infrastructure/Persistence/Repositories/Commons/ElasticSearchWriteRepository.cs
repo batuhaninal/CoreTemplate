@@ -1,6 +1,5 @@
 ﻿using Application.Abstractions.Repositories.Commons;
 using Application.Utilities.Exceptions.Commons;
-using Domain.Entities.Commons;
 using Elastic.Clients.Elasticsearch;
 
 namespace Persistence.Repositories.Commons

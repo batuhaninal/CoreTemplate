@@ -6,6 +6,7 @@ using Application.Abstractions.Services.Categories;
 using Application.Models.Constants.CachePrefixes;
 using Application.Models.Constants.Elastics;
 using Application.Models.Constants.MessageBrokers;
+using Application.Models.DTOs.Articles;
 using Application.Models.DTOs.Categories;
 using Application.Models.DTOs.Commons.Results;
 using Application.Models.MessageBrokers.Events;
@@ -15,6 +16,7 @@ using Application.Models.RequestParameters.Commons;
 using Application.Utilities.Pagination;
 using AutoMapper;
 using Domain.Entities;
+using Elastic.Clients.Elasticsearch;
 using Persistence.Repositories.Categories.Extensions;
 using Persistence.Services.Commons;
 using System.Text.Json;
@@ -24,9 +26,11 @@ namespace Persistence.Services.Categories
     public class CategoryService : BaseService, ICategoryService
     {
         private readonly CategoryBusinessRules _businessRules;
-        public CategoryService(IUnitOfWork unitOfWork, IMapper mapper, ICacheService cache, IRabbitMQPublisherService rabbitMQPublisherService) : base(unitOfWork, mapper, cache, rabbitMQPublisherService)
+        private readonly ElasticsearchClient _elasticsearchClient;
+        public CategoryService(IUnitOfWork unitOfWork, IMapper mapper, ICacheService cache, IRabbitMQPublisherService rabbitMQPublisherService, ElasticsearchClient elasticsearchClient) : base(unitOfWork, mapper, cache, rabbitMQPublisherService)
         {
             _businessRules = new CategoryBusinessRules(unitOfWork.CategoryReadRepository);
+            _elasticsearchClient = elasticsearchClient;
         }
 
         public async Task<IBaseResult> CreateAsync(CreateCategoryDto createCategoryDto)
@@ -111,9 +115,19 @@ namespace Persistence.Services.Categories
             return new SuccessResultDto(204);
         }
 
-        public Task<IDataResult<IList<SearchCategoryDto>>> SearchAsync(string condition, int size = 10)
+        public async Task<IDataResult<IList<SearchCategoryDto>>> SearchAsync(string condition, int size = 10)
         {
-            throw new NotImplementedException();
+            var response = await _elasticsearchClient.SearchAsync<Category>(s => s.Index("categories")
+                .From(0)
+                .Size(size)
+                .Query(q => q.Fuzzy(fz => fz.Field(fi => fi.Title).Value(condition).Fuzziness(new Fuzziness(2)))));
+
+            if(!response.IsValidResponse)
+                return new SuccessDataResultDto<IList<SearchCategoryDto>>(new List<SearchCategoryDto>());
+
+            var data = response.Documents.ToList();
+
+            return new SuccessDataResultDto<IList<SearchCategoryDto>>(Mapper.Map<List<SearchCategoryDto>>(data));
         }
 
         public async Task<IBaseResult> UpdateAsync(string categoryId, UpdateCategoryDto updateCategoryDto)
