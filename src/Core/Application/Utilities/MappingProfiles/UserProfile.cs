@@ -1,4 +1,5 @@
 ﻿using Application.Models.DTOs.Auths;
+using Application.Models.DTOs.Commons.Results;
 using Application.Models.DTOs.Users;
 using Application.Models.DTOs.Writers;
 using AutoMapper;
@@ -23,6 +24,11 @@ namespace Application.Utilities.MappingProfiles
             CreateMap<User, UserItemDto>()
                 .ForMember(dest => dest.UserId, src => src.MapFrom(x => x.Id))
                 .ForMember(dest => dest.FullName, src => src.MapFrom(x => string.Join(' ', x.FirstName, x.LastName)));
+
+            CreateMap<SecuredUserDto, SearchUserDto>()
+                .ForMember(dest => dest.UserId, src => src.MapFrom(x => x.Id));
+
+            CreateMap<PaginatedListDto<SecuredUserDto>, PaginatedListDto<SearchUserDto>>();
         }
     }
 }

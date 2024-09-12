@@ -2,6 +2,7 @@
 using Application.Abstractions.Commons.MessageBrokers.Publishers;
 using Application.Abstractions.Commons.Results;
 using Application.Abstractions.Repositories.Commons;
+using Application.Abstractions.Repositories.Users.Elasticsearch;
 using Application.Abstractions.Services.Users;
 using Application.Models.Constants.CachePrefixes;
 using Application.Models.DTOs.Commons.Results;
@@ -19,8 +20,10 @@ namespace Persistence.Services.Users
 {
     public class UserService : BaseService, IUserService
     {
-        public UserService(IUnitOfWork unitOfWork, IMapper mapper, ICacheService cache, IRabbitMQPublisherService publisher) : base(unitOfWork, mapper, cache, publisher)
+        private readonly IELKUserRepository _elkUserRepository;
+        public UserService(IUnitOfWork unitOfWork, IMapper mapper, ICacheService cache, IRabbitMQPublisherService publisher, IELKUserRepository elkUserRepository) : base(unitOfWork, mapper, cache, publisher)
         {
+            _elkUserRepository = elkUserRepository;
         }
 
         public async Task<IPaginatedDataResult<UserItemDto>> GetAllAsync(UserRequestParameter parameter, BasePaginationRequestParameter pagination)
@@ -58,6 +61,13 @@ namespace Persistence.Services.Users
                 await Cache.AddAsync(CachePrefix.User.CreatePaginationPrefix("GetAllAsync", pagination.PageIndex, pagination.PageSize), users);
 
             return users;
+        }
+
+        public async Task<IPaginatedDataResult<SearchUserDto>> SearchAsync(string condition, BasePaginationRequestParameter pagination)
+        {
+            var data = await _elkUserRepository.FuzzySearchWithPaginationAsync(condition, pagination);
+
+            return Mapper.Map<PaginatedListDto<SearchUserDto>>(data);
         }
     }
 }

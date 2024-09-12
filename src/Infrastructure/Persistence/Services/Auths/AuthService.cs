@@ -148,7 +148,7 @@ namespace Persistence.Services.Auths
                     // Duzeltilmeli
                     Publisher.Publish(QueueNames.CreateWriterElastic, ExchangeNames.Elastic, new WriterCreatedEvent()
                     {
-                        IndexName = ElasticIndexes.UserIndex,
+                        IndexName = ElasticIndexes.WriterIndex,
                         Model = JsonSerializer.Serialize(createdWriter),
                     });
 

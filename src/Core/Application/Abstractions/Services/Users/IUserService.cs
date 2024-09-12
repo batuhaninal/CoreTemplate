@@ -9,5 +9,6 @@ namespace Application.Abstractions.Services.Users
     {
         Task<IPaginatedDataResult<UserItemDto>> GetAllAsync(UserRequestParameter parameter, BasePaginationRequestParameter pagination);
         Task<IPaginatedDataResult<UserItemDto>> GetAllAsync(BasePaginationRequestParameter pagination);
+        Task<IPaginatedDataResult<SearchUserDto>> SearchAsync(string condition, BasePaginationRequestParameter pagination);
     }
 }
