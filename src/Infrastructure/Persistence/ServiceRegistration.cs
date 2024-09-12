@@ -1,6 +1,7 @@
 ﻿using Application.Abstractions.Repositories.Articles.Elasticsearch;
 using Application.Abstractions.Repositories.Categories.Elasticsearch;
 using Application.Abstractions.Repositories.Commons;
+using Application.Abstractions.Repositories.Users.Elasticsearch;
 using Application.Abstractions.Repositories.Writers.Elasticsearch;
 using Application.Abstractions.Services.Articles;
 using Application.Abstractions.Services.Auths;
@@ -16,6 +17,7 @@ using Persistence.Contexts;
 using Persistence.Repositories.Articles.Elasticsearch;
 using Persistence.Repositories.Categories.Elasticsearch;
 using Persistence.Repositories.Commons;
+using Persistence.Repositories.Users.Elasticsearch;
 using Persistence.Repositories.Writers.Elasticsearch;
 using Persistence.Services.Articles;
 using Persistence.Services.Auths;
@@ -67,6 +69,7 @@ namespace Persistence
             services.AddScoped<IELKArticleRepository, ELKArticleRepository>();
             services.AddScoped<IELKCategoryRepository, ELKCategoryRepository>();
             services.AddScoped<IELKWriterRepository, ELKWriterRepository>();
+            services.AddScoped<IELKUserRepository, ELKUserRepository>();
 
             var settings = new ElasticsearchClientSettings(new Uri(configuration.GetSection("Elastic")["Url"]!))
                 .Authentication(new BasicAuthentication(configuration.GetSection("Elastic")["Username"]!, configuration.GetSection("Elastic")["Password"]!));

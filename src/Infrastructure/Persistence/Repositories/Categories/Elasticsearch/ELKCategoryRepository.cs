@@ -1,4 +1,5 @@
-﻿using Application.Abstractions.Repositories.Categories.Elasticsearch;
+﻿using Application.Abstractions.Commons.Results;
+using Application.Abstractions.Repositories.Categories.Elasticsearch;
 using Application.Models.Constants.Elastics;
 using Application.Models.DTOs.Commons.Results;
 using Application.Models.RequestParameters.Commons;
@@ -47,14 +48,14 @@ namespace Persistence.Repositories.Categories.Elasticsearch
         public async Task<IImmutableList<Category>> FuzzySearchAsync(string condition, BasePaginationRequestParameter pagination) =>
             await FuzzySearchAsync(condition, pagination.PageIndex, pagination.PageSize);
 
-        public async Task<PaginatedListDto<Category>> FuzzySearchWithPaginationAsync(string condition, int pageIndex = 0, int pageSize = 10)
+        public async Task<IPaginatedDataResult<Category>> FuzzySearchWithPaginationAsync(string condition, int pageIndex = 0, int pageSize = 10)
         {
             var data = await FuzzyAsync(condition, pageIndex, pageSize);
 
             return data.ToPaginatedListDto(pageIndex, pageSize);
         }
 
-        public async Task<PaginatedListDto<Category>> FuzzySearchWithPaginationAsync(string condition, BasePaginationRequestParameter pagination) =>
+        public async Task<IPaginatedDataResult<Category>> FuzzySearchWithPaginationAsync(string condition, BasePaginationRequestParameter pagination) =>
             await FuzzySearchWithPaginationAsync(condition, pagination.PageIndex, pagination.PageSize);
     }
 }
