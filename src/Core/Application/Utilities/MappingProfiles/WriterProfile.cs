@@ -1,4 +1,5 @@
 ﻿using Application.Models.DTOs.Auths;
+using Application.Models.DTOs.Commons.Results;
 using Application.Models.DTOs.Writers;
 using Application.Models.Enums;
 using Application.Utilities.Helpers;
@@ -33,6 +34,8 @@ namespace Application.Utilities.MappingProfiles
 
             CreateMap<Writer, SearchWriterDto>()
                 .ForMember(dest => dest.WriterId, src => src.MapFrom(x => x.Id));
+
+            CreateMap<PaginatedListDto<Writer>, PaginatedListDto<SearchWriterDto>>();
         }
     }
 }

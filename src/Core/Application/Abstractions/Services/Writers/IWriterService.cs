@@ -12,6 +12,6 @@ namespace Application.Abstractions.Services.Writers
         Task<IDataResult<WriterInfoDto>> GetByIdAsync(string writerId);
         Task<IPaginatedDataResult<WriterItemDto>> GetAllAsync(BasePaginationRequestParameter pagination);
         Task<IPaginatedDataResult<WriterItemDto>> GetAllAsync(WriterRequestParameter parameter, BasePaginationRequestParameter pagination);
-        Task<IDataResult<IList<SearchWriterDto>>> SearchAsync(string condition, int size = 10);
+        Task<IPaginatedDataResult<SearchWriterDto>> SearchAsync(string condition, BasePaginationRequestParameter pagination);
     }
 }

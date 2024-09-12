@@ -2,6 +2,7 @@
 using Application.Abstractions.Commons.MessageBrokers.Publishers;
 using Application.Abstractions.Commons.Results;
 using Application.Abstractions.Repositories.Commons;
+using Application.Abstractions.Repositories.Writers.Elasticsearch;
 using Application.Abstractions.Services.Writers;
 using Application.Models.Constants.CachePrefixes;
 using Application.Models.Constants.Elastics;
@@ -26,11 +27,11 @@ namespace Persistence.Services.Writers
     public class WriterService : BaseService, IWriterService
     {
         private readonly WriterBusinessRules _writerBusinessRules;
-        private readonly ElasticsearchClient _elasticsearchClient;
-        public WriterService(IUnitOfWork unitOfWork, IMapper mapper, ICacheService cache, IRabbitMQPublisherService publisher, ElasticsearchClient elasticsearchClient) : base(unitOfWork, mapper, cache, publisher)
+        private readonly IELKWriterRepository _elkWriterRepository;
+        public WriterService(IUnitOfWork unitOfWork, IMapper mapper, ICacheService cache, IRabbitMQPublisherService publisher, IELKWriterRepository elkWriterRepository) : base(unitOfWork, mapper, cache, publisher)
         {
             _writerBusinessRules = new WriterBusinessRules(unitOfWork.WriterReadRepository);
-            _elasticsearchClient = elasticsearchClient;
+            _elkWriterRepository = elkWriterRepository;
         }
 
         public async Task<IBaseResult> CreateAsync(CreateWriterDto createWriterDto)
@@ -114,19 +115,11 @@ namespace Persistence.Services.Writers
             return new SuccessResultDto(204);
         }
 
-        public async Task<IDataResult<IList<SearchWriterDto>>> SearchAsync(string condition, int size = 10)
+        public async Task<IPaginatedDataResult<SearchWriterDto>> SearchAsync(string condition, BasePaginationRequestParameter pagination)
         {
-            var response = await _elasticsearchClient.SearchAsync<Writer>(s => s.Index("writers")
-            .From(0)
-            .Size(size)
-            .Query(q=> q.Fuzzy(f=> f.Field(fi=> fi.Nick).Value(condition).Fuzziness(new Fuzziness(2)))));
+            var data = await _elkWriterRepository.FuzzySearchWithPaginationAsync(condition, pagination);
 
-            if(!response.IsValidResponse)
-                return new SuccessDataResultDto<IList<SearchWriterDto>>(new List<SearchWriterDto>());
-
-            var data = response.Documents.ToList();
-
-            return new SuccessDataResultDto<IList<SearchWriterDto>>(Mapper.Map<List<SearchWriterDto>>(data));
+            return Mapper.Map<PaginatedListDto<SearchWriterDto>>(data); 
         }
 
         private void RemoveCachePrefixes()

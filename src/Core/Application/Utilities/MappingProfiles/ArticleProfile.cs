@@ -1,4 +1,5 @@
 ﻿using Application.Models.DTOs.Articles;
+using Application.Models.DTOs.Commons.Results;
 using AutoMapper;
 using Domain.Entities;
 
@@ -25,6 +26,8 @@ namespace Application.Utilities.MappingProfiles
             CreateMap<UpdateArticleDto, Article>()
                 .ForMember(dest => dest.Id, src => src.MapFrom(x => x.ArticleId))
                  .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember != null));
+
+            CreateMap<PaginatedListDto<Article>, PaginatedListDto<SearchArticleDto>>();
 
 
             // Entity State Kullanılmayan durumlarda updateddate createdDate gibi durumlar automapper tarafından handler edileibilir

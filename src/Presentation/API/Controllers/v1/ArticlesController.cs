@@ -34,8 +34,8 @@ namespace API.Controllers.v1
 
         [MapToApiVersion(1)]
         [HttpGet]
-        public async Task<IActionResult> Search([FromQuery] string condition, [FromQuery] int size = 10) =>
-            CreateResponse(await _articleService.SearchAsync(condition, size));
+        public async Task<IActionResult> Search([FromQuery] string condition, [FromQuery] PaginationRequestParameter pagination) =>
+            CreateResponse(await _articleService.SearchAsync(condition, pagination));
 
         [MapToApiVersion(1)]
         [HttpGet]

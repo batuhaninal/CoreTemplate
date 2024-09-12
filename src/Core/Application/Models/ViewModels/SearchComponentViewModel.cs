@@ -11,15 +11,15 @@ namespace Application.Models.ViewModels
             
         }
 
-        public SearchComponentViewModel(IList<SearchWriterDto> writers, IList<SearchCategoryDto> categories, IList<SearchArticleDto> articles)
+        public SearchComponentViewModel(IEnumerable<SearchWriterDto> writers, IEnumerable<SearchCategoryDto> categories, IEnumerable<SearchArticleDto> articles)
         {
             Writers = writers;
             Categories = categories;
             Articles = articles;
         }
 
-        public IList<SearchWriterDto> Writers { get; init; }
-        public IList<SearchCategoryDto> Categories { get; init; }
-        public IList<SearchArticleDto> Articles { get; init; }
+        public IEnumerable<SearchWriterDto> Writers { get; init; }
+        public IEnumerable<SearchCategoryDto> Categories { get; init; }
+        public IEnumerable<SearchArticleDto> Articles { get; init; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Application.Models.DTOs.Categories;
+using Application.Models.DTOs.Commons.Results;
 using AutoMapper;
 using Domain.Entities;
 
@@ -24,6 +25,8 @@ namespace Application.Utilities.MappingProfiles
 
             CreateMap<Category, SearchCategoryDto>()
                 .ForMember(dest => dest.CategoryId, src => src.MapFrom(x => x.Id));
+
+            CreateMap<PaginatedListDto<Category>, PaginatedListDto<SearchCategoryDto>>();
         }
     }
 }

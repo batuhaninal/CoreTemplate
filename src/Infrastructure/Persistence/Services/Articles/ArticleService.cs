@@ -18,11 +18,9 @@ using Application.Utilities.Exceptions.Commons;
 using Application.Utilities.Pagination;
 using AutoMapper;
 using Domain.Entities;
-using Elastic.Clients.Elasticsearch;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Repositories.Articles.Extensions;
 using Persistence.Services.Commons;
-using System.Linq.Expressions;
 using System.Text.Json;
 
 namespace Persistence.Services.Articles
@@ -31,12 +29,12 @@ namespace Persistence.Services.Articles
     {
         private readonly ArticleBusinessRule _businessRule;
         //private readonly IElasticSearchWriteRepository _elasticsearchWriteRepository;
-        private readonly IELKArticleRepository _articleRepository;
+        private readonly IELKArticleRepository _elkArticleRepository;
 
         public ArticleService(IUnitOfWork unitOfWork, IMapper mapper, ICacheService cache, IRabbitMQPublisherService rabbitMQPublisherService, IELKArticleRepository articleRepository) : base(unitOfWork, mapper, cache, rabbitMQPublisherService)
         {
             _businessRule = new ArticleBusinessRule(unitOfWork.ArticleReadRepository, unitOfWork.ArticleFavoriteReadRepository);
-            _articleRepository = articleRepository;
+            _elkArticleRepository = articleRepository;
             //_elasticsearchWriteRepository = elasticsearchWriteRepository;
         }
 
@@ -238,11 +236,13 @@ namespace Persistence.Services.Articles
             UnitOfWork.ArticleReadRepository.Table
             .FirstOrDefault(x=> x.Id == Guid.Parse(articleId));
 
-        public async Task<IDataResult<IList<SearchArticleDto>>> SearchAsync(string condition, int size = 10)
+        public async Task<IPaginatedDataResult<SearchArticleDto>> SearchAsync(string condition, BasePaginationRequestParameter pagination)
         {
-            var data = await _articleRepository.FuzzySearchAsync(condition, size);
+            var data = await _elkArticleRepository.FuzzySearchWithPaginationAsync(condition, pagination);
 
-            return new SuccessDataResultDto<IList<SearchArticleDto>>(Mapper.Map<List<SearchArticleDto>>(data));
+            var mappedData = Mapper.Map<PaginatedListDto<SearchArticleDto>>(data);
+
+            return mappedData;
         }
     }
 }

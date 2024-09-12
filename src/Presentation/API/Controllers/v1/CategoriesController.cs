@@ -3,6 +3,7 @@ using Application.Models.Constants.Options;
 using Application.Models.DTOs.Categories;
 using Application.Models.RequestParameters;
 using Application.Models.RequestParameters.Categories;
+using Application.Models.RequestParameters.Commons;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -25,8 +26,8 @@ namespace API.Controllers.v1
 
         [MapToApiVersion(1)]
         [HttpGet]
-        public async Task<IActionResult> Search([FromQuery] string condition, [FromQuery] int size = 10) =>
-            CreateResponse(await _categoryService.SearchAsync(condition, size));
+        public async Task<IActionResult> Search([FromQuery] string condition, [FromQuery] BasePaginationRequestParameter pagination) =>
+            CreateResponse(await _categoryService.SearchAsync(condition, pagination));
 
         [MapToApiVersion(1)]
         [HttpGet]

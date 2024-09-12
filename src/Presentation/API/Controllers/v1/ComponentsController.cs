@@ -1,6 +1,7 @@
 ﻿using Application.Abstractions.Services.Articles;
 using Application.Abstractions.Services.Categories;
 using Application.Abstractions.Services.Writers;
+using Application.Models.RequestParameters;
 using Application.Models.ViewModels;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
@@ -27,9 +28,21 @@ namespace API.Controllers.v1
         [HttpGet]
         public async Task<IActionResult> SearchComponent([FromQuery] string condition, [FromQuery] int size = 10)
         {
-            var articles = await _articleService.SearchAsync(condition, size);
-            var categories = await _categoryService.SearchAsync(condition, size);
-            var writers = await _writerService.SearchAsync(condition, size);
+            var articles = await _articleService.SearchAsync(condition, new PaginationRequestParameter()
+            {
+                PageIndex = 1,
+                PageSize = size
+            });
+            var categories = await _categoryService.SearchAsync(condition, new PaginationRequestParameter()
+            {
+                PageIndex = 1,
+                PageSize = size
+            });
+            var writers = await _writerService.SearchAsync(condition, new PaginationRequestParameter()
+            {
+                PageIndex = 1,
+                PageSize = size
+            });
             return Ok(new SearchComponentViewModel(writers.Data, categories.Data, articles.Data));
         }
     }

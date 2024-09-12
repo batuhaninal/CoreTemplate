@@ -46,14 +46,14 @@ namespace API.Middlewares
                 }));
                 return;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 httpContext.Response.ContentType = "application/json";
                 httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
                 string message = "Internal Server Error";
 
-                await httpContext.Response.WriteAsync(JsonSerializer.Serialize(new ErrorResultDto(httpContext.Response.StatusCode, message)));
+                await httpContext.Response.WriteAsync(JsonSerializer.Serialize(new ErrorResultDto(httpContext.Response.StatusCode, ex.Message)));
                 return;
             }
         }
