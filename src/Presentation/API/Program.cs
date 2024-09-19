@@ -71,6 +71,8 @@ app.UseMiddleware<CustomExceptionMiddleware>();
 // Auto migration
 await app.ConfigureMigrationAsync();
 
+app.UseStaticFiles();
+
 app.UseHttpsRedirection();
 
 app.UseMiddleware<RequestLogContextMiddleware>();

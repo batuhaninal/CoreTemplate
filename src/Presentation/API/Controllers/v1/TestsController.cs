@@ -1,4 +1,5 @@
-﻿using Application.Abstractions.Services.Articles;
+﻿using Application.Abstractions.Commons.Files;
+using Application.Abstractions.Services.Articles;
 using Application.Abstractions.Services.Categories;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
@@ -12,11 +13,13 @@ namespace API.Controllers.v1
     {
         private readonly ICategoryService _categoryService;
         private readonly IArticleService _articleService;
+        private readonly IFileService _fileService;
 
-        public TestsController(ICategoryService categoryService, IArticleService articleService)
+        public TestsController(ICategoryService categoryService, IArticleService articleService, IFileService fileService)
         {
             _categoryService = categoryService;
             _articleService = articleService;
+            _fileService = fileService;
         }
 
         [MapToApiVersion(1)]
@@ -80,6 +83,17 @@ namespace API.Controllers.v1
         public IActionResult Test8([FromRoute] string articleId)
         {
             return Ok(_articleService.Test8(articleId));
+        }
+
+        [MapToApiVersion(1)]
+        [HttpPost]
+        public async Task<IActionResult> UploadFile([FromForm] IFormFile formFile)
+        {
+            var result = await _fileService.UploadAsync(new Application.Models.DTOs.Commons.Files.CreateFileDto(){
+                Path = "test",
+                FormFiles = new FormFileCollection() { formFile }
+            });
+            return Ok(result);
         }
 
     }

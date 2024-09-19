@@ -4,14 +4,8 @@ using Application.Models.Constants.Elastics;
 using Application.Models.DTOs.Users;
 using Application.Models.RequestParameters.Commons;
 using Application.Utilities.Pagination;
-using Domain.Entities;
 using Elastic.Clients.Elasticsearch;
-using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Persistence.Repositories.Users.Elasticsearch
 {
