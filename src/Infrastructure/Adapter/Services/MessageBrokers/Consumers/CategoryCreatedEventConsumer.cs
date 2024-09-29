@@ -72,7 +72,8 @@ namespace Adapter.Services.MessageBrokers.Consumers
             catch (Exception ex)
             {
                 _logger.LogError($"{nameof(CategoryCreatedEventConsumer)} service error : {ex.Message}");
-                throw;
+                // dead-letter-queue DLQ eklenmeli
+                _channel.BasicNack(@event.DeliveryTag, false, false);
             }
         }
 

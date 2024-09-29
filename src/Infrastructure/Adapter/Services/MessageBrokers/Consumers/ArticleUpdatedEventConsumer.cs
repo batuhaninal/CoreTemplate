@@ -68,6 +68,8 @@ namespace Adapter.Services.MessageBrokers.Consumers
             catch (Exception ex)
             {
                 _logger.LogError("ArticleUpdatedEventConsumer error: " + ex.Message);
+                // dead-letter-queue DLQ eklenmeli
+                _channel.BasicNack(@event.DeliveryTag, false, false);
             }
         }
 
