@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions.Services.Articles;
+using Application.Models.Constants.CachePrefixes;
 using Application.Models.Constants.Options;
 using Application.Models.DTOs.Articles;
 using Application.Models.RequestParameters;
@@ -6,6 +7,7 @@ using Application.Models.RequestParameters.Articles;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.AspNetCore.RateLimiting;
 
 namespace API.Controllers.v1
@@ -29,6 +31,7 @@ namespace API.Controllers.v1
 
         [MapToApiVersion(1)]
         [HttpGet]
+        [OutputCache(PolicyName = "Pagination1m", Tags = [OutputCacheTag.ArticleTag])]
         public async Task<IActionResult> GetAll([FromQuery] PaginationRequestParameter parameter) =>
             CreateResponse(await _articleService.GetAllAsync(parameter.PageIndex, parameter.PageSize));
 
@@ -39,6 +42,7 @@ namespace API.Controllers.v1
 
         [MapToApiVersion(1)]
         [HttpGet]
+        [OutputCache(PolicyName = "Pagination1m", Tags = [OutputCacheTag.ArticleTag])]
         public async Task<IActionResult> GetAllFiltered([FromQuery] ArticleRequestParameter parameter, [FromQuery] PaginationRequestParameter pagination) =>
             CreateResponse(await _articleService.GetAllAsync(parameter, pagination));
 

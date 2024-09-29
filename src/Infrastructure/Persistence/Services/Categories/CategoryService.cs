@@ -16,6 +16,7 @@ using Application.Models.RequestParameters.Commons;
 using Application.Utilities.Pagination;
 using AutoMapper;
 using Domain.Entities;
+using Microsoft.AspNetCore.OutputCaching;
 using Persistence.Repositories.Categories.Extensions;
 using Persistence.Services.Commons;
 using System.Text.Json;
@@ -56,9 +57,10 @@ namespace Persistence.Services.Categories
 
         public async Task<IPaginatedDataResult<CategoryItemDto>> GetAllAsync(int pageIndex = 1, int pageSize = 20)
         {
-            if(pageIndex < 5 && pageSize == 20)
+            string cacheKey = CachePrefix.Categories.CreatePaginationPrefix("GetAllAsync", pageIndex, pageSize);
+            if(pageIndex > 0 && pageIndex <= 5 && (pageSize == 5 || pageSize == 10 || pageSize == 20 || pageSize == 25 || pageSize == 50))
             {
-                string? cacheData = await Cache.GetAsync(CachePrefix.Categories.GetAllWithPagination(pageIndex, pageSize));
+                string? cacheData = await Cache.GetAsync(cacheKey);
                 if (!string.IsNullOrEmpty(cacheData))
                     return JsonSerializer.Deserialize<PaginatedListDto<CategoryItemDto>>(cacheData)!;
             }
@@ -67,8 +69,8 @@ namespace Persistence.Services.Categories
                 .Select(x => Mapper.Map<CategoryItemDto>(x))
                 .ToPaginatedListDtoAsync(pageIndex, pageSize, 200);
 
-            if (pageIndex < 5 && pageSize == 20)
-                await Cache.AddAsync(CachePrefix.Categories.GetAllWithPagination(pageIndex, pageSize), data);
+            if (pageIndex > 0 && pageIndex <= 5 && (pageSize == 5 || pageSize == 10 || pageSize == 20 || pageSize == 25 || pageSize == 50) && data.ItemsCount > 0)
+                await Cache.AddAsync(cacheKey, data);
 
             return data;
         }
@@ -79,7 +81,7 @@ namespace Persistence.Services.Categories
         public async Task<IPaginatedDataResult<CategoryItemDto>> GetAllAsync(CategoryRequestParameter parameter, BasePaginationRequestParameter pagination)
         {
             PaginatedListDto<CategoryItemDto> data = await UnitOfWork.CategoryReadRepository.Table
-                .Filter(parameter)
+                .FilterAllConditions(parameter)
                 .Select(x => Mapper.Map<CategoryItemDto>(x))
                 .ToPaginatedListDtoAsync(pagination);
 
@@ -151,7 +153,7 @@ namespace Persistence.Services.Categories
             {
                 CachePrefix.Categories.Prefix,
                 CachePrefix.Articles.Prefix,
-            }));
+            }, new string[] { OutputCacheTag.CategoryTag }));
         }
     }
 }

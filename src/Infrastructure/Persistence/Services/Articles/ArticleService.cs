@@ -148,7 +148,7 @@ namespace Persistence.Services.Articles
             Publisher.Publish(QueueNames.CacheRemove, ExchangeNames.Cache, new CacheRemovedEvent(new string[]
             {
                 CachePrefix.Articles.Prefix,
-            }));
+            }, [ OutputCacheTag.ArticleTag ] ));
         }
 
         public async Task<IBaseResult> Fav(string articleId, string userId)
@@ -197,7 +197,7 @@ namespace Persistence.Services.Articles
                 .Include(x => x.Category)
                 .Include(x=> x.Writer)
                     .ThenInclude(w=> w!.User)
-                .Filter(articleRequest)
+                .FilterAllConditions(articleRequest)
                 .Select(x => Mapper.Map<ArticleItemDto>(x))
                 .ToPaginatedListDtoAsync(pagination);
 

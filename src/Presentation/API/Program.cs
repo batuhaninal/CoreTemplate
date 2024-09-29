@@ -40,6 +40,8 @@ builder.Services.AddOpenTelemetryExtension(builder.Configuration);
 
 builder.Services.ConfigureCors();
 
+builder.Services.ConfigureOutputCache();
+
 builder.Services.ConfigureApiVersioning();
 
 builder.Services.ConfigureOptions<ConfigureSwaggerGenOptions>();
@@ -90,6 +92,8 @@ app.UseAuthorization();
 app.UseRateLimiter();
 
 app.UseCors("DefaultCorsPolicy");
+
+app.UseOutputCache();
 
 app.MapControllers();
 

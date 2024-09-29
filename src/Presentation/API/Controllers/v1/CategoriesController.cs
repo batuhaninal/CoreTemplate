@@ -1,4 +1,5 @@
 ﻿using Application.Abstractions.Services.Categories;
+using Application.Models.Constants.CachePrefixes;
 using Application.Models.Constants.Options;
 using Application.Models.DTOs.Categories;
 using Application.Models.RequestParameters;
@@ -7,6 +8,7 @@ using Application.Models.RequestParameters.Commons;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.AspNetCore.RateLimiting;
 
 namespace API.Controllers.v1
@@ -31,11 +33,13 @@ namespace API.Controllers.v1
 
         [MapToApiVersion(1)]
         [HttpGet]
+        [OutputCache(PolicyName = "Pagination1m", Tags = [OutputCacheTag.CategoryTag])]
         public async Task<IActionResult> GetAll([FromQuery] PaginationRequestParameter pagination) =>
             CreateResponse(await _categoryService.GetAllAsync(pagination));
 
         [MapToApiVersion(1)]
         [HttpGet]
+        [OutputCache(PolicyName = "Pagination1m", Tags = [OutputCacheTag.CategoryTag])]
         public async Task<IActionResult> GetAllFiltered([FromQuery] CategoryRequestParameter parameter, [FromQuery] PaginationRequestParameter pagination) =>
             CreateResponse(await _categoryService.GetAllAsync(parameter, pagination));
 

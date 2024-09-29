@@ -15,6 +15,7 @@ using Serilog.Formatting.Elasticsearch;
 using Serilog.Core;
 using Serilog.Sinks.Elasticsearch;
 using Asp.Versioning;
+using Application.Abstractions.Commons.Caching;
 
 namespace API.Extensions
 {
@@ -186,6 +187,28 @@ namespace API.Extensions
                     options.GroupNameFormat = "'v'V";
                     options.SubstituteApiVersionInUrl = true;
                 });
+        }
+
+        public static void ConfigureOutputCache(this IServiceCollection services)
+        {
+            services.AddOutputCache(opt =>
+            {
+                opt.AddBasePolicy(builder => builder.Expire(TimeSpan.FromSeconds(30)));
+
+                opt.AddPolicy("Pagination30s", builder =>
+                {
+                    builder.AddPolicy<OutputCacheCustomPolicy>();
+                    builder.SetVaryByQuery("PageIndex", "PageSize");
+                    builder.Expire(TimeSpan.FromSeconds(30));
+                });
+
+                opt.AddPolicy("Pagination1m", builder =>
+                {
+                    builder.AddPolicy<OutputCacheCustomPolicy>();
+                    builder.SetVaryByQuery("PageIndex", "PageSize");
+                    builder.Expire(TimeSpan.FromSeconds(60));
+                });
+            });
         }
     }
 }

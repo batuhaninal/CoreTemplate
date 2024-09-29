@@ -7,7 +7,7 @@ namespace Persistence.Repositories.Users.Extensions
 {
     public static class UserFilterExtensions
     {
-        public static IQueryable<User> Filter(this IQueryable<User> source, UserRequestParameter parameter)
+        public static IQueryable<User> FilterAllConditions(this IQueryable<User> source, UserRequestParameter parameter)
         {
             var predicate = PredicateBuilderHelper.True<User>();
 
@@ -25,6 +25,22 @@ namespace Persistence.Repositories.Users.Extensions
             source = source.Search(parameter.Condition);
 
             return source.OrderQuery(parameter.OrderBy);
+        }
+
+        public static IQueryable<User> Filter(this IQueryable<User> source, UserRequestParameter parameter)
+        {
+            var predicate = PredicateBuilderHelper.True<User>();
+
+            if (parameter.IsActive is not null)
+                predicate = predicate.And(x => x.IsActive == parameter.IsActive);
+
+            if (parameter.MinDate is not null)
+                predicate = predicate.And(x => x.CreatedDate >= parameter.MinDate);
+
+            if (parameter.MaxDate is not null)
+                predicate = predicate.And(x => x.CreatedDate <= parameter.MaxDate);
+
+            return source.Where(predicate);
         }
 
         public static IQueryable<User> Search(this IQueryable<User> source, string? condition)

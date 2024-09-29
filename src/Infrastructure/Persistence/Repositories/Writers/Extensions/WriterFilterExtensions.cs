@@ -7,7 +7,7 @@ namespace Persistence.Repositories.Writers.Extensions
 {
     public static class WriterFilterExtensions
     {
-        public static IQueryable<Writer> Filter(this IQueryable<Writer> source, WriterRequestParameter parameter)
+        public static IQueryable<Writer> FilterAllConditions(this IQueryable<Writer> source, WriterRequestParameter parameter)
         {
             var predicate = PredicateBuilderHelper.True<Writer>();
 
@@ -28,6 +28,25 @@ namespace Persistence.Repositories.Writers.Extensions
             source = source.Search(parameter.Condition);
 
             return source.OrderQuery(parameter.OrderBy);
+        }
+
+        public static IQueryable<Writer> Filter(this IQueryable<Writer> source, WriterRequestParameter parameter)
+        {
+            var predicate = PredicateBuilderHelper.True<Writer>();
+
+            if (parameter.IsActive is not null)
+                predicate = predicate.And(x => x.IsActive == parameter.IsActive);
+
+            if (parameter.MinDate is not null)
+                predicate = predicate.And(x => x.CreatedDate >= parameter.MinDate);
+
+            if (parameter.MaxDate is not null)
+                predicate = predicate.And(x => x.CreatedDate <= parameter.MaxDate);
+
+            if (parameter.Level.HasValue && parameter.Level.Value >= 0 && parameter.Level.Value <= 4)
+                predicate = predicate.And(x => x.Level == parameter.Level.Value);
+
+            return source.Where(predicate);
         }
 
         public static IQueryable<Writer> Search(this IQueryable<Writer> source, string? condition)

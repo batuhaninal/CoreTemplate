@@ -7,7 +7,7 @@ namespace Persistence.Repositories.Articles.Extensions
 {
     public static class ArticleFilterExtensions
     {
-        public static IQueryable<Article> Filter(this IQueryable<Article> source, ArticleRequestParameter parameter)
+        public static IQueryable<Article> FilterAllConditions(this IQueryable<Article> source, ArticleRequestParameter parameter)
         {
             var predicate = PredicateBuilderHelper.True<Article>();
 
@@ -25,6 +25,22 @@ namespace Persistence.Repositories.Articles.Extensions
             source = source.Search(parameter.Condition);
 
             return source.OrderQuery(parameter.OrderBy);
+        }
+
+        public static IQueryable<Article> Filter(this IQueryable<Article> source, ArticleRequestParameter parameter)
+        {
+            var predicate = PredicateBuilderHelper.True<Article>();
+
+            if (parameter.IsActive is not null)
+                predicate = predicate.And(x => x.IsActive == parameter.IsActive);
+
+            if (parameter.MinDate is not null)
+                predicate = predicate.And(x => x.CreatedDate >= parameter.MinDate);
+
+            if (parameter.MaxDate is not null)
+                predicate = predicate.And(x => x.CreatedDate <= parameter.MaxDate);
+
+            return source.Where(predicate);
         }
 
         public static IQueryable<Article> Search(this IQueryable<Article> source, string? condition)

@@ -7,7 +7,7 @@ namespace Persistence.Repositories.Categories.Extensions
 {
     public static class CategoryFilterExtensions
     {
-        public static IQueryable<Category> Filter(this IQueryable<Category> source, CategoryRequestParameter parameter)
+        public static IQueryable<Category> FilterAllConditions(this IQueryable<Category> source, CategoryRequestParameter parameter)
         {
             var predicate = PredicateBuilderHelper.True<Category>();
 
@@ -25,6 +25,22 @@ namespace Persistence.Repositories.Categories.Extensions
             source = source.Search(parameter.Condition);
 
             return source.OrderQuery(parameter.OrderBy);
+        }
+
+        public static IQueryable<Category> Filter(this IQueryable<Category> source, CategoryRequestParameter parameter)
+        {
+            var predicate = PredicateBuilderHelper.True<Category>();
+
+            if (parameter.IsActive is not null)
+                predicate = predicate.And(x => x.IsActive == parameter.IsActive);
+
+            if (parameter.MinDate is not null)
+                predicate = predicate.And(x => x.CreatedDate >= parameter.MinDate);
+
+            if (parameter.MaxDate is not null)
+                predicate = predicate.And(x => x.CreatedDate <= parameter.MaxDate);
+
+            return source.Where(predicate);
         }
 
         public static IQueryable<Category> Search(this IQueryable<Category> source, string? condition)

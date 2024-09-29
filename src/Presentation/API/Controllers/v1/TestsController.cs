@@ -85,16 +85,15 @@ namespace API.Controllers.v1
             return Ok(_articleService.Test8(articleId));
         }
 
-        [MapToApiVersion(1)]
-        [HttpPost]
-        public async Task<IActionResult> UploadFile([FromForm] IFormFile formFile)
-        {
-            var result = await _fileService.UploadAsync(new Application.Models.DTOs.Commons.Files.CreateFileDto(){
-                Path = "test",
-                FormFiles = new FormFileCollection() { formFile }
-            });
-            return Ok(result);
-        }
-
+        //[MapToApiVersion(1)]
+        //[HttpPost]
+        //public async Task<IActionResult> UploadFile([FromForm] IFormFile formFile)
+        //{
+        //    var result = await _fileService.UploadAsync(new Application.Models.DTOs.Commons.Files.CreateFileDto(){
+        //        Path = "test",
+        //        FormFiles = new FormFileCollection() { formFile }
+        //    });
+        //    return Ok(result);
+        //}
     }
 }

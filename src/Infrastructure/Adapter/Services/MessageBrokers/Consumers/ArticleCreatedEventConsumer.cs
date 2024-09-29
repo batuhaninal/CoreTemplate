@@ -1,9 +1,6 @@
-﻿using Adapter.Services.Caching;
-using Application.Abstractions.Commons.Caching;
-using Application.Abstractions.Commons.MessageBrokers;
+﻿using Application.Abstractions.Commons.MessageBrokers;
 using Application.Abstractions.Repositories.Commons;
 using Application.Models.Constants.MessageBrokers;
-using Application.Models.MessageBrokers.Events;
 using Application.Models.MessageBrokers.Events.Articles;
 using Domain.Entities;
 using Microsoft.Extensions.DependencyInjection;
@@ -71,6 +68,8 @@ namespace Adapter.Services.MessageBrokers.Consumers
             catch (Exception ex)
             {
                 _logger.LogError("ArticleCreatedEventConsumer error: "+ex.Message);
+                // dead-letter-queue DLQ eklenmeli
+                _channel.BasicNack(@event.DeliveryTag, false, false);
             }
         }
 

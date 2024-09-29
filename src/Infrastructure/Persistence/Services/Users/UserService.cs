@@ -36,7 +36,7 @@ namespace Persistence.Services.Users
 
             var users = await UnitOfWork.UserReadRepository.Table
                 .AsNoTracking()
-                .Filter(parameter)
+                .FilterAllConditions(parameter)
                 .Select(x => Mapper.Map<UserItemDto>(x)!)
                 .ToPaginatedListDtoAsync(pagination);
 

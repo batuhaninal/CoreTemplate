@@ -16,7 +16,6 @@ using Application.Models.RequestParameters.Writers;
 using Application.Utilities.Pagination;
 using AutoMapper;
 using Domain.Entities;
-using Elastic.Clients.Elasticsearch;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Repositories.Writers.Extensions;
 using Persistence.Services.Commons;
@@ -78,7 +77,7 @@ namespace Persistence.Services.Writers
         {
             PaginatedListDto<WriterItemDto> data = await UnitOfWork.WriterReadRepository.Table
                 .Include(x=> x.User)
-                .Filter(parameter)
+                .FilterAllConditions(parameter)
                 .Select(x => Mapper.Map<WriterItemDto>(x))
                 .ToPaginatedListDtoAsync(pagination);
 
@@ -128,7 +127,7 @@ namespace Persistence.Services.Writers
             {
                 CachePrefix.Writer.Prefix,
                 CachePrefix.Articles.Prefix,
-            }));
+            }, [ OutputCacheTag.WriterTag ]));
         }
     }
 }

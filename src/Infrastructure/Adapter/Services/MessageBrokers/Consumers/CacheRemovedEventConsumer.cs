@@ -2,7 +2,9 @@
 using Application.Abstractions.Commons.MessageBrokers;
 using Application.Models.Constants.MessageBrokers;
 using Application.Models.MessageBrokers.Events;
+using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text.Json;
@@ -15,11 +17,15 @@ namespace Adapter.Services.MessageBrokers.Consumers
         private readonly ICacheService _cacheService;
         private IModel _channel;
         private IConnection _connection;
+        private readonly ILogger<CacheRemovedEventConsumer> _logger;
+        private readonly IOutputCacheStore _outputCacheStore;
 
-        public CacheRemovedEventConsumer(IRabbitMQService rabbitmqService, ICacheService cacheService)
+        public CacheRemovedEventConsumer(IRabbitMQService rabbitmqService, ICacheService cacheService, ILogger<CacheRemovedEventConsumer> logger, IOutputCacheStore outputCacheStore)
         {
             _rabbitmqService = rabbitmqService;
             _cacheService = cacheService;
+            _logger = logger;
+            _outputCacheStore = outputCacheStore;
         }
 
         public override Task StartAsync(CancellationToken cancellationToken)
@@ -41,26 +47,40 @@ namespace Adapter.Services.MessageBrokers.Consumers
 
             consumer.Received += async (model, @event) =>
             {
-                var body = @event.Body.ToArray();
-                var cacheRemovedEvent = JsonSerializer.Deserialize<CacheRemovedEvent>(body);
-
-                foreach (var item in cacheRemovedEvent.CachePrefixes)
+                try
                 {
-                    Console.WriteLine(item);
-                }
+                    var body = @event.Body.ToArray();
+                    var cacheRemovedEvent = JsonSerializer.Deserialize<CacheRemovedEvent>(body);
 
-                if (cacheRemovedEvent != null)
-                {
-                    if (cacheRemovedEvent.CachePrefixes is not null && cacheRemovedEvent.CachePrefixes.Any())
+                    if (cacheRemovedEvent != null)
                     {
-                        foreach (string cachePrefix in cacheRemovedEvent.CachePrefixes)
+                        if (cacheRemovedEvent.OutputCacheTags is not null && cacheRemovedEvent.OutputCacheTags.Any())
                         {
-                            await _cacheService.DeleteAllWithPrefixAsync(cachePrefix);
+                            foreach (string octag in cacheRemovedEvent.OutputCacheTags)
+                            {
+                                _logger.LogInformation($"{octag}");
+                                await _outputCacheStore.EvictByTagAsync(octag, stoppingToken);
+                            }
+                        }
+
+                        if (cacheRemovedEvent.CachePrefixes is not null && cacheRemovedEvent.CachePrefixes.Any())
+                        {
+                            foreach (string cachePrefix in cacheRemovedEvent.CachePrefixes)
+                            {
+                                _logger.LogInformation($"{cachePrefix}");
+                                await _cacheService.DeleteAllWithPrefixAsync(cachePrefix);
+                            }
                         }
                     }
-                }
 
-                _channel.BasicAck(@event.DeliveryTag, false);
+                    _channel.BasicAck(@event.DeliveryTag, false);   
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError($"Service: {nameof(CacheRemovedEventConsumer)}, Error: {ex.Message}, InnerEx: {ex.InnerException}");
+                    // dead-letter-queue DLQ eklenmeli
+                    _channel.BasicNack(@event.DeliveryTag, false, false);
+                }
             };
 
             _channel.BasicConsume(QueueNames.CacheRemove, false, consumer);
