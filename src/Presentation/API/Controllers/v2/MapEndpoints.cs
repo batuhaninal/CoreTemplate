@@ -1,4 +1,5 @@
 ﻿using API.Endpoints.v2;
+using Application.Abstractions.Commons.Caching;
 
 namespace API.Controllers.v2
 {
@@ -19,7 +20,13 @@ namespace API.Controllers.v2
 
             articleGroup.MapGet("getall", ArticleEndpoints.GetAll)
                 .RequireRateLimiting("Api")
-                .MapToApiVersion(2);
+                .MapToApiVersion(2)
+                .CacheOutput(builder =>
+                {
+                    builder.AddPolicy<CacheOutputCustomPolicy>();
+                    builder.SetVaryByQuery("PageIndex", "PageSize");
+                    builder.Expire(TimeSpan.FromSeconds(60));
+                });
 
             articleGroup.MapGet("getbyid/{articleId}", ArticleEndpoints.GetById)
                 .RequireRateLimiting("Api")
@@ -27,7 +34,13 @@ namespace API.Controllers.v2
 
             articleGroup.MapGet("getallfiltered", ArticleEndpoints.GetAllFiltered)
                 .RequireRateLimiting("Test")
-                .MapToApiVersion(2);
+                .MapToApiVersion(2)
+                .CacheOutput(builder =>
+                {
+                    builder.AddPolicy<CacheOutputCustomPolicy>();
+                    builder.SetVaryByQuery("PageIndex", "PageSize");
+                    builder.Expire(TimeSpan.FromSeconds(60));
+                });
 
             articleGroup.MapPost("create", ArticleEndpoints.Create)
                 .RequireRateLimiting("Api")
@@ -70,11 +83,23 @@ namespace API.Controllers.v2
 
             group.MapGet("getall", CategoryEndpoints.GetAll)
                 .RequireRateLimiting("Api")
-                .MapToApiVersion(2);
+                .MapToApiVersion(2)
+                .CacheOutput(builder =>
+                {
+                    builder.AddPolicy<CacheOutputCustomPolicy>();
+                    builder.SetVaryByQuery("PageIndex", "PageSize");
+                    builder.Expire(TimeSpan.FromSeconds(60));
+                });
 
             group.MapGet("getallfiltered", CategoryEndpoints.GetAllFiltered)
                 .RequireRateLimiting("Api")
-                .MapToApiVersion(2);
+                .MapToApiVersion(2)
+                .CacheOutput(builder =>
+                {
+                    builder.AddPolicy<CacheOutputCustomPolicy>();
+                    builder.SetVaryByQuery("PageIndex", "PageSize");
+                    builder.Expire(TimeSpan.FromSeconds(60));
+                });
 
             group.MapGet("getbyid/{categoryId}", CategoryEndpoints.GetById)
                 .RequireRateLimiting("Api")
@@ -103,12 +128,24 @@ namespace API.Controllers.v2
             group.MapGet("getall", UserEndpoints.GetAll)
                 .RequireRateLimiting("Api")
                 .RequireAuthorization()
-                .MapToApiVersion(2);
+                .MapToApiVersion(2)
+                .CacheOutput(builder =>
+                {
+                    builder.AddPolicy<CacheOutputCustomPolicy>();
+                    builder.SetVaryByQuery("PageIndex", "PageSize");
+                    builder.Expire(TimeSpan.FromSeconds(60));
+                });
 
             group.MapGet("getallfiltered", UserEndpoints.GetAllFiltered)
                 .RequireRateLimiting("Api")
                 .RequireAuthorization()
-                .MapToApiVersion(2);
+                .MapToApiVersion(2)
+                .CacheOutput(builder =>
+                {
+                    builder.AddPolicy<CacheOutputCustomPolicy>();
+                    builder.SetVaryByQuery("PageIndex", "PageSize");
+                    builder.Expire(TimeSpan.FromSeconds(60));
+                });
         }
 
         public static void MapWriterEndpoints(this IEndpointRouteBuilder app)
@@ -117,11 +154,23 @@ namespace API.Controllers.v2
 
             group.MapGet("getall", WriterEndpoints.GetAll)
                 .RequireRateLimiting("Api")
-                .MapToApiVersion(2);
+                .MapToApiVersion(2)
+                .CacheOutput(builder =>
+                {
+                    builder.AddPolicy<CacheOutputCustomPolicy>();
+                    builder.SetVaryByQuery("PageIndex", "PageSize");
+                    builder.Expire(TimeSpan.FromSeconds(60));
+                });
 
             group.MapGet("getallfiltered", WriterEndpoints.GetAllFiltered)
                 .RequireRateLimiting("Api")
-                .MapToApiVersion(2);
+                .MapToApiVersion(2)
+                .CacheOutput(builder =>
+                {
+                    builder.AddPolicy<CacheOutputCustomPolicy>();
+                    builder.SetVaryByQuery("PageIndex", "PageSize");
+                    builder.Expire(TimeSpan.FromSeconds(60));
+                });
 
             group.MapGet("getbyid/{writerId}", WriterEndpoints.GetById)
                 .RequireRateLimiting("Api")

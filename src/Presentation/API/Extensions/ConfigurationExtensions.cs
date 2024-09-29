@@ -197,14 +197,14 @@ namespace API.Extensions
 
                 opt.AddPolicy("Pagination30s", builder =>
                 {
-                    builder.AddPolicy<OutputCacheCustomPolicy>();
+                    builder.AddPolicy<CacheOutputCustomPolicy>();
                     builder.SetVaryByQuery("PageIndex", "PageSize");
                     builder.Expire(TimeSpan.FromSeconds(30));
                 });
 
                 opt.AddPolicy("Pagination1m", builder =>
                 {
-                    builder.AddPolicy<OutputCacheCustomPolicy>();
+                    builder.AddPolicy<CacheOutputCustomPolicy>();
                     builder.SetVaryByQuery("PageIndex", "PageSize");
                     builder.Expire(TimeSpan.FromSeconds(60));
                 });

@@ -4,11 +4,11 @@ using Microsoft.Extensions.Primitives;
 
 namespace Application.Abstractions.Commons.Caching
 {
-    public sealed class OutputCacheCustomPolicy : IOutputCachePolicy
+    public sealed class CacheOutputCustomPolicy : IOutputCachePolicy
     {
-        public static readonly OutputCacheCustomPolicy Instance = new OutputCacheCustomPolicy();
+        public static readonly CacheOutputCustomPolicy Instance = new CacheOutputCustomPolicy();
 
-        public OutputCacheCustomPolicy()
+        public CacheOutputCustomPolicy()
         {
             
         }
