@@ -2,9 +2,9 @@
 {
     public record UpdateArticleDto
     {
-        public string ArticleId { get; init; } = null!;
+        public Guid ArticleId { get; init; }
         public string? Title { get; init; }
         public string? Content { get; init; } = null!;
-        public string CategoryId { get; init; } = null!;
+        public Guid CategoryId { get; init; }
     }
 }

@@ -20,7 +20,7 @@ namespace API.Endpoints.v2
             return Results.Ok(result);
         }
 
-        public static async Task<IResult> GetById([FromRoute(Name = "writerid")] string writerId, IWriterService writerService)
+        public static async Task<IResult> GetById([FromRoute(Name = "writerid")] Guid writerId, IWriterService writerService)
         {
             var result = await writerService.GetByIdAsync(writerId);
 

@@ -58,7 +58,7 @@ namespace Persistence.Services.Articles
             return new SuccessResultDto(201);
         }
 
-        public async Task<IBaseResult> RemoveAsync(string articleId)
+        public async Task<IBaseResult> RemoveAsync(Guid articleId)
         {
             await _businessRule.CheckArticleExist(articleId);
 
@@ -69,7 +69,7 @@ namespace Persistence.Services.Articles
             Publisher.Publish(QueueNames.RemoveArticleElastic, ExchangeNames.Elastic, new ArticleRemovedEvent()
             {
                 IndexName = ElasticIndexes.ArticleIndex,
-                ArticleId = articleId
+                ArticleId = articleId.ToString()
             });
 
             RemoveCachePrefixes();
@@ -103,13 +103,13 @@ namespace Persistence.Services.Articles
             return data;
         }
 
-        public async Task<IDataResult<ArticleInfoDto>> GetByIdAsync(string articleId)
+        public async Task<IDataResult<ArticleInfoDto>> GetByIdAsync(Guid articleId)
         {
             await _businessRule.CheckArticleExist(articleId);
 
             ArticleInfoDto article = (await UnitOfWork.ArticleReadRepository
                 .Table
-                .Where(x => x.Id == Guid.Parse(articleId))
+                .Where(x => x.Id == articleId)
                 .Include(x => x.Category)
                 .Include(x=> x.Writer)
                     .ThenInclude(w=> w.User)
@@ -119,7 +119,7 @@ namespace Persistence.Services.Articles
             return new SuccessDataResultDto<ArticleInfoDto>(article);
         }
 
-        public async Task<IBaseResult> UpdateAsync(string articleId, UpdateArticleDto updateArticleDto)
+        public async Task<IBaseResult> UpdateAsync(Guid articleId, UpdateArticleDto updateArticleDto)
         {
             if (!updateArticleDto.ArticleId.Equals(articleId))
                 throw new BusinessException("Article Id degerleri eslesmemektedir!");
@@ -135,7 +135,7 @@ namespace Persistence.Services.Articles
             Publisher.Publish(QueueNames.UpdateArticleElastic, ExchangeNames.Elastic, new ArticleUpdatedEvent()
             {
                 IndexName = ElasticIndexes.ArticleIndex,
-                ArticleId = articleId,
+                ArticleId = articleId.ToString(),
                 Model = JsonSerializer.Serialize(oldArticle)
             });
 
@@ -155,10 +155,10 @@ namespace Persistence.Services.Articles
             }, [ OutputCacheTag.ArticleTag ] ));
         }
 
-        public async Task<IBaseResult> Fav(string articleId, string userId)
+        public async Task<IBaseResult> Fav(Guid articleId, string userId)
         {
             await _businessRule.CheckArticleAlreadyFavorited(articleId, userId);
-            Publisher.Publish(QueueNames.ArticleLike, ExchangeNames.Article, new ArticleFavoritedEvent() { ArticleId = Guid.Parse(articleId), UserId = Guid.Parse(userId) });
+            Publisher.Publish(QueueNames.ArticleLike, ExchangeNames.Article, new ArticleFavoritedEvent() { ArticleId = articleId, UserId = Guid.Parse(userId) });
             return new SuccessResultDto(204);
         }
 
@@ -209,38 +209,6 @@ namespace Persistence.Services.Articles
 
             return data;
         }
-
-        public async Task<Article?> Test1(string articleId) =>
-            await UnitOfWork.ArticleReadRepository.GetArticleByIdWithNoTrackingAsync(articleId);
-
-        public async Task<Article?> Test2(string articleId) =>
-            await UnitOfWork.ArticleReadRepository.Table
-                .AsNoTracking()
-                .FirstOrDefaultAsync(x=> x.Id == Guid.Parse(articleId));
-
-        public async Task<Article?> Test3(string articleId) =>
-            await UnitOfWork.ArticleReadRepository.GetArticleByIdWithTrackingAsync(articleId);
-
-        public async Task<Article?> Test4(string articleId) =>
-            await UnitOfWork.ArticleReadRepository.Table
-            .FirstOrDefaultAsync(x=> x.Id == Guid.Parse(articleId));
-
-        public Article? Test5(string articleId) =>
-            UnitOfWork.ArticleReadRepository
-                .GetArticleByIdWithNoTracking(articleId);
-
-        public Article? Test6(string articleId) =>
-            UnitOfWork.ArticleReadRepository.Table
-                .AsNoTracking()
-                .FirstOrDefault(x=> x.Id == Guid.Parse(articleId));
-
-        public Article? Test7(string articleId) => 
-            UnitOfWork.ArticleReadRepository
-                .GetArticleByIdWithTracking(articleId);
-
-        public Article? Test8(string articleId) =>
-            UnitOfWork.ArticleReadRepository.Table
-            .FirstOrDefault(x=> x.Id == Guid.Parse(articleId));
 
         public async Task<IPaginatedDataResult<SearchArticleDto>> SearchAsync(string condition, BasePaginationRequestParameter pagination)
         {

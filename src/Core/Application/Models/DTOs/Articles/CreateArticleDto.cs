@@ -4,7 +4,7 @@
     {
         public string Title { get; init; } = null!;
         public string Content { get; init; } = null!;
-        public string CategoryId { get; init; } = null!;
-        public string WriterId { get; init; } = null!;
+        public Guid CategoryId { get; init; }
+        public Guid WriterId { get; init; }
     }
 }

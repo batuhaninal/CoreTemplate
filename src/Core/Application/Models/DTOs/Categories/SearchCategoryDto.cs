@@ -2,7 +2,7 @@
 {
     public record SearchCategoryDto
     {
-        public Guid CategoryId { get; init; }
+        public string CategoryId { get; init; } = null!;
         public string Title { get; init; } = null!;
     }
 }

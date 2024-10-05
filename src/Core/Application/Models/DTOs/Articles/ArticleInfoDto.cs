@@ -5,7 +5,7 @@ namespace Application.Models.DTOs.Articles
 {
     public record ArticleInfoDto
     {
-        public string ArticleId { get; init; } = null!;
+        public Guid ArticleId { get; init; }
         public string Title { get; init; } = null!;
         public string Content { get; init; } = null!;
         public int LikeCount { get; init; }

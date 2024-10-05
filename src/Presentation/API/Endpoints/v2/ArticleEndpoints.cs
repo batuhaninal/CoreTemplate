@@ -15,7 +15,7 @@ namespace API.Endpoints.v2
             return Results.Ok(data);
         }
 
-        public static async Task<IResult> GetById([FromRoute] string articleId, [FromServices] IArticleService articleService)
+        public static async Task<IResult> GetById([FromRoute] Guid articleId, [FromServices] IArticleService articleService)
         {
             var data = await articleService.GetByIdAsync(articleId);
 
@@ -28,13 +28,13 @@ namespace API.Endpoints.v2
             return Results.Ok(data);
         }
 
-        public static async Task<IResult> Update([FromRoute] string articleId, [FromBody] UpdateArticleDto updateArticleDto, [FromServices] IArticleService articleService)
+        public static async Task<IResult> Update([FromRoute] Guid articleId, [FromBody] UpdateArticleDto updateArticleDto, [FromServices] IArticleService articleService)
         {
             await articleService.UpdateAsync(articleId, updateArticleDto);
             return Results.NoContent();
         }
 
-        public static async Task<IResult> Remove([FromRoute] string articleId, [FromServices] IArticleService articleService)
+        public static async Task<IResult> Remove([FromRoute] Guid articleId, [FromServices] IArticleService articleService)
         {
             await articleService.RemoveAsync(articleId);
 

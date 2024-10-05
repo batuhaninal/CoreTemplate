@@ -10,12 +10,12 @@ namespace Application.Models.DTOs.Users
         }
         public UserItemDto(Guid userId, string email, string fullName)
         {
-            UserId = userId.ToString();
+            UserId = userId;
             Email = email;
             FullName = fullName;
         }
 
-        public string UserId { get; set; } = null!;
+        public Guid UserId { get; set; }
         public string FullName { get; set; } = null!;
         public string Email { get; set; } = null!;
 
@@ -23,7 +23,7 @@ namespace Application.Models.DTOs.Users
         {
             return new UserItemDto
             {
-                UserId = x.Id.ToString(),
+                UserId = x.Id,
                 Email = x.Email,
                 FullName = x.FirstName + " " + x.LastName,
             };

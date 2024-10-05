@@ -10,12 +10,8 @@ namespace Application.Utilities.FluentValidations.Products
         public UpdateArticleDtoValidator()
         {
             RuleFor(x => x.ArticleId)
-                .NotEmpty()
-                    .WithMessage(CommonMessage.Validation.NotNull("Article Id"))
                 .NotNull()
-                    .WithMessage(CommonMessage.Validation.NotNull("Article Id"))
-                .MaximumLength(50)
-                    .WithMessage(CommonMessage.Validation.MaxLength("Article Id", 50));
+                    .WithMessage(CommonMessage.Validation.NotNull());
 
             RuleFor(x => x.Title)
                 .NotEmpty()
@@ -41,12 +37,8 @@ namespace Application.Utilities.FluentValidations.Products
 
 
             RuleFor(x => x.CategoryId)
-                .NotEmpty()
-                    .WithMessage(CommonMessage.Validation.NotNull("Category Id"))
                 .NotNull()
-                    .WithMessage(CommonMessage.Validation.NotNull("Category Id"))
-                .MaximumLength(50)
-                    .WithMessage(CommonMessage.Validation.MaxLength("Category Id", 50));
+                    .WithMessage(CommonMessage.Validation.NotNull("Category Id"));
 
 
             // Ornek nullable

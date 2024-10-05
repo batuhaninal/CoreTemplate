@@ -19,18 +19,18 @@ namespace Persistence.Services.Writers
                 throw new DuplicateException("Nick", nickName);
         }
 
-        public async Task CheckWriterExistById(string writerId)
+        public async Task CheckWriterExistById(Guid writerId)
         {
-            bool result = await _writerReadRepository.AnyAsync(x=> x.Id == Guid.Parse(writerId));
+            bool result = await _writerReadRepository.AnyAsync(x=> x.Id == writerId);
             if (!result)
                 throw new NotFoundException("Writer");
         }
 
-        public async Task CheckUserIdAvailable(string userId)
+        public async Task CheckUserIdAvailable(Guid userId)
         {
-            bool result = await _writerReadRepository.AnyAsync(x=> x.UserId == Guid.Parse(userId));
+            bool result = await _writerReadRepository.AnyAsync(x=> x.UserId == userId);
             if(result)
-                throw new DuplicateException("User Id", userId);
+                throw new DuplicateException("User Id", userId.ToString());
         }
     }
 }

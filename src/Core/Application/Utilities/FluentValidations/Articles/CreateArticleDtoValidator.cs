@@ -32,12 +32,8 @@ namespace Application.Utilities.FluentValidations.Articles
                     .WithMessage(CommonMessage.Validation.MaxLength("Content", 5000));
 
             RuleFor(x => x.CategoryId)
-                .NotEmpty()
-                    .WithMessage(CommonMessage.Validation.NotNull("Category Id"))
                 .NotNull()
-                    .WithMessage(CommonMessage.Validation.NotNull("Category Id"))
-                .MaximumLength(50)
-                    .WithMessage(CommonMessage.Validation.MaxLength("Category Id", 50));
+                    .WithMessage(CommonMessage.Validation.NotNull());
         }
     }
 }

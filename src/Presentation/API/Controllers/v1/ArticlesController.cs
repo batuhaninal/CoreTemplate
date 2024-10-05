@@ -48,7 +48,7 @@ namespace API.Controllers.v1
 
         [MapToApiVersion(1)]
         [HttpGet("{articleid}")]
-        public async Task<IActionResult> GetById([FromRoute(Name = "articleid")] string articleId) =>
+        public async Task<IActionResult> GetById([FromRoute(Name = "articleid")] Guid articleId) =>
             CreateResponse(await _articleService.GetByIdAsync(articleId));
 
         [MapToApiVersion(1)]
@@ -60,13 +60,13 @@ namespace API.Controllers.v1
         [MapToApiVersion(1)]
         [HttpPut("{articleid}")]
         [Authorize(Roles = "admin")]
-        public async Task<IActionResult> Update([FromRoute(Name = "articleid")] string articleId, [FromBody] UpdateArticleDto updateArticleDto) =>
+        public async Task<IActionResult> Update([FromRoute(Name = "articleid")] Guid articleId, [FromBody] UpdateArticleDto updateArticleDto) =>
             CreateResponse(await _articleService.UpdateAsync(articleId, updateArticleDto));
 
         [MapToApiVersion(1)]
         [HttpDelete("{articleid}")]
         [Authorize(Roles = "admin")]
-        public async Task<IActionResult> Remove([FromRoute(Name = "articleid")] string articleId) =>
+        public async Task<IActionResult> Remove([FromRoute(Name = "articleid")] Guid articleId) =>
             CreateResponse(await _articleService.RemoveAsync(articleId));
     }
 }

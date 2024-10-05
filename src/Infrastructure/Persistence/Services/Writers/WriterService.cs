@@ -84,20 +84,20 @@ namespace Persistence.Services.Writers
             return data!;
         }
 
-        public async Task<IDataResult<WriterInfoDto>> GetByIdAsync(string writerId)
+        public async Task<IDataResult<WriterInfoDto>> GetByIdAsync(Guid writerId)
         {
             await _writerBusinessRules.CheckWriterExistById(writerId);
 
             WriterInfoDto writer = (await UnitOfWork.WriterReadRepository.Table
                 .Include(x=> x.User)
-                .Where(x => x.Id == Guid.Parse(writerId))
+                .Where(x => x.Id == writerId)
                 .Select(x => Mapper.Map<WriterInfoDto>(x))
                 .FirstOrDefaultAsync())!;
 
             return new SuccessDataResultDto<WriterInfoDto>(writer);
         }
 
-        public async Task<IBaseResult> RemoveAsync(string writerId)
+        public async Task<IBaseResult> RemoveAsync(Guid writerId)
         {
             await _writerBusinessRules.CheckWriterExistById(writerId);
 
@@ -106,7 +106,7 @@ namespace Persistence.Services.Writers
             Publisher.Publish(QueueNames.RemoveWriterElastic, ExchangeNames.Elastic, new WriterRemovedEvent()
             {
                 IndexName = ElasticIndexes.WriterIndex,
-                WriterId = writerId
+                WriterId = writerId.ToString()
             });
 
             RemoveCachePrefixes();
