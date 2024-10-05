@@ -97,19 +97,19 @@ app.UseOutputCache();
 
 app.MapControllers();
 
-ApiVersionSet v2Set = app.NewApiVersionSet()
-                .HasApiVersion(new ApiVersion(2))
-                .ReportApiVersions()
-                .Build();
+//ApiVersionSet v2Set = app.NewApiVersionSet()
+//                .HasApiVersion(new ApiVersion(2))
+//                .ReportApiVersions()
+//                .Build();
 
-var group = app.MapGroup("api/v{v:apiVersion}")
-    .RequireCors("DefaultCorsPolicy")
-    .WithApiVersionSet(v2Set);
+//var group = app.MapGroup("api/v{v:apiVersion}")
+//    .RequireCors("DefaultCorsPolicy")
+//    .WithApiVersionSet(v2Set);
 
-group.MapArticleEndpoints();
-group.MapAuthEndpoints();
-group.MapCategoryEndpoints();
-group.MapUserEndpoints();
-group.MapWriterEndpoints();
+//group.MapArticleEndpoints();
+//group.MapAuthEndpoints();
+//group.MapCategoryEndpoints();
+//group.MapUserEndpoints();
+//group.MapWriterEndpoints();
 
 app.Run();

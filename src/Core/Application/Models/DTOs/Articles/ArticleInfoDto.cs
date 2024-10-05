@@ -10,7 +10,7 @@ namespace Application.Models.DTOs.Articles
         public string Content { get; init; } = null!;
         public int LikeCount { get; init; }
         public int FavCount { get; init; }
-        public CategoryInfoDto Category { get; init; } = null!;
+        public CategoryToolDto Category { get; init; } = null!;
         public WriterInfoDto Writer { get; init; } = null!;
         public DateTime CreatedDate { get; init; }
     }

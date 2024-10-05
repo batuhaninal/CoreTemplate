@@ -60,7 +60,9 @@ namespace Persistence.Services.Categories
         public async Task<IPaginatedDataResult<CategoryItemDto>> GetAllAsync(int pageIndex = 1, int pageSize = 20)
         {
             string cacheKey = CachePrefix.Categories.CreatePaginationPrefix("GetAllAsync", pageIndex, pageSize);
-            if (pageIndex > 0 && pageIndex <= 5 && (pageSize == 5 || pageSize == 10 || pageSize == 20 || pageSize == 25 || pageSize == 50))
+            bool willCache = CacheHelpers.WillCache(pageIndex, pageSize);
+
+            if (willCache)
             {
                 string? cacheData = await Cache.GetAsync(cacheKey);
                 if (!string.IsNullOrEmpty(cacheData))
@@ -75,7 +77,7 @@ namespace Persistence.Services.Categories
                 .ProjectTo<CategoryItemDto>(Mapper.ConfigurationProvider)
                 .ToPaginatedListDtoAsync(pageIndex, pageSize, 200);
 
-            if (pageIndex > 0 && pageIndex <= 5 && (pageSize == 5 || pageSize == 10 || pageSize == 20 || pageSize == 25 || pageSize == 50) && data.ItemsCount > 0)
+            if (willCache && data.ItemsCount > 0)
                 await Cache.AddAsync(cacheKey, data);
 
             return data;
@@ -154,70 +156,11 @@ namespace Persistence.Services.Categories
                 //.Include(x => x.Childrens.Where(c => c.IsActive))
                 .FirstOrDefaultAsync();
 
-            await GetChildrenRecursiveAsync(category!);
-            //await GetChildrenRecursiveAsync(category!, true);
+            await UnitOfWork.CategoryReadRepository.GetChildrenRecursiveAsync(category!);
+            //await UnitOfWork.CategoryReadRepository.GetChildrenRecursiveAsync(category!, true);
 
             return new SuccessDataResultDto<CategoryItemDto>(Mapper.Map<CategoryItemDto>(category)!, "Urun bulundu");
         }
-
-        private async Task GetChildrenRecursiveAsync(Category category)
-        {
-            if (category.Childrens != null && category.Childrens.Any())
-            {
-                foreach (var child in category.Childrens)
-                {
-                    // Alt children'ları veritabanından çekmek için sorgu atıyoruz
-                    var loadedChild = await UnitOfWork.CategoryReadRepository.Table
-                        .AsNoTracking()
-                        .Where(c => c.Id == child.Id)
-                        .Include(c => c.Childrens) // Alt children'ları yüklüyoruz
-                        .FirstOrDefaultAsync();
-
-                    if (loadedChild != null && loadedChild.Childrens != null && loadedChild.Childrens.Any())
-                    {
-                        // Child kategorinin childrens listesini dolduruyoruz
-                        await GetChildrenRecursiveAsync(loadedChild);
-
-                        // Child'ı orijinal child'a ekliyoruz
-                        child.Childrens = loadedChild.Childrens;
-                    }
-                }
-            }
-        }
-
-        private async Task GetChildrenRecursiveAsync(Category category, bool isActive)
-        {
-            // Eğer mevcut kategorinin children'ları varsa devam ediyoruz
-            if (category.Childrens != null && category.Childrens.Any())
-            {
-                // Sadece aktif olan child'lar üzerinde işlem yapıyoruz
-                var activeChildren = category.Childrens.Where(c => c.IsActive == isActive).ToList();
-
-                // Hiyerarşik yapı için her bir child üzerinde işlem
-                foreach (var child in activeChildren)
-                {
-                    // Alt children'ları veritabanından çekmek için sorgu atıyoruz
-                    var loadedChild = await UnitOfWork.CategoryReadRepository.Table
-                        .AsNoTracking()
-                        .Where(c => c.Id == child.Id && c.IsActive == isActive)  // Sadece aktif child
-                        .Include(c => c.Childrens.Where(x => x.IsActive == isActive))  // Sadece aktif alt children'ları yüklüyoruz
-                        .FirstOrDefaultAsync();
-
-                    if (loadedChild != null && loadedChild.Childrens.Any())
-                    {
-                        // Özyineleme ile alt children'ları getiriyoruz
-                        await GetChildrenRecursiveAsync(loadedChild, isActive);
-
-                        // Child'ı orijinal child'a ekliyoruz, sadece aktif children'ları getiriyoruz
-                        child.Childrens = loadedChild.Childrens.Where(x => x.IsActive == isActive).ToList();
-                    }
-                }
-
-                // Son olarak kategorinin children listesini sadece aktif children'larla güncelliyoruz
-                category.Childrens = activeChildren;
-            }
-        }
-
 
         public async Task<IBaseResult> RemoveAsync(Guid categoryId)
         {

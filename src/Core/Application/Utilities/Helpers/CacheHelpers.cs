@@ -2,7 +2,8 @@
 {
     public static class CacheHelpers
     {
-        public static bool WillCache(int pageIndex, int pageSize) => pageIndex <= 5 &&
+        public static bool WillCache(int pageIndex, int pageSize) =>
+            pageIndex <= 5 &&
                 (pageSize == 10 ||
                 pageSize == 20 ||
                 pageSize == 25 ||

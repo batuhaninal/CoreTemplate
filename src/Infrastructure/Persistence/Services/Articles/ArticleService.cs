@@ -15,6 +15,7 @@ using Application.Models.RequestParameters;
 using Application.Models.RequestParameters.Articles;
 using Application.Models.RequestParameters.Commons;
 using Application.Utilities.Exceptions.Commons;
+using Application.Utilities.Helpers;
 using Application.Utilities.Pagination;
 using AutoMapper;
 using Domain.Entities;
@@ -78,7 +79,10 @@ namespace Persistence.Services.Articles
 
         public async Task<IPaginatedDataResult<ArticleItemDto>> GetAllAsync(int pageIndex = 1, int pageSize = 20)
         {
-            if (pageIndex < 5 && pageSize == 20)
+            string cacheKey = CachePrefix.Articles.CreatePaginationPrefix("GetAllAsync", pageIndex, pageSize);
+            bool willCache = CacheHelpers.WillCache(pageIndex, pageSize);
+
+            if (willCache)
             {
                 string? cacheData = await Cache.GetAsync(CachePrefix.Articles.GetAllWithPagination(pageIndex, pageSize));
                 if (!string.IsNullOrEmpty(cacheData))
@@ -93,7 +97,7 @@ namespace Persistence.Services.Articles
                 .Select(x => Mapper.Map<ArticleItemDto>(x))
                 .ToPaginatedListDtoAsync(pageIndex, pageSize);
 
-            if (pageIndex < 5 && pageSize == 20)
+            if (willCache && data.ItemsCount > 0)
                 await Cache.AddAsync(CachePrefix.Articles.GetAllWithPagination(pageIndex, pageSize), data);
 
             return data;
@@ -191,6 +195,8 @@ namespace Persistence.Services.Articles
             INNER JOIN categories AS c ON t.category_id = c.id
             INNER JOIN writers AS w ON t.writer_id = w.id
              */
+
+            articleRequest.CategoryIds = await UnitOfWork.CategoryReadRepository.GetAllChildrensId(articleRequest.CategoryId!.Value, true);
 
             var data = await UnitOfWork.ArticleReadRepository
                 .Table

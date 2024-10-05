@@ -1,14 +1,13 @@
 ﻿using Application.Abstractions.Repositories.Commons;
 using Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Abstractions.Repositories.Categories
 {
     public interface ICategoryReadRepository : IReadRepository<Category>
     {
+        Task<List<Guid>?> GetAllChildrensId(Guid categoryId);
+        Task<List<Guid>?> GetAllChildrensId(Guid categoryId, bool isActive);
+        Task GetChildrenRecursiveAsync(Category category);
+        Task GetChildrenRecursiveAsync(Category category, bool isActive);
     }
 }

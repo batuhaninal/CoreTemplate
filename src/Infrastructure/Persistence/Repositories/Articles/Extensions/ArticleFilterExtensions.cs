@@ -40,6 +40,9 @@ namespace Persistence.Repositories.Articles.Extensions
             if (parameter.MaxDate is not null)
                 predicate = predicate.And(x => x.CreatedDate <= parameter.MaxDate);
 
+            if(parameter.CategoryIds is not null && parameter.CategoryIds.Any())
+                predicate = predicate.And(x=> parameter.CategoryIds.Contains(x.CategoryId));
+
             return source.Where(predicate);
         }
 
