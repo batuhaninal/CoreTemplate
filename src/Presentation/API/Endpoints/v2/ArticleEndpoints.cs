@@ -22,9 +22,9 @@ namespace API.Endpoints.v2
             return Results.Ok(data);
         }
 
-        public static async Task<IResult> GetAllFiltered([AsParameters] ArticleRequestParameter parameter, [AsParameters] PaginationRequestParameter pagination, [FromServices] IArticleService articleService)
+        public static async Task<IResult> GetAllFiltered([AsParameters] ArticleRequestParameter parameter, [FromServices] IArticleService articleService)
         {
-            var data = await articleService.GetAllAsync(parameter, pagination);
+            var data = await articleService.GetAllAsync(parameter);
             return Results.Ok(data);
         }
 

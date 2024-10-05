@@ -43,8 +43,8 @@ namespace API.Controllers.v1
         [MapToApiVersion(1)]
         [HttpGet]
         [OutputCache(PolicyName = "Pagination1m", Tags = [OutputCacheTag.ArticleTag])]
-        public async Task<IActionResult> GetAllFiltered([FromQuery] ArticleRequestParameter parameter, [FromQuery] PaginationRequestParameter pagination) =>
-            CreateResponse(await _articleService.GetAllAsync(parameter, pagination));
+        public async Task<IActionResult> GetAllFiltered([FromQuery] ArticleRequestParameter parameter) =>
+            CreateResponse(await _articleService.GetAllAsync(parameter));
 
         [MapToApiVersion(1)]
         [HttpGet("{articleid}")]

@@ -13,9 +13,9 @@ namespace API.Endpoints.v2
 
             return Results.Ok(result);
         }
-        public static async Task<IResult> GetAllFiltered([AsParameters] WriterRequestParameter parameter, [AsParameters] PaginationRequestParameter pagination, IWriterService writerService)
+        public static async Task<IResult> GetAllFiltered([AsParameters] WriterRequestParameter parameter, IWriterService writerService)
         {
-            var result = await writerService.GetAllAsync(parameter, pagination);
+            var result = await writerService.GetAllAsync(parameter);
 
             return Results.Ok(result);
         }

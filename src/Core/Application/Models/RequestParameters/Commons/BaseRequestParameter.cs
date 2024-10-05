@@ -1,6 +1,6 @@
 namespace Application.Models.RequestParameters.Commons
 {
-    public abstract class BaseRequestParameter
+    public abstract class BaseRequestParameter : BasePaginationRequestParameter
     {
         private string? _condition;
         public virtual string? Condition 

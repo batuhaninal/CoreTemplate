@@ -35,8 +35,8 @@ namespace API.Controllers.v1
         [MapToApiVersion(1)]
         [HttpGet]
         [OutputCache(PolicyName = "Pagination1m", Tags = [OutputCacheTag.WriterTag])]
-        public async Task<IActionResult> GetAllFiltered([FromQuery] WriterRequestParameter parameter, [FromQuery] PaginationRequestParameter pagination) =>
-             CreateResponse(await _writerService.GetAllAsync(parameter, pagination));
+        public async Task<IActionResult> GetAllFiltered([FromQuery] WriterRequestParameter parameter) =>
+             CreateResponse(await _writerService.GetAllAsync(parameter));
 
         [MapToApiVersion(1)]
         [HttpGet("{writerid}")]

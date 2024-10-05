@@ -16,7 +16,7 @@ namespace Application.Abstractions.Services.Categories
         Task<IPaginatedDataResult<CategoryToolDto>> GetAllToolsAsync(int pageIndex = 1, int pageSize = 20);
         Task<IPaginatedDataResult<CategoryToolDto>> GetAllBaseCategoriesAsync(int pageIndex = 1, int pageSize = 20);
         Task<IPaginatedDataResult<CategoryItemDto>> GetAllAsync(BasePaginationRequestParameter pagination);
-        Task<IPaginatedDataResult<CategoryItemDto>> GetAllAsync(CategoryRequestParameter parameter, BasePaginationRequestParameter pagination);
+        Task<IPaginatedDataResult<CategoryItemDto>> GetAllAsync(CategoryRequestParameter parameter);
         Task<IDataResult<CategoryItemDto>> GetByIdAsync(Guid categoryId);
         Task<IPaginatedDataResult<SearchCategoryDto>> SearchAsync(string condition, BasePaginationRequestParameter pagination);
     }

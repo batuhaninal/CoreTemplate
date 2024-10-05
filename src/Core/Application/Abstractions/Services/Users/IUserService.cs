@@ -7,7 +7,7 @@ namespace Application.Abstractions.Services.Users
 {
     public interface IUserService
     {
-        Task<IPaginatedDataResult<UserItemDto>> GetAllAsync(UserRequestParameter parameter, BasePaginationRequestParameter pagination);
+        Task<IPaginatedDataResult<UserItemDto>> GetAllAsync(UserRequestParameter parameter);
         Task<IPaginatedDataResult<UserItemDto>> GetAllAsync(BasePaginationRequestParameter pagination);
         Task<IPaginatedDataResult<SearchUserDto>> SearchAsync(string condition, BasePaginationRequestParameter pagination);
     }

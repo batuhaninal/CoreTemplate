@@ -86,13 +86,13 @@ namespace Persistence.Services.Categories
         public async Task<IPaginatedDataResult<CategoryItemDto>> GetAllAsync(BasePaginationRequestParameter pagination) =>
             await GetAllAsync(pagination.PageIndex, pagination.PageSize);
 
-        public async Task<IPaginatedDataResult<CategoryItemDto>> GetAllAsync(CategoryRequestParameter parameter, BasePaginationRequestParameter pagination)
+        public async Task<IPaginatedDataResult<CategoryItemDto>> GetAllAsync(CategoryRequestParameter parameter)
         {
             PaginatedListDto<CategoryItemDto> data = await UnitOfWork.CategoryReadRepository.Table
                 .AsNoTracking()
                 .FilterAllConditions(parameter)
                 .Select(x => Mapper.Map<CategoryItemDto>(x))
-                .ToPaginatedListDtoAsync(pagination);
+                .ToPaginatedListDtoAsync(parameter);
 
             return data;
         }
@@ -123,7 +123,7 @@ namespace Persistence.Services.Categories
 
         public async Task<IPaginatedDataResult<CategoryToolDto>> GetAllToolsAsync(int pageIndex = 1, int pageSize = 20)
         {
-            string cacheKey = CachePrefix.Categories.CreatePaginationPrefix("GetAllBaseCategoriesAsync", pageIndex, pageSize);
+            string cacheKey = CachePrefix.Categories.CreatePaginationPrefix("GetAllToolsAsync", pageIndex, pageSize);
             bool willCache = CacheHelpers.WillCache(pageIndex, pageSize);
 
             if (willCache)

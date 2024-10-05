@@ -34,7 +34,7 @@ namespace API.Controllers.v1
         [MapToApiVersion(1)]
         [HttpGet]
         [OutputCache(PolicyName = "Pagination1m", Tags = [OutputCacheTag.UserTag])]
-        public async Task<IActionResult> GetAllFiltered([FromQuery] UserRequestParameter parameter, [FromQuery] PaginationRequestParameter pagination) =>
-            CreateResponse(await _userService.GetAllAsync(parameter, pagination));
+        public async Task<IActionResult> GetAllFiltered([FromQuery] UserRequestParameter parameter) =>
+            CreateResponse(await _userService.GetAllAsync(parameter));
     }
 }

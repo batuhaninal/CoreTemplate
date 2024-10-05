@@ -162,7 +162,7 @@ namespace Persistence.Services.Articles
             return new SuccessResultDto(204);
         }
 
-        public async Task<IPaginatedDataResult<ArticleItemDto>> GetAllAsync(ArticleRequestParameter articleRequest, PaginationRequestParameter pagination)
+        public async Task<IPaginatedDataResult<ArticleItemDto>> GetAllAsync(ArticleRequestParameter articleRequest)
         {
             /* (.ProjectTo<ArticleItemDto>(Mapper.ConfigurationProvider)) Buyuk data sorgulari icin performansli fakat kucuk veriler icin performansi dusuk!  Query ciktisi =>
              SELECT t.title, FALSE, c.id::text, c.title, c.created_date, FALSE, w.nick, w.level::smallint, w.id::text, t.created_date, t.id::text
@@ -196,7 +196,8 @@ namespace Persistence.Services.Articles
             INNER JOIN writers AS w ON t.writer_id = w.id
              */
 
-            articleRequest.CategoryIds = await UnitOfWork.CategoryReadRepository.GetAllChildrensId(articleRequest.CategoryId!.Value, true);
+            if(articleRequest.CategoryId.HasValue)
+                articleRequest.CategoryIds = await UnitOfWork.CategoryReadRepository.GetAllChildrensId(articleRequest.CategoryId!.Value, true);
 
             var data = await UnitOfWork.ArticleReadRepository
                 .Table
@@ -205,7 +206,7 @@ namespace Persistence.Services.Articles
                     .ThenInclude(w=> w!.User)
                 .FilterAllConditions(articleRequest)
                 .Select(x => Mapper.Map<ArticleItemDto>(x))
-                .ToPaginatedListDtoAsync(pagination);
+                .ToPaginatedListDtoAsync(articleRequest);
 
             return data;
         }

@@ -26,7 +26,7 @@ namespace Persistence.Services.Users
             _elkUserRepository = elkUserRepository;
         }
 
-        public async Task<IPaginatedDataResult<UserItemDto>> GetAllAsync(UserRequestParameter parameter, BasePaginationRequestParameter pagination)
+        public async Task<IPaginatedDataResult<UserItemDto>> GetAllAsync(UserRequestParameter parameter)
         {
             //var users = await UnitOfWork.UserReadRepository.Table
             //    .AsNoTracking()
@@ -38,7 +38,7 @@ namespace Persistence.Services.Users
                 .AsNoTracking()
                 .FilterAllConditions(parameter)
                 .Select(x => Mapper.Map<UserItemDto>(x)!)
-                .ToPaginatedListDtoAsync(pagination);
+                .ToPaginatedListDtoAsync(parameter);
 
             return users;
         }

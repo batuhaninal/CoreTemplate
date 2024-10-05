@@ -15,9 +15,9 @@ namespace API.Endpoints.v2
             return Results.Ok(result);
         }
 
-        public static async Task<IResult> GetAllFiltered([AsParameters] CategoryRequestParameter parameter, [AsParameters] PaginationRequestParameter pagination, ICategoryService categoryService)
+        public static async Task<IResult> GetAllFiltered([AsParameters] CategoryRequestParameter parameter, ICategoryService categoryService)
         {
-            var result = await categoryService.GetAllAsync(parameter, pagination);
+            var result = await categoryService.GetAllAsync(parameter);
 
             return Results.Ok(result);
         }
