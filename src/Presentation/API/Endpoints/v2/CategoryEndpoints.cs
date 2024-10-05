@@ -22,7 +22,7 @@ namespace API.Endpoints.v2
             return Results.Ok(result);
         }
 
-        public static async Task<IResult> GetById([FromRoute(Name = "categoryid")] string categoryId, ICategoryService categoryService)
+        public static async Task<IResult> GetById([FromRoute(Name = "categoryid")] Guid categoryId, ICategoryService categoryService)
         {
             var result = await categoryService.GetByIdAsync(categoryId);
 
@@ -36,14 +36,14 @@ namespace API.Endpoints.v2
             return Results.Created();
         }
      
-        public static async Task<IResult> Remove([FromRoute(Name = "categoryid")] string categoryId, ICategoryService categoryService)
+        public static async Task<IResult> Remove([FromRoute(Name = "categoryid")] Guid categoryId, ICategoryService categoryService)
         {
             var result = await categoryService.RemoveAsync(categoryId);
 
             return Results.NoContent();
         }
 
-        public static async Task<IResult> Update([FromRoute(Name = "categoryid")] string categoryId, [FromBody] UpdateCategoryDto updateCategoryDto, ICategoryService categoryService)
+        public static async Task<IResult> Update([FromRoute(Name = "categoryid")] Guid categoryId, [FromBody] UpdateCategoryDto updateCategoryDto, ICategoryService categoryService)
         {
             var result = await categoryService.UpdateAsync(categoryId, updateCategoryDto);
 

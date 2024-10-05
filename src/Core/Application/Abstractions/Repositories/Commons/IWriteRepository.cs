@@ -8,6 +8,7 @@ namespace Application.Abstractions.Repositories.Commons
         Task<T> CreateAsync(T entity);
         Task AddRangeAsync(List<T> entities);
         Task RemoveAsync(string id);
+        Task RemoveAsync(Guid id);
         bool Remove(T? model);
         void RemoveRange(List<T> datas);
         T Update(T entity);

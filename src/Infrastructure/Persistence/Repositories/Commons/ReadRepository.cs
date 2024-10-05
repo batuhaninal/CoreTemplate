@@ -36,6 +36,11 @@ namespace Persistence.Repositories.Commons
             await Table.AsTracking().FirstOrDefaultAsync(x=> x.Id == Guid.Parse(id)) :
             await Table.AsNoTracking().FirstOrDefaultAsync(x=> x.Id == Guid.Parse(id));
 
+        public async Task<T?> GetByIdAsync(Guid id, bool tracking = false) =>
+            tracking ?
+            await Table.AsTracking().FirstOrDefaultAsync(x => x.Id == id) :
+            await Table.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+
         public IQueryable<T> GetWhere(Expression<Func<T, bool>> expression, bool tracking = false) =>
             tracking ?
             Table.AsQueryable().AsTracking().Where(expression) :

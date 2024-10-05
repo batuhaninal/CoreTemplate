@@ -13,10 +13,13 @@ using Application.Models.MessageBrokers.Events;
 using Application.Models.MessageBrokers.Events.Categories;
 using Application.Models.RequestParameters.Categories;
 using Application.Models.RequestParameters.Commons;
+using Application.Utilities.Helpers;
 using Application.Utilities.Pagination;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Domain.Entities;
 using Microsoft.AspNetCore.OutputCaching;
+using Microsoft.EntityFrameworkCore;
 using Persistence.Repositories.Categories.Extensions;
 using Persistence.Services.Commons;
 using System.Text.Json;
@@ -58,15 +61,19 @@ namespace Persistence.Services.Categories
         public async Task<IPaginatedDataResult<CategoryItemDto>> GetAllAsync(int pageIndex = 1, int pageSize = 20)
         {
             string cacheKey = CachePrefix.Categories.CreatePaginationPrefix("GetAllAsync", pageIndex, pageSize);
-            if(pageIndex > 0 && pageIndex <= 5 && (pageSize == 5 || pageSize == 10 || pageSize == 20 || pageSize == 25 || pageSize == 50))
-            {
-                string? cacheData = await Cache.GetAsync(cacheKey);
-                if (!string.IsNullOrEmpty(cacheData))
-                    return JsonSerializer.Deserialize<PaginatedListDto<CategoryItemDto>>(cacheData)!;
-            }
+            //if(pageIndex > 0 && pageIndex <= 5 && (pageSize == 5 || pageSize == 10 || pageSize == 20 || pageSize == 25 || pageSize == 50))
+            //{
+            //    string? cacheData = await Cache.GetAsync(cacheKey);
+            //    if (!string.IsNullOrEmpty(cacheData))
+            //        return JsonSerializer.Deserialize<PaginatedListDto<CategoryItemDto>>(cacheData)!;
+            //}
 
             PaginatedListDto<CategoryItemDto> data = await UnitOfWork.CategoryReadRepository.Table
-                .Select(x => Mapper.Map<CategoryItemDto>(x))
+                .Include(x=> x.Parent)
+                .Include(x=> x.Childrens)
+                .AsSplitQuery()
+                .OrderQuery("created")
+                .ProjectTo<CategoryItemDto>(Mapper.ConfigurationProvider)
                 .ToPaginatedListDtoAsync(pageIndex, pageSize, 200);
 
             if (pageIndex > 0 && pageIndex <= 5 && (pageSize == 5 || pageSize == 10 || pageSize == 20 || pageSize == 25 || pageSize == 50) && data.ItemsCount > 0)
@@ -81,6 +88,7 @@ namespace Persistence.Services.Categories
         public async Task<IPaginatedDataResult<CategoryItemDto>> GetAllAsync(CategoryRequestParameter parameter, BasePaginationRequestParameter pagination)
         {
             PaginatedListDto<CategoryItemDto> data = await UnitOfWork.CategoryReadRepository.Table
+                .AsNoTracking()
                 .FilterAllConditions(parameter)
                 .Select(x => Mapper.Map<CategoryItemDto>(x))
                 .ToPaginatedListDtoAsync(pagination);
@@ -88,27 +96,107 @@ namespace Persistence.Services.Categories
             return data;
         }
 
-        public async Task<IDataResult<CategoryItemDto>> GetByIdAsync(string id)
+        public async Task<IPaginatedDataResult<CategoryToolDto>> GetAllBaseCategoriesAsync(int pageIndex = 1, int pageSize = 20)
         {
-            await _businessRules.CheckCategoryExist(id);
+            string cacheKey = CachePrefix.Categories.CreatePaginationPrefix("GetAllBaseCategoriesAsync", pageIndex, pageSize);
+            bool willCache = CacheHelpers.WillCache(pageIndex, pageSize); 
+            
+            if(willCache)
+            {
+                string? cache = await Cache.GetAsync(cacheKey);
+                if (!string.IsNullOrEmpty(cache))
+                    return JsonSerializer.Deserialize<PaginatedListDto<CategoryToolDto>>(cache)!;
+            }
 
-            var category = await UnitOfWork.CategoryReadRepository.GetByIdAsync(id);
+            var data = await UnitOfWork.CategoryReadRepository.Table
+                .AsNoTracking()
+                .Where(x=> x.ParentId == null)
+                .ProjectTo<CategoryToolDto>(Mapper.ConfigurationProvider)
+                .ToPaginatedListDtoAsync(pageIndex, pageSize);
+
+            if(willCache && data.ItemsCount > 0)
+                await Cache.AddAsync(cacheKey, data);
+
+            return data;
+        }
+
+        public async Task<IPaginatedDataResult<CategoryToolDto>> GetAllToolsAsync(int pageIndex = 1, int pageSize = 20)
+        {
+            string cacheKey = CachePrefix.Categories.CreatePaginationPrefix("GetAllBaseCategoriesAsync", pageIndex, pageSize);
+            bool willCache = CacheHelpers.WillCache(pageIndex, pageSize);
+
+            if (willCache)
+            {
+                string? cache = await Cache.GetAsync(cacheKey);
+                if (!string.IsNullOrEmpty(cache))
+                    return JsonSerializer.Deserialize<PaginatedListDto<CategoryToolDto>>(cache)!;
+            }
+
+            var data = await UnitOfWork.CategoryReadRepository.Table
+                .AsNoTracking()
+                .ProjectTo<CategoryToolDto>(Mapper.ConfigurationProvider)
+                .ToPaginatedListDtoAsync(pageIndex, pageSize);
+
+            if (willCache && data.ItemsCount > 0)
+                await Cache.AddAsync(cacheKey, data);
+
+            return data;
+        }
+
+        public async Task<IDataResult<CategoryItemDto>> GetByIdAsync(Guid categoryId)
+        {
+            await _businessRules.CheckCategoryExist(categoryId);
+
+            Category? category = await UnitOfWork.CategoryReadRepository.Table
+                .AsNoTracking()
+                .Where(x=> x.Id == categoryId)
+                .Include(x=> x.Parent)
+                .Include(x=> x.Childrens)
+                .FirstOrDefaultAsync();
+
+            await GetChildrenRecursiveAsync(category!);
 
             return new SuccessDataResultDto<CategoryItemDto>(Mapper.Map<CategoryItemDto>(category)!, "Urun bulundu");
         }
 
-        public async Task<IBaseResult> RemoveAsync(string id)
+        private async Task GetChildrenRecursiveAsync(Category category)
         {
-            await _businessRules.CheckCategoryExist(id);
+            if (category.Childrens != null && category.Childrens.Any())
+            {
+                foreach (var child in category.Childrens)
+                {
+                    // Alt children'ları veritabanından çekmek için sorgu atıyoruz
+                    var loadedChild = await UnitOfWork.CategoryReadRepository.Table
+                        .AsNoTracking()
+                        .Where(c => c.Id == child.Id)
+                        .Include(c => c.Childrens) // Alt children'ları yüklüyoruz
+                        .FirstOrDefaultAsync();
 
-            await UnitOfWork.CategoryWriteRepository.RemoveAsync(id);
+                    if (loadedChild != null && loadedChild.Childrens != null && loadedChild.Childrens.Any())
+                    {
+                        // Child kategorinin childrens listesini dolduruyoruz
+                        await GetChildrenRecursiveAsync(loadedChild);
+
+                        // Child'ı orijinal child'a ekliyoruz
+                        child.Childrens = loadedChild.Childrens;
+                    }
+                }
+            }
+        }
+
+
+        public async Task<IBaseResult> RemoveAsync(Guid categoryId)
+        {
+            await _businessRules.CheckCategoryExist(categoryId);
+
+            await UnitOfWork.CategoryWriteRepository.RemoveAsync(categoryId);
 
             await UnitOfWork.SaveChangesAsync();
 
             Publisher.Publish(QueueNames.RemoveCategoryElastic, ExchangeNames.Elastic, new CategoryRemovedEvent()
             {
                 IndexName = ElasticIndexes.CategoryIndex,
-                CategoryId = id
+                CategoryId = categoryId.ToString()
             });
 
             RemoveCachePrefixes();
@@ -123,7 +211,7 @@ namespace Persistence.Services.Categories
             return Mapper.Map<PaginatedListDto<SearchCategoryDto>>(data);   
         }
 
-        public async Task<IBaseResult> UpdateAsync(string categoryId, UpdateCategoryDto updateCategoryDto)
+        public async Task<IBaseResult> UpdateAsync(Guid categoryId, UpdateCategoryDto updateCategoryDto)
         {
             if (!categoryId.Equals(updateCategoryDto.CategoryId))
                 throw new Exception("Category Id degerleri eslesmemektedir!");
@@ -139,7 +227,7 @@ namespace Persistence.Services.Categories
             {
                 IndexName = ElasticIndexes.CategoryIndex,
                 Model = JsonSerializer.Serialize(oldCategory),
-                CategoryId = categoryId
+                CategoryId = categoryId.ToString(),
             });
 
             RemoveCachePrefixes();

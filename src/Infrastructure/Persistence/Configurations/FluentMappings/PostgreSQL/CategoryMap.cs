@@ -15,6 +15,10 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
 
                 c.Property(x => x.Id).HasColumnName("id").ValueGeneratedOnAdd();
 
+                c.Property(x => x.ParentId)
+                    .HasColumnName("parent_id")
+                    .IsRequired(false);
+
 
                 c.Property(c => c.CreatedDate).HasColumnName("created_date").IsRequired();
                 c.Property(c => c.UpdatedDate).HasColumnName("updated_date").IsRequired();
@@ -26,6 +30,11 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
                     .HasMaxLength(100);
 
                 c.HasMany(m => m.Articles);
+
+                c.HasOne(c=> c.Parent)
+                    .WithMany(p=> p.Childrens)
+                    .HasForeignKey(c=> c.ParentId)
+                    .OnDelete(DeleteBehavior.SetNull);
             });
 
             Category[] categories =
@@ -34,6 +43,7 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
                 {
                     Id = Guid.Parse("24fe2676-c6b0-4f15-b045-edd9a84a7ca7"),
                     Title = "Teknoloji",
+                    ParentId = null,
                     IsActive = true,
                     CreatedDate = DateTime.UtcNow,
                     UpdatedDate = DateTime.UtcNow
@@ -42,6 +52,7 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
                 {
                     Id = Guid.Parse("1fe6dbd9-048f-45cf-b1ea-d46210a87d96"),
                     Title = "Yazılım",
+                    ParentId = Guid.Parse("24fe2676-c6b0-4f15-b045-edd9a84a7ca7"),
                     IsActive = true,
                     CreatedDate = DateTime.UtcNow,
                     UpdatedDate = DateTime.UtcNow

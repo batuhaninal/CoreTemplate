@@ -1,10 +1,9 @@
 ﻿namespace Application.Models.DTOs.Categories
 {
-    public record CategoryInfoDto
+    public record ParentCategoryItemDto
     {
         public Guid CategoryId { get; init; }
-        public Guid? ParentId { get; init; }
+        public string Title { get; init; } = null!;
         public ParentCategoryItemDto? Parent { get; init; }
-        public List<ChildrenCategoryItemDto>? Childrens { get; set; }
     }
 }

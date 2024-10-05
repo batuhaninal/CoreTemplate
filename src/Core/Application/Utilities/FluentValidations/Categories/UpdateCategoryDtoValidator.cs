@@ -10,12 +10,8 @@ namespace Application.Utilities.FluentValidations.Categories
         public UpdateCategoryDtoValidator()
         {
             RuleFor(x => x.CategoryId)
-                .NotEmpty()
-                    .WithMessage(CommonMessage.Validation.NotNull("Category Id"))
                 .NotNull()
-                    .WithMessage(CommonMessage.Validation.NotNull("Category Id"))
-                .MaximumLength(50)
-                    .WithMessage(CommonMessage.Validation.MaxLength("Category Id", 50));
+                    .WithMessage(CommonMessage.Validation.NotNull());
 
             RuleFor(x => x.Title)
                 .NotEmpty()

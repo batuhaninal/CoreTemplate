@@ -1,5 +1,4 @@
 ﻿using Application.Abstractions.Repositories.Categories;
-using Application.Abstractions.Repositories.Commons;
 using Application.Utilities.Exceptions.Commons;
 
 namespace Persistence.Services.Categories
@@ -12,9 +11,9 @@ namespace Persistence.Services.Categories
             _categoryReadRepository = categoryReadRepository;
         }
 
-        public async Task CheckCategoryExist(string categoryId)
+        public async Task CheckCategoryExist(Guid categoryId)
         {
-            bool result = await _categoryReadRepository.AnyAsync(x=> x.Id == Guid.Parse(categoryId));
+            bool result = await _categoryReadRepository.AnyAsync(x=> x.Id == categoryId);
             if (!result)
                 throw new NotFoundException("Category");
         }

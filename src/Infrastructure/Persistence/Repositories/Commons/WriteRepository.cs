@@ -40,7 +40,13 @@ namespace Persistence.Repositories.Commons
 
         public async Task RemoveAsync(string id)
         {
-            T? entityForDelete = await Table.Where(x => x.Id == Guid.Parse(id)).FirstOrDefaultAsync();
+            T? entityForDelete = await Table.FirstOrDefaultAsync(x => x.Id == Guid.Parse(id));
+            Remove(entityForDelete);
+        }
+
+        public async Task RemoveAsync(Guid id)
+        {
+            T? entityForDelete = await Table.FirstOrDefaultAsync(x => x.Id == id);
             Remove(entityForDelete);
         }
 

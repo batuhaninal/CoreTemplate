@@ -78,5 +78,29 @@ namespace Persistence.Repositories.Categories.Extensions
 
             return source;
         }
+
+        public static IQueryable<Category> OrderSplitQuery(this IQueryable<Category> source, string? orderBy)
+        {
+            if (string.IsNullOrWhiteSpace(orderBy))
+                return source;
+
+            string normalizedConditiom = orderBy.TrimStart().TrimEnd().ToLower();
+
+            string[] orderByQuery = orderBy.Split('_');
+
+            Expression<Func<Category, object>> keySelector = orderByQuery[0] switch
+            {
+                "title" => category => category.Title,
+                "created" => category => category.CreatedDate,
+                _ => category => category.Id
+            };
+
+            if (normalizedConditiom.Contains("_desc"))
+                source = source.OrderByDescending(keySelector).ThenByDescending(x=> x.Id);
+            else
+                source = source.OrderBy(keySelector).ThenBy(x=> x.Id);
+
+            return source;
+        }
     }
 }

@@ -18,15 +18,25 @@ namespace Application.Utilities.MappingProfiles
             //CreateMap<Category, CategoryItemDto>();
 
             CreateMap<Category, CategoryItemDto>()
-                .ConstructUsing(x => new CategoryItemDto(x.Id.ToString(), x.Title, x.CreatedDate));
+                .ForMember(dest => dest.CategoryId, src => src.MapFrom(x => x.Id));
+
+            CreateMap<Category, CategoryToolDto>()
+                .ForMember(dest => dest.CategoryId, src => src.MapFrom(x => x.Id));
 
             CreateMap<Category, CategoryInfoDto>()
-                .ConstructUsing(x=> new CategoryInfoDto(x.Id.ToString(), x.Title));
+                .ForMember(dest=> dest.CategoryId, src=> src.MapFrom(x=> x.Id));
 
             CreateMap<Category, SearchCategoryDto>()
                 .ForMember(dest => dest.CategoryId, src => src.MapFrom(x => x.Id));
 
+            CreateMap<Category, ParentCategoryItemDto>()
+                .ForMember(dest => dest.CategoryId, src => src.MapFrom(x => x.Id));
+
+            CreateMap<Category, ChildrenCategoryItemDto>()
+                .ForMember(dest => dest.CategoryId, src => src.MapFrom(x => x.Id));
+
             CreateMap<PaginatedListDto<Category>, PaginatedListDto<SearchCategoryDto>>();
+            CreateMap<PaginatedListDto<Category>, PaginatedListDto<CategoryToolDto>>();
         }
     }
 }

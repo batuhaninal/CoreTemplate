@@ -28,7 +28,7 @@ namespace API.Controllers.v1
 
         [MapToApiVersion(1)]
         [HttpGet]
-        public async Task<IActionResult> Search([FromQuery] string condition, [FromQuery] BasePaginationRequestParameter pagination) =>
+        public async Task<IActionResult> Search([FromQuery] string condition, [FromQuery] PaginationRequestParameter pagination) =>
             CreateResponse(await _categoryService.SearchAsync(condition, pagination));
 
         [MapToApiVersion(1)]
@@ -36,6 +36,12 @@ namespace API.Controllers.v1
         [OutputCache(PolicyName = "Pagination1m", Tags = [OutputCacheTag.CategoryTag])]
         public async Task<IActionResult> GetAll([FromQuery] PaginationRequestParameter pagination) =>
             CreateResponse(await _categoryService.GetAllAsync(pagination));
+
+        [MapToApiVersion(1)]
+        [HttpGet]
+        [OutputCache(PolicyName = "Pagination1m", Tags = [OutputCacheTag.CategoryTag])]
+        public async Task<IActionResult> GetAllBaseCategories([FromQuery] PaginationRequestParameter pagination) =>
+            CreateResponse(await _categoryService.GetAllBaseCategoriesAsync(pagination.PageIndex, pagination.PageSize));
 
         [MapToApiVersion(1)]
         [HttpGet]
@@ -52,19 +58,19 @@ namespace API.Controllers.v1
 
         [MapToApiVersion(1)]
         [HttpGet("{categoryid}")]
-        public async Task<IActionResult> GetById([FromRoute(Name = "categoryid")] string categoryId) =>
+        public async Task<IActionResult> GetById([FromRoute(Name = "categoryid")] Guid categoryId) =>
             CreateResponse(await _categoryService.GetByIdAsync(categoryId));
 
         [MapToApiVersion(1)]
         [HttpDelete("{categoryid}")]
         [Authorize(Roles = "admin")]
-        public async Task<IActionResult> Remove([FromRoute(Name = "categoryid")] string categoryId) =>
+        public async Task<IActionResult> Remove([FromRoute(Name = "categoryid")] Guid categoryId) =>
             CreateResponse(await _categoryService.RemoveAsync(categoryId));
 
         [MapToApiVersion(1)]
         [HttpPut("{categoryid}")]
         [Authorize(Roles = "admin")]
-        public async Task<IActionResult> Update([FromRoute(Name = "categoryid")] string categoryId, [FromBody] UpdateCategoryDto updateCategoryDto) =>
+        public async Task<IActionResult> Update([FromRoute(Name = "categoryid")] Guid categoryId, [FromBody] UpdateCategoryDto updateCategoryDto) =>
             CreateResponse(await _categoryService.UpdateAsync(categoryId, updateCategoryDto));
     }
 }
