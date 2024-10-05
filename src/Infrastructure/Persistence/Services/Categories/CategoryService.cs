@@ -18,7 +18,6 @@ using Application.Utilities.Pagination;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Domain.Entities;
-using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Repositories.Categories.Extensions;
 using Persistence.Services.Commons;
@@ -47,7 +46,7 @@ namespace Persistence.Services.Categories
             Publisher.Publish(QueueNames.CreateCategoryElastic, ExchangeNames.Elastic, new CategoryCreatedEvent()
             {
                 IndexName = ElasticIndexes.CategoryIndex,
-                Model = JsonSerializer.Serialize(createdCategory)   
+                Model = JsonSerializer.Serialize(createdCategory)
             });
 
             // Eski cache sistemi
@@ -61,16 +60,16 @@ namespace Persistence.Services.Categories
         public async Task<IPaginatedDataResult<CategoryItemDto>> GetAllAsync(int pageIndex = 1, int pageSize = 20)
         {
             string cacheKey = CachePrefix.Categories.CreatePaginationPrefix("GetAllAsync", pageIndex, pageSize);
-            //if(pageIndex > 0 && pageIndex <= 5 && (pageSize == 5 || pageSize == 10 || pageSize == 20 || pageSize == 25 || pageSize == 50))
-            //{
-            //    string? cacheData = await Cache.GetAsync(cacheKey);
-            //    if (!string.IsNullOrEmpty(cacheData))
-            //        return JsonSerializer.Deserialize<PaginatedListDto<CategoryItemDto>>(cacheData)!;
-            //}
+            if (pageIndex > 0 && pageIndex <= 5 && (pageSize == 5 || pageSize == 10 || pageSize == 20 || pageSize == 25 || pageSize == 50))
+            {
+                string? cacheData = await Cache.GetAsync(cacheKey);
+                if (!string.IsNullOrEmpty(cacheData))
+                    return JsonSerializer.Deserialize<PaginatedListDto<CategoryItemDto>>(cacheData)!;
+            }
 
             PaginatedListDto<CategoryItemDto> data = await UnitOfWork.CategoryReadRepository.Table
-                .Include(x=> x.Parent)
-                .Include(x=> x.Childrens)
+                .Include(x => x.Parent)
+                .Include(x => x.Childrens)
                 .AsSplitQuery()
                 .OrderQuery("created")
                 .ProjectTo<CategoryItemDto>(Mapper.ConfigurationProvider)
@@ -82,7 +81,7 @@ namespace Persistence.Services.Categories
             return data;
         }
 
-        public async Task<IPaginatedDataResult<CategoryItemDto>> GetAllAsync(BasePaginationRequestParameter pagination) => 
+        public async Task<IPaginatedDataResult<CategoryItemDto>> GetAllAsync(BasePaginationRequestParameter pagination) =>
             await GetAllAsync(pagination.PageIndex, pagination.PageSize);
 
         public async Task<IPaginatedDataResult<CategoryItemDto>> GetAllAsync(CategoryRequestParameter parameter, BasePaginationRequestParameter pagination)
@@ -99,9 +98,9 @@ namespace Persistence.Services.Categories
         public async Task<IPaginatedDataResult<CategoryToolDto>> GetAllBaseCategoriesAsync(int pageIndex = 1, int pageSize = 20)
         {
             string cacheKey = CachePrefix.Categories.CreatePaginationPrefix("GetAllBaseCategoriesAsync", pageIndex, pageSize);
-            bool willCache = CacheHelpers.WillCache(pageIndex, pageSize); 
-            
-            if(willCache)
+            bool willCache = CacheHelpers.WillCache(pageIndex, pageSize);
+
+            if (willCache)
             {
                 string? cache = await Cache.GetAsync(cacheKey);
                 if (!string.IsNullOrEmpty(cache))
@@ -110,11 +109,11 @@ namespace Persistence.Services.Categories
 
             var data = await UnitOfWork.CategoryReadRepository.Table
                 .AsNoTracking()
-                .Where(x=> x.ParentId == null)
+                .Where(x => x.ParentId == null)
                 .ProjectTo<CategoryToolDto>(Mapper.ConfigurationProvider)
                 .ToPaginatedListDtoAsync(pageIndex, pageSize);
 
-            if(willCache && data.ItemsCount > 0)
+            if (willCache && data.ItemsCount > 0)
                 await Cache.AddAsync(cacheKey, data);
 
             return data;
@@ -149,12 +148,14 @@ namespace Persistence.Services.Categories
 
             Category? category = await UnitOfWork.CategoryReadRepository.Table
                 .AsNoTracking()
-                .Where(x=> x.Id == categoryId)
-                .Include(x=> x.Parent)
-                .Include(x=> x.Childrens)
+                .Where(x => x.Id == categoryId)
+                .Include(x => x.Parent)
+                .Include(x => x.Childrens)
+                //.Include(x => x.Childrens.Where(c => c.IsActive))
                 .FirstOrDefaultAsync();
 
             await GetChildrenRecursiveAsync(category!);
+            //await GetChildrenRecursiveAsync(category!, true);
 
             return new SuccessDataResultDto<CategoryItemDto>(Mapper.Map<CategoryItemDto>(category)!, "Urun bulundu");
         }
@@ -184,6 +185,39 @@ namespace Persistence.Services.Categories
             }
         }
 
+        private async Task GetChildrenRecursiveAsync(Category category, bool isActive)
+        {
+            // Eğer mevcut kategorinin children'ları varsa devam ediyoruz
+            if (category.Childrens != null && category.Childrens.Any())
+            {
+                // Sadece aktif olan child'lar üzerinde işlem yapıyoruz
+                var activeChildren = category.Childrens.Where(c => c.IsActive == isActive).ToList();
+
+                // Hiyerarşik yapı için her bir child üzerinde işlem
+                foreach (var child in activeChildren)
+                {
+                    // Alt children'ları veritabanından çekmek için sorgu atıyoruz
+                    var loadedChild = await UnitOfWork.CategoryReadRepository.Table
+                        .AsNoTracking()
+                        .Where(c => c.Id == child.Id && c.IsActive == isActive)  // Sadece aktif child
+                        .Include(c => c.Childrens.Where(x => x.IsActive == isActive))  // Sadece aktif alt children'ları yüklüyoruz
+                        .FirstOrDefaultAsync();
+
+                    if (loadedChild != null && loadedChild.Childrens.Any())
+                    {
+                        // Özyineleme ile alt children'ları getiriyoruz
+                        await GetChildrenRecursiveAsync(loadedChild, isActive);
+
+                        // Child'ı orijinal child'a ekliyoruz, sadece aktif children'ları getiriyoruz
+                        child.Childrens = loadedChild.Childrens.Where(x => x.IsActive == isActive).ToList();
+                    }
+                }
+
+                // Son olarak kategorinin children listesini sadece aktif children'larla güncelliyoruz
+                category.Childrens = activeChildren;
+            }
+        }
+
 
         public async Task<IBaseResult> RemoveAsync(Guid categoryId)
         {
@@ -208,7 +242,7 @@ namespace Persistence.Services.Categories
         {
             var data = await _elkCategoryRepository.FuzzySearchWithPaginationAsync(condition, pagination);
 
-            return Mapper.Map<PaginatedListDto<SearchCategoryDto>>(data);   
+            return Mapper.Map<PaginatedListDto<SearchCategoryDto>>(data);
         }
 
         public async Task<IBaseResult> UpdateAsync(Guid categoryId, UpdateCategoryDto updateCategoryDto)
@@ -242,6 +276,52 @@ namespace Persistence.Services.Categories
                 CachePrefix.Categories.Prefix,
                 CachePrefix.Articles.Prefix,
             }, new string[] { OutputCacheTag.CategoryTag }));
+        }
+
+        public async Task<IBaseResult> ChangeStatusAsync(Guid categoryId, bool isActive)
+        {
+            await _businessRules.CheckCategoryExist(categoryId);
+
+            var category = await UnitOfWork.CategoryReadRepository.GetByIdAsync(categoryId, false);
+            category!.IsActive = isActive;
+
+            UnitOfWork.CategoryWriteRepository.Update(category);
+
+            await UnitOfWork.SaveChangesAsync();
+
+            Publisher.Publish(QueueNames.UpdateCategoryElastic, ExchangeNames.Elastic, new CategoryUpdatedEvent()
+            {
+                IndexName = ElasticIndexes.CategoryIndex,
+                Model = JsonSerializer.Serialize(category),
+                CategoryId = categoryId.ToString(),
+            });
+
+            RemoveCachePrefixes();
+
+            return new SuccessResultDto(204);
+        }
+
+        public async Task<IBaseResult> ChangeStatusAsync(Guid categoryId)
+        {
+            await _businessRules.CheckCategoryExist(categoryId);
+
+            var category = await UnitOfWork.CategoryReadRepository.GetByIdAsync(categoryId, false);
+            category!.IsActive = !category.IsActive;
+
+            UnitOfWork.CategoryWriteRepository.Update(category);
+
+            await UnitOfWork.SaveChangesAsync();
+
+            Publisher.Publish(QueueNames.UpdateCategoryElastic, ExchangeNames.Elastic, new CategoryUpdatedEvent()
+            {
+                IndexName = ElasticIndexes.CategoryIndex,
+                Model = JsonSerializer.Serialize(category),
+                CategoryId = categoryId.ToString(),
+            });
+
+            RemoveCachePrefixes();
+
+            return new SuccessResultDto(204);
         }
     }
 }

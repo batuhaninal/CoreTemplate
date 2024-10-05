@@ -72,5 +72,11 @@ namespace API.Controllers.v1
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> Update([FromRoute(Name = "categoryid")] Guid categoryId, [FromBody] UpdateCategoryDto updateCategoryDto) =>
             CreateResponse(await _categoryService.UpdateAsync(categoryId, updateCategoryDto));
+
+        [MapToApiVersion(1)]
+        [HttpPut("{categoryid}")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> ChangeStatus([FromRoute(Name = "categoryid")] Guid categoryId) =>
+            CreateResponse(await _categoryService.ChangeStatusAsync(categoryId));
     }
 }

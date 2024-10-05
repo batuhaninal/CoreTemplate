@@ -9,6 +9,8 @@ namespace Application.Abstractions.Services.Categories
     {
         Task<IBaseResult> CreateAsync(CreateCategoryDto createCategoryDto);
         Task<IBaseResult> UpdateAsync(Guid categoryId, UpdateCategoryDto updateCategoryDto);
+        Task<IBaseResult> ChangeStatusAsync(Guid categoryId, bool isActive);
+        Task<IBaseResult> ChangeStatusAsync(Guid categoryId);
         Task<IBaseResult> RemoveAsync(Guid categoryId);
         Task<IPaginatedDataResult<CategoryItemDto>> GetAllAsync(int pageIndex = 1, int pageSize = 20);
         Task<IPaginatedDataResult<CategoryToolDto>> GetAllToolsAsync(int pageIndex = 1, int pageSize = 20);
