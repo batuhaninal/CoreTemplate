@@ -21,5 +21,13 @@ namespace Persistence.Services.Users
             if (result)
                 throw new DuplicateException("Email", email);
         }
+
+        public async Task CheckExist(Guid userId)
+        {
+            bool result = await _userReadRepository.Table.AnyAsync(x => x.Id == userId);
+
+            if (!result)
+                throw new NotFoundException("User");
+        }
     }
 }

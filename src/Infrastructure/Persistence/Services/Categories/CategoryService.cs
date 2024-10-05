@@ -39,20 +39,12 @@ namespace Persistence.Services.Categories
         {
             await _businessRules.CheckTitleDuplicate(createCategoryDto.Title);
 
-            var createdCategory = await UnitOfWork.CategoryWriteRepository.CreateAsync(Mapper.Map<Category>(createCategoryDto));
+            Category createdCategory = Mapper.Map<Category>(createCategoryDto)!;
 
-            await UnitOfWork.SaveChangesAsync();
-
-            Publisher.Publish(QueueNames.CreateCategoryElastic, ExchangeNames.Elastic, new CategoryCreatedEvent()
-            {
-                IndexName = ElasticIndexes.CategoryIndex,
-                Model = JsonSerializer.Serialize(createdCategory)
-            });
+            await InsertOperationAsync(createdCategory);
 
             // Eski cache sistemi
             //await Cache.DeleteAllWithPrefixAsync(CachePrefix.Categories.All);
-
-            RemoveCachePrefixes();
 
             return new SuccessResultDto(201);
         }
@@ -195,19 +187,11 @@ namespace Persistence.Services.Categories
 
             await _businessRules.CheckCategoryExist(updateCategoryDto.CategoryId);
 
-            var oldCategory = await UnitOfWork.CategoryReadRepository.GetByIdAsync(updateCategoryDto.CategoryId, true);
+            Category? oldCategory = await UnitOfWork.CategoryReadRepository.GetByIdAsync(updateCategoryDto.CategoryId, true);
 
             Mapper.Map(updateCategoryDto, oldCategory);
-            await UnitOfWork.SaveChangesAsync();
 
-            Publisher.Publish(QueueNames.UpdateCategoryElastic, ExchangeNames.Elastic, new CategoryUpdatedEvent()
-            {
-                IndexName = ElasticIndexes.CategoryIndex,
-                Model = JsonSerializer.Serialize(oldCategory),
-                CategoryId = categoryId.ToString(),
-            });
-
-            RemoveCachePrefixes();
+            await UpdateOperationAsync(oldCategory!);
 
             return new SuccessResultDto(204);
         }
@@ -218,7 +202,7 @@ namespace Persistence.Services.Categories
             {
                 CachePrefix.Categories.Prefix,
                 CachePrefix.Articles.Prefix,
-            }, new string[] { OutputCacheTag.CategoryTag }));
+            }, new string[] { OutputCacheTag.CategoryTag, OutputCacheTag.ArticleTag }));
         }
 
         public async Task<IBaseResult> ChangeStatusAsync(Guid categoryId, bool isActive)
@@ -228,18 +212,7 @@ namespace Persistence.Services.Categories
             var category = await UnitOfWork.CategoryReadRepository.GetByIdAsync(categoryId, false);
             category!.IsActive = isActive;
 
-            UnitOfWork.CategoryWriteRepository.Update(category);
-
-            await UnitOfWork.SaveChangesAsync();
-
-            Publisher.Publish(QueueNames.UpdateCategoryElastic, ExchangeNames.Elastic, new CategoryUpdatedEvent()
-            {
-                IndexName = ElasticIndexes.CategoryIndex,
-                Model = JsonSerializer.Serialize(category),
-                CategoryId = categoryId.ToString(),
-            });
-
-            RemoveCachePrefixes();
+            await UpdateOperationAsync(category);
 
             return new SuccessResultDto(204);
         }
@@ -248,23 +221,41 @@ namespace Persistence.Services.Categories
         {
             await _businessRules.CheckCategoryExist(categoryId);
 
-            var category = await UnitOfWork.CategoryReadRepository.GetByIdAsync(categoryId, false);
+            Category? category = await UnitOfWork.CategoryReadRepository.GetByIdAsync(categoryId, false);
             category!.IsActive = !category.IsActive;
 
-            UnitOfWork.CategoryWriteRepository.Update(category);
+            await UpdateOperationAsync(category);
 
+            return new SuccessResultDto(204);
+        }
+
+        private async Task InsertOperationAsync(Category category)
+        {
+            await UnitOfWork.CategoryWriteRepository.CreateAsync(category);
+            await UnitOfWork.SaveChangesAsync();
+
+            Publisher.Publish(QueueNames.CreateCategoryElastic, ExchangeNames.Elastic, new CategoryCreatedEvent()
+            {
+                IndexName = ElasticIndexes.CategoryIndex,
+                Model = JsonSerializer.Serialize(category)
+            });
+
+            RemoveCachePrefixes();
+        }
+
+        private async Task UpdateOperationAsync(Category category)
+        {
+            UnitOfWork.CategoryWriteRepository.Update(category);
             await UnitOfWork.SaveChangesAsync();
 
             Publisher.Publish(QueueNames.UpdateCategoryElastic, ExchangeNames.Elastic, new CategoryUpdatedEvent()
             {
                 IndexName = ElasticIndexes.CategoryIndex,
                 Model = JsonSerializer.Serialize(category),
-                CategoryId = categoryId.ToString(),
+                CategoryId = category.Id.ToString(),
             });
 
             RemoveCachePrefixes();
-
-            return new SuccessResultDto(204);
         }
     }
 }

@@ -10,5 +10,6 @@ namespace Application.Abstractions.Services.Users
         Task<IPaginatedDataResult<UserItemDto>> GetAllAsync(UserRequestParameter parameter);
         Task<IPaginatedDataResult<UserItemDto>> GetAllAsync(BasePaginationRequestParameter pagination);
         Task<IPaginatedDataResult<SearchUserDto>> SearchAsync(string condition, BasePaginationRequestParameter pagination);
+        Task<IBaseResult> ChangeStatusAsync(Guid userId);
     }
 }

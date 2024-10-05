@@ -10,6 +10,7 @@ namespace Application.Abstractions.Services.Articles
         Task<IBaseResult> CreateAsync(CreateArticleDto createArticleDto);
         Task<IBaseResult> UpdateAsync(Guid articleId, UpdateArticleDto updateArticleDto);
         Task<IBaseResult> RemoveAsync(Guid articleId);
+        Task<IBaseResult> ChangeStatusAsync(Guid articleId);
         Task<IBaseResult> Fav(Guid articleId, string userId);
         Task<IDataResult<ArticleInfoDto>> GetByIdAsync(Guid articleId);
         Task<IPaginatedDataResult<ArticleItemDto>> GetAllAsync(int pageIndex = 1, int pageSize = 20);

@@ -11,7 +11,6 @@ using Application.Models.DTOs.Articles;
 using Application.Models.DTOs.Commons.Results;
 using Application.Models.MessageBrokers.Events;
 using Application.Models.MessageBrokers.Events.Articles;
-using Application.Models.RequestParameters;
 using Application.Models.RequestParameters.Articles;
 using Application.Models.RequestParameters.Commons;
 using Application.Utilities.Exceptions.Commons;
@@ -41,19 +40,12 @@ namespace Persistence.Services.Articles
 
         public async Task<IBaseResult> CreateAsync(CreateArticleDto createArticleDto)
         {
-            var createdArticle = await UnitOfWork.ArticleWriteRepository.CreateAsync(Mapper.Map<Article>(createArticleDto)!);
-            await UnitOfWork.SaveChangesAsync();
+            var createdArticle = Mapper.Map<Article>(createArticleDto)!;
 
-            Publisher.Publish(QueueNames.CreateArticleElastic, ExchangeNames.Elastic, new ArticleCreatedEvent()
-            {
-                IndexName = ElasticIndexes.ArticleIndex,
-                Model = JsonSerializer.Serialize(createdArticle)
-            });
+            await InsertOperationAsync(createdArticle);
 
             // Eski cache sistemi
             //await Cache.DeleteAllWithPrefixAsync(CachePrefix.Articles.All);
-
-            RemoveCachePrefixes();
 
             return new SuccessResultDto(201);
         }
@@ -130,16 +122,7 @@ namespace Persistence.Services.Articles
 
             Mapper.Map(updateArticleDto, oldArticle);
 
-            await UnitOfWork.SaveChangesAsync();
-
-            Publisher.Publish(QueueNames.UpdateArticleElastic, ExchangeNames.Elastic, new ArticleUpdatedEvent()
-            {
-                IndexName = ElasticIndexes.ArticleIndex,
-                ArticleId = articleId.ToString(),
-                Model = JsonSerializer.Serialize(oldArticle)
-            });
-
-            RemoveCachePrefixes();
+            await UpdateOperationAsync(oldArticle);
 
             return new SuccessResultDto(204);
         }
@@ -218,6 +201,48 @@ namespace Persistence.Services.Articles
             var mappedData = Mapper.Map<PaginatedListDto<SearchArticleDto>>(data);
 
             return mappedData;
+        }
+
+        public async Task<IBaseResult> ChangeStatusAsync(Guid articleId)
+        {
+            await _businessRule.CheckArticleExist(articleId);
+
+            Article? article = await UnitOfWork.ArticleReadRepository.GetByIdAsync(articleId);
+            article!.IsActive = !article.IsActive;
+
+            await UpdateOperationAsync(article);
+
+            return new SuccessResultDto(204);
+        }
+
+        private async Task InsertOperationAsync(Article article)
+        {
+            await UnitOfWork.ArticleWriteRepository.CreateAsync(article);
+            await UnitOfWork.SaveChangesAsync();
+
+
+            Publisher.Publish(QueueNames.CreateArticleElastic, ExchangeNames.Elastic, new ArticleCreatedEvent()
+            {
+                IndexName = ElasticIndexes.ArticleIndex,
+                Model = JsonSerializer.Serialize(article)
+            });
+
+            RemoveCachePrefixes();
+        }
+
+        private async Task UpdateOperationAsync(Article article)
+        {
+            UnitOfWork.ArticleWriteRepository.Update(article);
+            await UnitOfWork.SaveChangesAsync();
+
+            Publisher.Publish(QueueNames.UpdateArticleElastic, ExchangeNames.Elastic, new ArticleUpdatedEvent()
+            {
+                IndexName = ElasticIndexes.ArticleIndex,
+                ArticleId = article.Id.ToString(),
+                Model = JsonSerializer.Serialize(article)
+            });
+
+            RemoveCachePrefixes();
         }
     }
 }

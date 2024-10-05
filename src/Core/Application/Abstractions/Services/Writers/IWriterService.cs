@@ -9,6 +9,7 @@ namespace Application.Abstractions.Services.Writers
     {
         Task<IBaseResult> CreateAsync(CreateWriterDto createWriterDto);
         Task<IBaseResult> RemoveAsync(Guid writerId);
+        Task<IBaseResult> ChangeStatusAsync(Guid writerId);
         Task<IDataResult<WriterInfoDto>> GetByIdAsync(Guid writerId);
         Task<IPaginatedDataResult<WriterItemDto>> GetAllAsync(BasePaginationRequestParameter pagination);
         Task<IPaginatedDataResult<WriterItemDto>> GetAllAsync(WriterRequestParameter parameter);

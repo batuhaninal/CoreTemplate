@@ -4,7 +4,6 @@ using Application.Models.Constants.Options;
 using Application.Models.DTOs.Categories;
 using Application.Models.RequestParameters;
 using Application.Models.RequestParameters.Categories;
-using Application.Models.RequestParameters.Commons;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

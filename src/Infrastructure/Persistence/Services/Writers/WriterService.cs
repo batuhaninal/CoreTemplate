@@ -33,22 +33,26 @@ namespace Persistence.Services.Writers
             _elkWriterRepository = elkWriterRepository;
         }
 
+        public async Task<IBaseResult> ChangeStatusAsync(Guid writerId)
+        {
+            await _writerBusinessRules.CheckWriterExistById(writerId);
+
+            Writer? writer = await UnitOfWork.WriterReadRepository.GetByIdAsync(writerId);
+            writer!.IsActive = !writer.IsActive;
+
+            await UpdateOperationAsync(writer);
+
+            return new SuccessResultDto(204);
+        }
+
         public async Task<IBaseResult> CreateAsync(CreateWriterDto createWriterDto)
         {
             await _writerBusinessRules.CheckNickAvailable(createWriterDto.Nick);
             await _writerBusinessRules.CheckUserIdAvailable(createWriterDto.UserId);
 
-            Writer toCreateEntity = Mapper.Map<Writer>(createWriterDto);
-            var createdWriter = await UnitOfWork.WriterWriteRepository.CreateAsync(toCreateEntity);
-            await UnitOfWork.SaveChangesAsync();
+            Writer toCreateEntity = Mapper.Map<Writer>(createWriterDto)!;
 
-            Publisher.Publish(QueueNames.CreateWriterElastic, ExchangeNames.Elastic, new WriterCreatedEvent()
-            {
-                IndexName = ElasticIndexes.WriterIndex,
-                Model = JsonSerializer.Serialize(createdWriter)
-            });
-
-            RemoveCachePrefixes();
+            await InsertOperationAsync(toCreateEntity);
 
             return new SuccessResultDto(201);
         }
@@ -128,6 +132,35 @@ namespace Persistence.Services.Writers
                 CachePrefix.Writer.Prefix,
                 CachePrefix.Articles.Prefix,
             }, [ OutputCacheTag.WriterTag ]));
+        }
+
+        private async Task InsertOperationAsync(Writer writer)
+        {
+            await UnitOfWork.WriterWriteRepository.CreateAsync(writer);
+            await UnitOfWork.SaveChangesAsync();
+
+            Publisher.Publish(QueueNames.CreateWriterElastic, ExchangeNames.Elastic, new WriterCreatedEvent()
+            {
+                IndexName = ElasticIndexes.WriterIndex,
+                Model = JsonSerializer.Serialize(writer)
+            });
+
+            RemoveCachePrefixes();
+        }
+
+        private async Task UpdateOperationAsync(Writer writer)
+        {
+            UnitOfWork.WriterWriteRepository.Update(writer);
+            await UnitOfWork.SaveChangesAsync();
+
+            Publisher.Publish(QueueNames.UpdateWriterElastic, ExchangeNames.Elastic, new WriterUpdatedEvent()
+            {
+                IndexName = ElasticIndexes.WriterIndex,
+                Model = JsonSerializer.Serialize(writer),
+                WriterId = writer.Id.ToString()
+            });
+
+            RemoveCachePrefixes();
         }
     }
 }

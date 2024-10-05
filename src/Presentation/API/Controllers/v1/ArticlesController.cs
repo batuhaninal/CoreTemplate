@@ -64,6 +64,12 @@ namespace API.Controllers.v1
             CreateResponse(await _articleService.UpdateAsync(articleId, updateArticleDto));
 
         [MapToApiVersion(1)]
+        [HttpPut("{articleid}")]
+        [Authorize(Roles = "admin")]
+        public async Task<IActionResult> ChangeStatus([FromRoute(Name = "articleid")] Guid articleId) =>
+            CreateResponse(await _articleService.ChangeStatusAsync(articleId));
+
+        [MapToApiVersion(1)]
         [HttpDelete("{articleid}")]
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> Remove([FromRoute(Name = "articleid")] Guid articleId) =>
