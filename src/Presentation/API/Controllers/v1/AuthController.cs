@@ -10,11 +10,11 @@ namespace API.Controllers.v1
     [Route("api/v{v:apiVersion}/[controller]/[action]")]
     [ApiController]
     [ApiVersion(1)]
-    public class AuthsController : BaseController
+    public class AuthController : BaseController
     {
         private readonly IAuthService _authService;
 
-        public AuthsController(IAuthService authService)
+        public AuthController(IAuthService authService)
         {
             _authService = authService;
         }

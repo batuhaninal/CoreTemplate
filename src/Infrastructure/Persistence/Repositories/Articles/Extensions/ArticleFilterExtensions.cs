@@ -56,8 +56,7 @@ namespace Persistence.Repositories.Articles.Extensions
             return source.Where(s=> 
                 s.Title.ToLower().Contains(normalizedCondition) ||
                 s.Writer!.Nick.ToLower().Contains(normalizedCondition) ||
-                s.Writer!.User!.FirstName.ToLower().Contains(normalizedCondition) ||
-                s.Writer.User.LastName.ToLower().Contains(normalizedCondition) ||
+                string.Join(' ', s.Writer!.User!.FirstName.ToLower(), s.Writer.User.LastName.ToLower()).Contains(normalizedCondition) ||
                 s.Writer.User.Email.ToLower().Contains(normalizedCondition)
             );
         }

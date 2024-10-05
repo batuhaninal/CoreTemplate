@@ -23,7 +23,7 @@ namespace API.Controllers.v1
 
         [MapToApiVersion(1)]
         [HttpGet]
-        public async Task<IActionResult> Search([FromQuery] string condition, [FromQuery] BasePaginationRequestParameter pagination) =>
+        public async Task<IActionResult> Search([FromQuery] string condition, [FromQuery] PaginationRequestParameter pagination) =>
              CreateResponse(await _writerService.SearchAsync(condition, pagination));
 
         [MapToApiVersion(1)]

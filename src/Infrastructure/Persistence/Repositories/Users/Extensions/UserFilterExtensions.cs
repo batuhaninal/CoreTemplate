@@ -51,8 +51,6 @@ namespace Persistence.Repositories.Users.Extensions
             string normalizedCondition = condition.TrimStart().TrimEnd().ToLower();
 
             return source.Where(s =>
-                s.FirstName.ToLower().Contains(normalizedCondition) || 
-                s.LastName.ToLower().Contains(normalizedCondition) || 
                 s.Email.ToLower().Contains(normalizedCondition) || 
                 string.Join(' ', s.FirstName.ToLower(), s.LastName.ToLower()).Contains(normalizedCondition)
             );

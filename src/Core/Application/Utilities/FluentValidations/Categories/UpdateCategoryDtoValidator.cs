@@ -22,6 +22,14 @@ namespace Application.Utilities.FluentValidations.Categories
                     .WithMessage(CommonMessage.Validation.MaxLength("Title", 75))
                 .Must(RegexHelper.CheckWhiteSpaceDuplicate)
                     .WithMessage(CommonMessage.RegexErr.DuplicateWhiteSpace("Title"));
+
+            RuleFor(x => x.Content)
+                .NotEmpty()
+                    .WithMessage(CommonMessage.Validation.NotNull())
+                .NotNull()
+                    .WithMessage(CommonMessage.Validation.NotNull())
+                .MaximumLength(75)
+                    .WithMessage(CommonMessage.Validation.MaxLength());
         }
     }
 }
