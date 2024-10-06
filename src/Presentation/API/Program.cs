@@ -6,11 +6,8 @@ using OpenTelemetry.Shared;
 using API.Middlewares;
 using HealthChecks.UI.Client;
 using Serilog;
-using Asp.Versioning;
 using API.OpenApi;
 using Asp.Versioning.ApiExplorer;
-using Asp.Versioning.Builder;
-using API.Controllers.v2;
 
 var builder = WebApplication.CreateBuilder(args);
 

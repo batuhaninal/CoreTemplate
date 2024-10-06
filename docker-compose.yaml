@@ -5,8 +5,8 @@ services:
     image: postgres
     container_name: core-postgre
     environment:
-       POSTGRES_PASSWORD: Passw0rd!
-       POSTGRES_USER: postgres
+       POSTGRES_PASSWORD: Unr4vel!
+       POSTGRES_USER: Unravel
        POSTGRES_DB: template_db
     ports:
       - 5432:5432
@@ -20,8 +20,8 @@ services:
     restart: always
     container_name: core-redis
     environment:
-        REDIS_PASSWORD: Unravel!
-    command: redis-server --save 20 1 --loglevel warning --requirepass Unravel!
+        REDIS_PASSWORD: Unr4vel!
+    command: redis-server --save 20 1 --loglevel warning --requirepass Unr4vel!
     ports:
       - "6379:6379"
     volumes:
@@ -80,6 +80,46 @@ services:
         - app-network
      depends_on:
         - elasticsearch
+
+  core.template.api:
+    container_name: core.template.api
+    build:
+        context: .
+        dockerfile: src/Presentation/API/Dockerfile
+    restart: on-failure
+    environment:
+        - ASPNETCORE_ENVIRONMENT=Development
+        - "ConnectionStrings:PgSQL=Server=postgre;Port=5432;Database=template_db;User Id=Unravel;Password=Unr4vel!;"
+        - "Token:Audience=Unravel"
+        - "Token:Issuer=Unravel"
+        - "Token:SecurityKey=myubersuberprivatesecuritykey12345!Unr4vel!"
+        - "Redis:Host=redis"
+        - "Redis:Port=6379"
+        - "Redis:Password=Unr4vel!"
+        - "Redis:DbIndex=1"
+        - "RabbitMQOptions:Host=rabbitmq"
+        - "RabbitMQOptions:Port=5672"
+        - "RabbitMQOptions:Username=Unravel"
+        - "RabbitMQOptions:Password=Unr4vel!"
+        - "OpenTelemetry:ServiceName=CoreTemplate.API"
+        - "OpenTelemetry:ServiceVersion=1.0.0"
+        - "OpenTelemetry:ActivitySourceName=CoreTemplate.API"
+        # Burasi cokomelli elasticsearch url bilgisi bu sekilde verilmek zorunda
+        - "Elastic:Url=http://elasticsearch:9200"
+        - "Elastic:Username=Unravel"
+        - "Elastic:Password=Unr4vel!"
+        - "Elastic:IndexName=coretemplate.api"
+    ports:
+        - 5212:8080
+    depends_on:
+        - postgre
+        - redis
+        - rabbitmq
+        - jaeger
+        - elasticsearch
+    networks:
+        - app-network
+
 
 networks:
   app-network:
