@@ -34,7 +34,7 @@ namespace Persistence.Services.Auths
         private readonly UserBusinessRules _userBusinessRules;
         private readonly WriterBusinessRules _writerBusinessRules;
 
-        public AuthService(IUnitOfWork unitOfWork, IMapper mapper, ICacheService cache, IRabbitMQPublisherService rabbitMQPublisherService, ITokenService tokenService, IHashingService hashingService) : base(unitOfWork, mapper, cache, rabbitMQPublisherService)
+        public AuthService(IUnitOfWork unitOfWork, IMapper mapper, ICacheService cache, IRabbitMQPublisherService rabbitMQPublisherService, ITokenService tokenService, IHashingService hashingService, IUserTokenService userTokenService) : base(unitOfWork, mapper, cache, rabbitMQPublisherService, userTokenService)
         {
             _hashingService = hashingService;
             _tokenService = tokenService;
@@ -55,7 +55,20 @@ namespace Persistence.Services.Auths
             if(!_hashingService.VerifyPassword(loginDto.Password, user.PasswordHash, user.PasswordSalt))
                 throw new BusinessException(CommonMessage.BusinessMessages.WrongPassword);
 
-            return _tokenService.CreateAccessToken(user, 15);
+            if(user.UserRoles.Any(x=> x.RoleId == Guid.Parse(AppRoles.WriterRoleId)))
+            {
+                Guid? writerId = await UnitOfWork.WriterReadRepository.Table.AsNoTracking()
+                    .Where(x => x.UserId == user.Id)
+                    .Select(x => x.Id)
+                    .FirstOrDefaultAsync();
+
+                if (writerId == null)
+                    throw new BusinessException("Unexpected Writer Error!");
+
+                return _tokenService.CreateAccessToken(user, writerId.Value, 15);
+            }
+
+            return _tokenService.CreateAccessToken(user, null, 15);
         }
 
         public async Task<IBaseResult> RegisterUserAsync(RegisterDto registerDto)
@@ -78,7 +91,7 @@ namespace Persistence.Services.Auths
                     await UnitOfWork.UserRoleWriteRepository.CreateAsync(new UserRole()
                     {
                         UserId = user.Id,
-                        RoleId = Guid.Parse(AppRoles.User)
+                        RoleId = Guid.Parse(AppRoles.UserRoleId)
                     });
 
                     await UnitOfWork.SaveChangesAsync();
@@ -126,7 +139,7 @@ namespace Persistence.Services.Auths
                     await UnitOfWork.UserRoleWriteRepository.CreateAsync(new UserRole()
                     {
                         UserId = user.Id,
-                        RoleId = Guid.Parse(AppRoles.Writer)
+                        RoleId = Guid.Parse(AppRoles.WriterRoleId)
                     });
 
                     Writer newWriter = Mapper.Map<Writer>(registerWriterDto);

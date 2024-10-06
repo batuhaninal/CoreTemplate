@@ -57,7 +57,7 @@ namespace Persistence.Contexts
                 .RuleFor(x => x.Id, i => Guid.NewGuid())
                 .RuleFor(x => x.CreatedDate, i => i.Date.Between(DateTime.Now.AddDays(-100), DateTime.Now))
                 .RuleFor(x => x.UserId, i => userIds[counterWriterUsers++])
-                .RuleFor(x => x.RoleId, i => Guid.Parse(AppRoles.Writer))
+                .RuleFor(x => x.RoleId, i => Guid.Parse(AppRoles.WriterRoleId))
                 .RuleFor(x => x.IsActive, i => i.PickRandom(true, false))
                 .Generate(500);
 

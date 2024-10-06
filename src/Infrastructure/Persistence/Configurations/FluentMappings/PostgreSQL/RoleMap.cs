@@ -33,7 +33,7 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
             {
                 new Role()
                 {
-                    Id = Guid.Parse(AppRoles.Admin),
+                    Id = Guid.Parse(AppRoles.AdminRoleId),
                     CreatedDate = DateTime.UtcNow,
                     UpdatedDate = DateTime.UtcNow,
                     IsActive = true,
@@ -41,7 +41,7 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
                 },
                 new Role()
                 {
-                    Id = Guid.Parse(AppRoles.User),
+                    Id = Guid.Parse(AppRoles.UserRoleId),
                     CreatedDate = DateTime.UtcNow,
                     UpdatedDate = DateTime.UtcNow,
                     IsActive = true,
@@ -49,7 +49,7 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
                 },
                 new Role()
                 {
-                    Id = Guid.Parse(AppRoles.Writer),
+                    Id = Guid.Parse(AppRoles.WriterRoleId),
                     CreatedDate = DateTime.UtcNow,
                     UpdatedDate = DateTime.UtcNow,
                     IsActive = true,

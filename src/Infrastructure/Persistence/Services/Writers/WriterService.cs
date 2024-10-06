@@ -1,6 +1,7 @@
 ﻿using Application.Abstractions.Commons.Caching;
 using Application.Abstractions.Commons.MessageBrokers.Publishers;
 using Application.Abstractions.Commons.Results;
+using Application.Abstractions.Commons.Tokens;
 using Application.Abstractions.Repositories.Commons;
 using Application.Abstractions.Repositories.Writers.Elasticsearch;
 using Application.Abstractions.Services.Writers;
@@ -27,7 +28,7 @@ namespace Persistence.Services.Writers
     {
         private readonly WriterBusinessRules _writerBusinessRules;
         private readonly IELKWriterRepository _elkWriterRepository;
-        public WriterService(IUnitOfWork unitOfWork, IMapper mapper, ICacheService cache, IRabbitMQPublisherService publisher, IELKWriterRepository elkWriterRepository) : base(unitOfWork, mapper, cache, publisher)
+        public WriterService(IUnitOfWork unitOfWork, IMapper mapper, ICacheService cache, IRabbitMQPublisherService publisher, IELKWriterRepository elkWriterRepository, IUserTokenService userTokenService) : base(unitOfWork, mapper, cache, publisher, userTokenService)
         {
             _writerBusinessRules = new WriterBusinessRules(unitOfWork.WriterReadRepository);
             _elkWriterRepository = elkWriterRepository;

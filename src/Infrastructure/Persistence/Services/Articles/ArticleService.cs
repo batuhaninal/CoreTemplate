@@ -1,6 +1,7 @@
 ﻿using Application.Abstractions.Commons.Caching;
 using Application.Abstractions.Commons.MessageBrokers.Publishers;
 using Application.Abstractions.Commons.Results;
+using Application.Abstractions.Commons.Tokens;
 using Application.Abstractions.Repositories.Articles.Elasticsearch;
 using Application.Abstractions.Repositories.Commons;
 using Application.Abstractions.Services.Articles;
@@ -31,7 +32,7 @@ namespace Persistence.Services.Articles
         //private readonly IElasticSearchWriteRepository _elasticsearchWriteRepository;
         private readonly IELKArticleRepository _elkArticleRepository;
 
-        public ArticleService(IUnitOfWork unitOfWork, IMapper mapper, ICacheService cache, IRabbitMQPublisherService rabbitMQPublisherService, IELKArticleRepository articleRepository) : base(unitOfWork, mapper, cache, rabbitMQPublisherService)
+        public ArticleService(IUnitOfWork unitOfWork, IMapper mapper, ICacheService cache, IRabbitMQPublisherService rabbitMQPublisherService, IELKArticleRepository articleRepository, IUserTokenService userTokenService) : base(unitOfWork, mapper, cache, rabbitMQPublisherService, userTokenService)
         {
             _businessRule = new ArticleBusinessRule(unitOfWork.ArticleReadRepository, unitOfWork.ArticleFavoriteReadRepository);
             _elkArticleRepository = articleRepository;
@@ -41,6 +42,7 @@ namespace Persistence.Services.Articles
         public async Task<IBaseResult> CreateAsync(CreateArticleDto createArticleDto)
         {
             var createdArticle = Mapper.Map<Article>(createArticleDto)!;
+            createdArticle.WriterId = UserTokenService.WriterId;
 
             await InsertOperationAsync(createdArticle);
 
@@ -52,6 +54,9 @@ namespace Persistence.Services.Articles
 
         public async Task<IBaseResult> RemoveAsync(Guid articleId)
         {
+            if (!UserTokenService.IsAdmin)
+                await _businessRule.CheckOwnArticle(articleId, UserTokenService.WriterId);
+
             await _businessRule.CheckArticleExist(articleId);
 
             await UnitOfWork.ArticleWriteRepository.RemoveAsync(articleId);
@@ -115,6 +120,9 @@ namespace Persistence.Services.Articles
         {
             if (!updateArticleDto.ArticleId.Equals(articleId))
                 throw new BusinessException("Article Id degerleri eslesmemektedir!");
+
+            if(!UserTokenService.IsAdmin)
+                await _businessRule.CheckOwnArticle(articleId, UserTokenService.WriterId);
 
             await _businessRule.CheckArticleExist(updateArticleDto.ArticleId);
 
@@ -205,6 +213,9 @@ namespace Persistence.Services.Articles
 
         public async Task<IBaseResult> ChangeStatusAsync(Guid articleId)
         {
+            if (!UserTokenService.IsAdmin)
+                await _businessRule.CheckOwnArticle(articleId, UserTokenService.WriterId);
+
             await _businessRule.CheckArticleExist(articleId);
 
             Article? article = await UnitOfWork.ArticleReadRepository.GetByIdAsync(articleId);

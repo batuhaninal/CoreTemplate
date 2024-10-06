@@ -23,8 +23,12 @@ namespace Adapter
     {
         public static void BindAdapterServices(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddHttpContextAccessor();
+
             services.AddSingleton<IHashingService, HashingService>();
             services.AddSingleton<ITokenService, TokenService>();
+
+            services.AddScoped<IUserTokenService, UserTokenService>();
 
             services.AddSingleton<ICacheService>(serviceProvider =>
             {

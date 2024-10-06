@@ -1,6 +1,7 @@
 ﻿using Application.Abstractions.Commons.Caching;
 using Application.Abstractions.Commons.MessageBrokers.Publishers;
 using Application.Abstractions.Commons.Results;
+using Application.Abstractions.Commons.Tokens;
 using Application.Abstractions.Repositories.Categories.Elasticsearch;
 using Application.Abstractions.Repositories.Commons;
 using Application.Abstractions.Services.Categories;
@@ -29,7 +30,7 @@ namespace Persistence.Services.Categories
     {
         private readonly CategoryBusinessRules _businessRules;
         private readonly IELKCategoryRepository _elkCategoryRepository;
-        public CategoryService(IUnitOfWork unitOfWork, IMapper mapper, ICacheService cache, IRabbitMQPublisherService rabbitMQPublisherService, IELKCategoryRepository elkCategoryRepository) : base(unitOfWork, mapper, cache, rabbitMQPublisherService)
+        public CategoryService(IUnitOfWork unitOfWork, IMapper mapper, ICacheService cache, IRabbitMQPublisherService rabbitMQPublisherService, IELKCategoryRepository elkCategoryRepository, IUserTokenService userTokenService) : base(unitOfWork, mapper, cache, rabbitMQPublisherService, userTokenService)
         {
             _businessRules = new CategoryBusinessRules(unitOfWork.CategoryReadRepository);
             _elkCategoryRepository = elkCategoryRepository;

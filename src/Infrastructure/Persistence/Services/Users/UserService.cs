@@ -1,6 +1,7 @@
 ﻿using Application.Abstractions.Commons.Caching;
 using Application.Abstractions.Commons.MessageBrokers.Publishers;
 using Application.Abstractions.Commons.Results;
+using Application.Abstractions.Commons.Tokens;
 using Application.Abstractions.Repositories.Commons;
 using Application.Abstractions.Repositories.Users.Elasticsearch;
 using Application.Abstractions.Services.Users;
@@ -27,7 +28,7 @@ namespace Persistence.Services.Users
     {
         private readonly IELKUserRepository _elkUserRepository;
         private readonly UserBusinessRules _userBusinessRules;
-        public UserService(IUnitOfWork unitOfWork, IMapper mapper, ICacheService cache, IRabbitMQPublisherService publisher, IELKUserRepository elkUserRepository) : base(unitOfWork, mapper, cache, publisher)
+        public UserService(IUnitOfWork unitOfWork, IMapper mapper, ICacheService cache, IRabbitMQPublisherService publisher, IELKUserRepository elkUserRepository, IUserTokenService userTokenService) : base(unitOfWork, mapper, cache, publisher, userTokenService)
         {
             _elkUserRepository = elkUserRepository;
             _userBusinessRules = new UserBusinessRules(UnitOfWork.UserReadRepository);

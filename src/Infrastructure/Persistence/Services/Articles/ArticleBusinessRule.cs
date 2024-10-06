@@ -15,6 +15,13 @@ namespace Persistence.Services.Articles
             _favoriteReadRepository = favoriteReadRepository;
         }
 
+        public async Task CheckOwnArticle(Guid articleId,  Guid writerId)
+        {
+            bool result = await _repository.AnyAsync(x=> x.Id == articleId && x.WriterId == writerId);
+            if (!result)
+                throw new BusinessException("Dont have permission this article!");
+        }
+
         public async Task CheckArticleExist(Guid articleId) 
         {
             bool result = await _repository.AnyAsync(x => x.Id == articleId);

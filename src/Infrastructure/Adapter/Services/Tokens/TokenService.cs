@@ -1,5 +1,7 @@
 ﻿using Application.Abstractions.Commons.Tokens;
+using Application.Models.Constants.Roles;
 using Application.Models.Tokens;
+using Application.Utilities.Exceptions.Commons;
 using Domain.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -19,8 +21,14 @@ namespace Adapter.Services.Tokens
             _configuration = configuration;
         }
 
-        public JwtToken CreateAccessToken(User user, int minutes)
+        public JwtToken CreateAccessToken(User user, Guid? writerId, int minutes)
         {
+            if (user.UserRoles == null ||
+                !user.UserRoles.Any() ||
+                user.UserRoles.Select(x=> x.Role).FirstOrDefault() == null ||
+                !user.UserRoles.Select(x=> x.Role).Any())
+                throw new BusinessException("Invalid Token with User");
+
             JwtToken token = new();
 
             SymmetricSecurityKey securityKey = new(Encoding.UTF8.GetBytes(_configuration.GetSection("Token")["SecurityKey"]!));
@@ -29,18 +37,23 @@ namespace Adapter.Services.Tokens
 
             token.Expiration = DateTime.UtcNow.AddMinutes(minutes);
 
+            List<Claim> claims = new List<Claim>()
+            {
+                new Claim("sub", user.Id.ToString()),
+                new Claim(ClaimTypes.Name, user.Email),
+                new Claim(ClaimTypes.Role, user.UserRoles!.FirstOrDefault()!.Role!.Name)
+            };
+
+            if (user.UserRoles.Any(x => x.RoleId == Guid.Parse(AppRoles.WriterRoleId)) && writerId.HasValue)
+                claims.Add(new Claim("writer-sub", writerId.Value.ToString()));
+
             JwtSecurityToken securityToken = new JwtSecurityToken(
                 audience: _configuration.GetSection("Token")["Audience"],
                 issuer: _configuration.GetSection("Token")["Issuer"],
                 expires: token.Expiration,
                 notBefore: DateTime.UtcNow,
                 signingCredentials: signingCredentials,
-                claims: new List<Claim>
-                {
-                    new Claim("sub", user.Id.ToString()),
-                    new Claim(ClaimTypes.Name, user.Email),
-                    new Claim(ClaimTypes.Role, user.UserRoles!.FirstOrDefault()!.Role!.Name)
-                });
+                claims: claims);
 
             JwtSecurityTokenHandler tokenHandler = new();
 

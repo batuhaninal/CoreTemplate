@@ -1,6 +1,7 @@
 ﻿using Application.Abstractions.Services.Articles;
 using Application.Models.Constants.CachePrefixes;
 using Application.Models.Constants.Options;
+using Application.Models.Constants.Roles;
 using Application.Models.DTOs.Articles;
 using Application.Models.RequestParameters;
 using Application.Models.RequestParameters.Articles;
@@ -53,25 +54,25 @@ namespace API.Controllers.v1
 
         [MapToApiVersion(1)]
         [HttpPost]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = AppRoles.Writer)]
         public async Task<IActionResult> Create([FromBody] CreateArticleDto createArticleDto) =>
             CreateResponse(await _articleService.CreateAsync(createArticleDto));
 
         [MapToApiVersion(1)]
         [HttpPut("{articleid}")]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = $"{AppRoles.Admin},{AppRoles.Writer}")]
         public async Task<IActionResult> Update([FromRoute(Name = "articleid")] Guid articleId, [FromBody] UpdateArticleDto updateArticleDto) =>
             CreateResponse(await _articleService.UpdateAsync(articleId, updateArticleDto));
 
         [MapToApiVersion(1)]
         [HttpPut("{articleid}")]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = $"{AppRoles.Admin},{AppRoles.Writer}")]
         public async Task<IActionResult> ChangeStatus([FromRoute(Name = "articleid")] Guid articleId) =>
             CreateResponse(await _articleService.ChangeStatusAsync(articleId));
 
         [MapToApiVersion(1)]
         [HttpDelete("{articleid}")]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = $"{AppRoles.Admin},{AppRoles.Writer}")]
         public async Task<IActionResult> Remove([FromRoute(Name = "articleid")] Guid articleId) =>
             CreateResponse(await _articleService.RemoveAsync(articleId));
     }

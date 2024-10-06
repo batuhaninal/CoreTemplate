@@ -5,7 +5,7 @@ namespace Application.Abstractions.Commons.Tokens
 {
     public interface ITokenService
     {
-        JwtToken CreateAccessToken(User user, int minutes);
+        JwtToken CreateAccessToken(User user, Guid? writerId, int minutes);
         string CreateRefreshToken();
     }
 }
