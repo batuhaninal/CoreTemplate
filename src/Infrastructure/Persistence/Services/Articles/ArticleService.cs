@@ -158,8 +158,24 @@ namespace Persistence.Services.Articles
             }, [ OutputCacheTag.ArticleTag ] ));
         }
 
+        private void RemoveOnlyDistrubutedCachePrefixes()
+        {
+            Publisher.Publish(QueueNames.CacheRemove, ExchangeNames.Cache, new CacheRemovedEvent(new string[]
+            {
+                CachePrefix.Articles.Prefix,
+            }, [ ] ));
+        }
+
+        private void RemoveOnlyOutputCachePrefixes()
+        {
+            Publisher.Publish(QueueNames.CacheRemove, ExchangeNames.Cache, new CacheRemovedEvent(new string[]
+            {
+            }, [OutputCacheTag.ArticleTag]));
+        }
+
         public async Task<IBaseResult> AddToFavAsync(Guid articleId)
         {
+            await _articleBusinessRule.CheckArticleExist(articleId);
             Guid userId = UserTokenService.UserId;
             await _articleBusinessRule.CheckArticleAlreadyFavorited(articleId, userId);
             Publisher.Publish(QueueNames.ArticleFavorite, ExchangeNames.Article, new ArticleFavoritedEvent() { ArticleId = articleId, UserId = userId });
@@ -295,8 +311,6 @@ namespace Persistence.Services.Articles
 
         public async Task<IBaseResult> CreateFavAsync(Guid articleId, Guid userId)
         {
-            await _articleBusinessRule.CheckArticleExist(articleId);
-            await _articleBusinessRule.CheckArticleAlreadyFavorited(articleId, userId);
             ArticleFavorite model = new ArticleFavorite()
             {
                 ArticleId = articleId,
@@ -305,6 +319,7 @@ namespace Persistence.Services.Articles
 
             await UnitOfWork.ArticleFavoriteWriteRepository.CreateAsync(model);
             await UnitOfWork.SaveChangesAsync();
+            RemoveOnlyOutputCachePrefixes();
             return new SuccessResultDto();
         }
     }

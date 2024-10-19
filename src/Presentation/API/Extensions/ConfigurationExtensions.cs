@@ -54,6 +54,8 @@ namespace API.Extensions
                     }
 
                 });
+
+                options.EnableAnnotations();
             });
         }
 
