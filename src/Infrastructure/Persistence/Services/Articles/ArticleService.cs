@@ -84,9 +84,14 @@ namespace Persistence.Services.Articles
 
             if (willCache)
             {
-                string? cacheData = await Cache.GetAsync(CachePrefix.Articles.GetAllWithPagination(pageIndex, pageSize));
-                if (!string.IsNullOrEmpty(cacheData))
-                    return JsonSerializer.Deserialize<PaginatedListDto<ArticleItemDto>>(cacheData)!;
+                string? cache = await Cache.GetAsync(CachePrefix.Articles.GetAllWithPagination(pageIndex, pageSize));
+                if (!string.IsNullOrEmpty(cache))
+                {
+                    var cacheData = JsonSerializer.Deserialize<PaginatedListDto<ArticleItemDto>>(cache)!;
+
+                    return await ReturnCheckedFavoritedData(cacheData);
+                }
+                    
             }
 
             var data = await UnitOfWork.ArticleReadRepository
@@ -100,7 +105,7 @@ namespace Persistence.Services.Articles
             if (willCache && data.ItemsCount > 0)
                 await Cache.AddAsync(CachePrefix.Articles.GetAllWithPagination(pageIndex, pageSize), data);
 
-            return data;
+            return await ReturnCheckedFavoritedData(data);
         }
 
         public async Task<IDataResult<ArticleInfoDto>> GetByIdAsync(Guid articleId)
@@ -115,6 +120,10 @@ namespace Persistence.Services.Articles
                     .ThenInclude(w=> w.User)
                 .Select(p=> Mapper.Map<ArticleInfoDto>(p))
                 .FirstOrDefaultAsync())!;
+
+            if(UserTokenService.IsAuthenticated)
+                article.IsFavorited = await UnitOfWork.ArticleFavoriteReadRepository.AnyAsync(x => x.ArticleId == articleId && x.UserId == UserTokenService.UserId);
+                
 
             return new SuccessDataResultDto<ArticleInfoDto>(article);
         }
@@ -203,7 +212,7 @@ namespace Persistence.Services.Articles
                 .Select(x => Mapper.Map<ArticleItemDto>(x))
                 .ToPaginatedListDtoAsync(articleRequest);
 
-            return data;
+            return await ReturnCheckedFavoritedData(data);
         }
 
         public async Task<IPaginatedDataResult<SearchArticleDto>> SearchAsync(string condition, BasePaginationRequestParameter pagination)
@@ -258,6 +267,30 @@ namespace Persistence.Services.Articles
             });
 
             RemoveCachePrefixes();
+        }
+
+        private async Task<PaginatedListDto<ArticleItemDto>> ReturnCheckedFavoritedData(PaginatedListDto<ArticleItemDto> data)
+        {
+            if (!UserTokenService.IsAuthenticated)
+                return data;
+
+            List<ArticleFavoriteItemDto> usersArticleFavorites = await UnitOfWork
+                    .ArticleFavoriteReadRepository
+                    .Table
+                    .AsNoTracking()
+                    .Where(x => x.UserId == UserTokenService.UserId)
+                    .Select(x => new ArticleFavoriteItemDto
+                    {
+                        ArticleFavoriteId = x.Id,
+                        UserId = UserTokenService.UserId,
+                        ArticleId = x.ArticleId
+                    })
+                    .ToListAsync();
+
+            foreach (ArticleItemDto article in data.Data)
+                article.IsFavorited = usersArticleFavorites.Any(x=> x.ArticleId == article.ArticleId);
+
+            return data;
         }
 
         public async Task<IBaseResult> CreateFavAsync(Guid articleId, Guid userId)

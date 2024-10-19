@@ -66,13 +66,16 @@ namespace API.Extensions
             })
             .AddJwtBearer(options =>
             {
+                // sub -> nameidentifier maplenmesini kapattik
+                options.MapInboundClaims = false;
+
                 options.TokenValidationParameters = new()
                 {
                     ValidateAudience = true,
                     ValidateIssuer = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-
+                    
                     ValidAudience = configuration["Token:Audience"],
                     ValidIssuer = configuration["Token:Issuer"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Token:SecurityKey"]!)),

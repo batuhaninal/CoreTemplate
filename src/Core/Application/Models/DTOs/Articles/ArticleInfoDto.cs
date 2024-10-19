@@ -13,5 +13,6 @@ namespace Application.Models.DTOs.Articles
         public CategoryToolDto Category { get; init; } = null!;
         public WriterInfoDto Writer { get; init; } = null!;
         public DateTime CreatedDate { get; init; }
+        public bool IsFavorited { get; set; } = false;
     }
 }

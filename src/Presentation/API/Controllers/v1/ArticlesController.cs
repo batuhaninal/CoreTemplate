@@ -75,5 +75,11 @@ namespace API.Controllers.v1
         [Authorize(Roles = $"{AppRoles.Admin},{AppRoles.Writer}")]
         public async Task<IActionResult> Remove([FromRoute(Name = "articleid")] Guid articleId) =>
             CreateResponse(await _articleService.RemoveAsync(articleId));
+
+        [MapToApiVersion(1)]
+        [HttpPost("{articleid}")]
+        [Authorize]
+        public async Task<IActionResult> AddToFav([FromRoute(Name = "articleid")] Guid articleId) =>
+            CreateResponse(await _articleService.AddToFavAsync(articleId));
     }
 }

@@ -2,6 +2,7 @@
 using Adapter.Services.Files;
 using Adapter.Services.MessageBrokers;
 using Adapter.Services.MessageBrokers.Consumers.Articles.ELKs;
+using Adapter.Services.MessageBrokers.Consumers.Articles.Postgres;
 using Adapter.Services.MessageBrokers.Consumers.Caching;
 using Adapter.Services.MessageBrokers.Consumers.Categories.ELKs;
 using Adapter.Services.MessageBrokers.Consumers.Users.ELKs;
@@ -70,6 +71,8 @@ namespace Adapter
             services.AddHostedService<ArticleCreatedEventConsumer>();
             services.AddHostedService<ArticleUpdatedEventConsumer>();
             services.AddHostedService<ArticleRemovedEventConsumer>();
+
+            services.AddHostedService<ArticleFavoritedEvenConsumer>();
 
             services.AddHostedService<CategoryCreatedEventConsumer>();
             services.AddHostedService<CategoryUpdatedEventConsumer>();

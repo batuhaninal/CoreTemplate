@@ -31,6 +31,10 @@ namespace Adapter.Services.Tokens
 
             string? value = _contextAccessor.HttpContext?.User.FindFirst(claimType)?.Value;
 
+            // sub -> nameidentifier auto map devrede ise
+            if (claimType == "sub" && string.IsNullOrEmpty(value))
+                value = _contextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
             if (string.IsNullOrEmpty(value))
                 throw new BusinessException("Token Exception! Please Re-Authenticated");
 
