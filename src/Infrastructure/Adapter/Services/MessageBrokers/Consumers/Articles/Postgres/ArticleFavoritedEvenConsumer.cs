@@ -1,8 +1,7 @@
 ﻿using Application.Abstractions.Commons.MessageBrokers;
-using Application.Abstractions.Repositories.Commons;
+using Application.Abstractions.Services.Articles;
 using Application.Models.Constants.MessageBrokers;
-using Application.Models.MessageBrokers.Events.Categories;
-using Domain.Entities;
+using Application.Models.MessageBrokers.Events.Articles;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -10,21 +9,21 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text.Json;
 
-namespace Adapter.Services.MessageBrokers.Consumers
+namespace Adapter.Services.MessageBrokers.Consumers.Articles.Postgres
 {
-    public class CategoryCreatedEventConsumer : BackgroundService
+    public class ArticleFavoritedEvenConsumer : BackgroundService
     {
-        private readonly IServiceProvider _serviceProvider;
-        private readonly ILogger<CategoryCreatedEventConsumer> _logger;
         private readonly IRabbitMQService _rabbitmqService;
+        private readonly IServiceProvider _serviceProvider;
+        private ILogger<ArticleFavoritedEvenConsumer> _logger;
         private IModel _channel;
         private IConnection _connection;
 
-        public CategoryCreatedEventConsumer(IServiceProvider serviceProvider, ILogger<CategoryCreatedEventConsumer> logger, IRabbitMQService rabbitmqService)
+        public ArticleFavoritedEvenConsumer(IRabbitMQService rabbitmqService, IServiceProvider serviceProvider, ILogger<ArticleFavoritedEvenConsumer> logger)
         {
+            _rabbitmqService = rabbitmqService;
             _serviceProvider = serviceProvider;
             _logger = logger;
-            _rabbitmqService = rabbitmqService;
         }
 
         public override Task StartAsync(CancellationToken cancellationToken)
@@ -32,11 +31,10 @@ namespace Adapter.Services.MessageBrokers.Consumers
             _connection = _rabbitmqService.GetRabbitMQConnection();
             _channel = _connection.CreateModel();
 
-            _channel.ExchangeDeclare(ExchangeNames.Elastic, ExchangeType.Direct, true, false);
-            _channel.QueueDeclare(QueueNames.CreateCategoryElastic, true, false, false);
-            _channel.QueueBind(QueueNames.CreateCategoryElastic, ExchangeNames.Elastic, QueueNames.CreateCategoryElastic);
+            _channel.ExchangeDeclare(ExchangeNames.Article, ExchangeType.Direct, true, false);
+            _channel.QueueDeclare(QueueNames.ArticleFavorite, true, false, false);
+            _channel.QueueBind(QueueNames.ArticleFavorite, ExchangeNames.Article, QueueNames.ArticleFavorite);
             _channel.BasicQos(0, 1, false);
-
 
             return base.StartAsync(cancellationToken);
         }
@@ -45,34 +43,34 @@ namespace Adapter.Services.MessageBrokers.Consumers
         {
             var consumer = new AsyncEventingBasicConsumer(_channel);
 
-            consumer.Received += Create_Category;
+            consumer.Received += Favorite_Article;
 
-            _channel.BasicConsume(QueueNames.CreateCategoryElastic, false, consumer);
+            _channel.BasicConsume(QueueNames.ArticleFavorite, false, consumer);
 
             return Task.CompletedTask;
         }
 
-        private async Task Create_Category(object sender, BasicDeliverEventArgs @event)
+        private async Task Favorite_Article(object sender, BasicDeliverEventArgs @event)
         {
             try
             {
                 using (var scope = _serviceProvider.CreateScope())
                 {
-                    byte[] body = @event.Body.ToArray();
+                    var body = @event.Body.ToArray();
+                    ArticleFavoritedEvent? favoritedArticle = JsonSerializer.Deserialize<ArticleFavoritedEvent>(body);
+                    if (favoritedArticle is null)
+                        throw new ArgumentNullException(nameof(favoritedArticle));
 
-                    CategoryCreatedEvent categoryCreatedEvent = JsonSerializer.Deserialize<CategoryCreatedEvent>(body)!;
+                    IArticleService articleService = scope.ServiceProvider.GetRequiredService<IArticleService>();
 
-                    var elasticService = scope.ServiceProvider.GetRequiredService<IElasticSearchWriteRepository>();
-
-                    await elasticService.CreateAsync(categoryCreatedEvent.IndexName, JsonSerializer.Deserialize<Category>(categoryCreatedEvent.Model));
+                    await articleService.CreateFavAsync(favoritedArticle.ArticleId, favoritedArticle.UserId);
 
                     _channel.BasicAck(@event.DeliveryTag, false);
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError($"{nameof(CategoryCreatedEventConsumer)} service error : {ex.Message}");
-                // dead-letter-queue DLQ eklenmeli
+                _logger.LogError($"{nameof(ArticleFavoritedEvenConsumer)} background service unexpected error: {ex.Message}");
                 _channel.BasicNack(@event.DeliveryTag, false, false);
             }
         }
@@ -89,6 +87,7 @@ namespace Adapter.Services.MessageBrokers.Consumers
         {
             _channel?.Dispose();
             _connection?.Dispose();
+
             base.Dispose();
         }
     }

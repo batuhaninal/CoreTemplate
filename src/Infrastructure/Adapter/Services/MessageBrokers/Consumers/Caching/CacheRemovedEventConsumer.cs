@@ -9,7 +9,7 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text.Json;
 
-namespace Adapter.Services.MessageBrokers.Consumers
+namespace Adapter.Services.MessageBrokers.Consumers.Caching
 {
     public class CacheRemovedEventConsumer : BackgroundService
     {
@@ -73,7 +73,7 @@ namespace Adapter.Services.MessageBrokers.Consumers
                         }
                     }
 
-                    _channel.BasicAck(@event.DeliveryTag, false);   
+                    _channel.BasicAck(@event.DeliveryTag, false);
                 }
                 catch (Exception ex)
                 {

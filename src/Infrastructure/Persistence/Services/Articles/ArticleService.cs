@@ -22,19 +22,22 @@ using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Repositories.Articles.Extensions;
 using Persistence.Services.Commons;
+using Persistence.Services.Users;
 using System.Text.Json;
 
 namespace Persistence.Services.Articles
 {
     public class ArticleService : BaseService, IArticleService
     {
-        private readonly ArticleBusinessRule _businessRule;
+        private readonly ArticleBusinessRule _articleBusinessRule;
+        private readonly UserBusinessRules _userBusinessRule;
         //private readonly IElasticSearchWriteRepository _elasticsearchWriteRepository;
         private readonly IELKArticleRepository _elkArticleRepository;
 
         public ArticleService(IUnitOfWork unitOfWork, IMapper mapper, ICacheService cache, IRabbitMQPublisherService rabbitMQPublisherService, IELKArticleRepository articleRepository, IUserTokenService userTokenService) : base(unitOfWork, mapper, cache, rabbitMQPublisherService, userTokenService)
         {
-            _businessRule = new ArticleBusinessRule(unitOfWork.ArticleReadRepository, unitOfWork.ArticleFavoriteReadRepository);
+            _articleBusinessRule = new ArticleBusinessRule(unitOfWork.ArticleReadRepository, unitOfWork.ArticleFavoriteReadRepository);
+            _userBusinessRule = new UserBusinessRules(unitOfWork.UserReadRepository);
             _elkArticleRepository = articleRepository;
             //_elasticsearchWriteRepository = elasticsearchWriteRepository;
         }
@@ -55,9 +58,9 @@ namespace Persistence.Services.Articles
         public async Task<IBaseResult> RemoveAsync(Guid articleId)
         {
             if (!UserTokenService.IsAdmin)
-                await _businessRule.CheckOwnArticle(articleId, UserTokenService.WriterId);
+                await _articleBusinessRule.CheckOwnArticle(articleId, UserTokenService.WriterId);
 
-            await _businessRule.CheckArticleExist(articleId);
+            await _articleBusinessRule.CheckArticleExist(articleId);
 
             await UnitOfWork.ArticleWriteRepository.RemoveAsync(articleId);
 
@@ -102,7 +105,7 @@ namespace Persistence.Services.Articles
 
         public async Task<IDataResult<ArticleInfoDto>> GetByIdAsync(Guid articleId)
         {
-            await _businessRule.CheckArticleExist(articleId);
+            await _articleBusinessRule.CheckArticleExist(articleId);
 
             ArticleInfoDto article = (await UnitOfWork.ArticleReadRepository
                 .Table
@@ -122,9 +125,9 @@ namespace Persistence.Services.Articles
                 throw new BusinessException("Article Id degerleri eslesmemektedir!");
 
             if(!UserTokenService.IsAdmin)
-                await _businessRule.CheckOwnArticle(articleId, UserTokenService.WriterId);
+                await _articleBusinessRule.CheckOwnArticle(articleId, UserTokenService.WriterId);
 
-            await _businessRule.CheckArticleExist(updateArticleDto.ArticleId);
+            await _articleBusinessRule.CheckArticleExist(updateArticleDto.ArticleId);
 
             Article oldArticle = (await UnitOfWork.ArticleReadRepository.GetByIdAsync(updateArticleDto.ArticleId, true))!;
 
@@ -146,10 +149,11 @@ namespace Persistence.Services.Articles
             }, [ OutputCacheTag.ArticleTag ] ));
         }
 
-        public async Task<IBaseResult> Fav(Guid articleId, string userId)
+        public async Task<IBaseResult> AddToFavAsync(Guid articleId)
         {
-            await _businessRule.CheckArticleAlreadyFavorited(articleId, userId);
-            Publisher.Publish(QueueNames.ArticleLike, ExchangeNames.Article, new ArticleFavoritedEvent() { ArticleId = articleId, UserId = Guid.Parse(userId) });
+            Guid userId = UserTokenService.UserId;
+            await _articleBusinessRule.CheckArticleAlreadyFavorited(articleId, userId);
+            Publisher.Publish(QueueNames.ArticleFavorite, ExchangeNames.Article, new ArticleFavoritedEvent() { ArticleId = articleId, UserId = userId });
             return new SuccessResultDto(204);
         }
 
@@ -214,9 +218,9 @@ namespace Persistence.Services.Articles
         public async Task<IBaseResult> ChangeStatusAsync(Guid articleId)
         {
             if (!UserTokenService.IsAdmin)
-                await _businessRule.CheckOwnArticle(articleId, UserTokenService.WriterId);
+                await _articleBusinessRule.CheckOwnArticle(articleId, UserTokenService.WriterId);
 
-            await _businessRule.CheckArticleExist(articleId);
+            await _articleBusinessRule.CheckArticleExist(articleId);
 
             Article? article = await UnitOfWork.ArticleReadRepository.GetByIdAsync(articleId);
             article!.IsActive = !article.IsActive;
@@ -254,6 +258,21 @@ namespace Persistence.Services.Articles
             });
 
             RemoveCachePrefixes();
+        }
+
+        public async Task<IBaseResult> CreateFavAsync(Guid articleId, Guid userId)
+        {
+            await _articleBusinessRule.CheckArticleExist(articleId);
+            await _articleBusinessRule.CheckArticleAlreadyFavorited(articleId, userId);
+            ArticleFavorite model = new ArticleFavorite()
+            {
+                ArticleId = articleId,
+                UserId = userId
+            };
+
+            await UnitOfWork.ArticleFavoriteWriteRepository.CreateAsync(model);
+            await UnitOfWork.SaveChangesAsync();
+            return new SuccessResultDto();
         }
     }
 }

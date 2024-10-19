@@ -10,7 +10,7 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text.Json;
 
-namespace Adapter.Services.MessageBrokers.Consumers
+namespace Adapter.Services.MessageBrokers.Consumers.Articles.ELKs
 {
     public class ArticleUpdatedEventConsumer : BackgroundService
     {

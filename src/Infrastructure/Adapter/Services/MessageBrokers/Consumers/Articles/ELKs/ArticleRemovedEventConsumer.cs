@@ -1,7 +1,7 @@
 ﻿using Application.Abstractions.Commons.MessageBrokers;
 using Application.Abstractions.Repositories.Commons;
 using Application.Models.Constants.MessageBrokers;
-using Application.Models.MessageBrokers.Events.Categories;
+using Application.Models.MessageBrokers.Events.Articles;
 using Domain.Entities;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -10,68 +10,64 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text.Json;
 
-namespace Adapter.Services.MessageBrokers.Consumers
+namespace Adapter.Services.MessageBrokers.Consumers.Articles.ELKs
 {
-    public class CategoryUpdatedEventConsumer : BackgroundService
+    public class ArticleRemovedEventConsumer : BackgroundService
     {
+        private readonly IRabbitMQService _rabbitmqService;
         private readonly IServiceProvider _serviceProvider;
         private IModel _channel;
         private IConnection _connection;
-        private readonly ILogger<CategoryUpdatedEventConsumer> _logger;
-        private readonly IRabbitMQService _rabbitMQService;
-
-        public CategoryUpdatedEventConsumer(IServiceProvider serviceProvider, ILogger<CategoryUpdatedEventConsumer> logger, IRabbitMQService rabbitMQService)
+        private ILogger<ArticleRemovedEventConsumer> _logger;
+        public ArticleRemovedEventConsumer(IRabbitMQService rabbitmqService, IServiceProvider serviceProvider, ILogger<ArticleRemovedEventConsumer> logger)
         {
+            _rabbitmqService = rabbitmqService;
             _serviceProvider = serviceProvider;
             _logger = logger;
-            _rabbitMQService = rabbitMQService;
         }
 
         public override Task StartAsync(CancellationToken cancellationToken)
         {
-            _connection = _rabbitMQService.GetRabbitMQConnection();
-            
+            _connection = _rabbitmqService.GetRabbitMQConnection();
             _channel = _connection.CreateModel();
-            _channel.ExchangeDeclare(ExchangeNames.Elastic, ExchangeType.Direct, true, false);
-            _channel.QueueDeclare(QueueNames.UpdateCategoryElastic, true, false, false);
-            _channel.QueueBind(QueueNames.UpdateCategoryElastic, ExchangeNames.Elastic, QueueNames.UpdateCategoryElastic);
 
+            _channel.ExchangeDeclare(ExchangeNames.Elastic, ExchangeType.Direct, true, false);
+            _channel.QueueDeclare(QueueNames.RemoveArticleElastic, true, false, false);
+            _channel.QueueBind(QueueNames.RemoveArticleElastic, ExchangeNames.Elastic, QueueNames.RemoveArticleElastic);
             _channel.BasicQos(0, 1, false);
 
             return base.StartAsync(cancellationToken);
         }
-
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
             var consumer = new AsyncEventingBasicConsumer(_channel);
 
-            consumer.Received += Update_Category;
+            consumer.Received += Remove_Article;
 
-            _channel.BasicConsume(QueueNames.UpdateCategoryElastic, false, consumer);
+            _channel.BasicConsume(QueueNames.RemoveArticleElastic, false, consumer);
 
             return Task.CompletedTask;
         }
 
-        private async Task Update_Category(object sender, BasicDeliverEventArgs @event)
+        private async Task Remove_Article(object sender, BasicDeliverEventArgs @event)
         {
             try
             {
                 using (var scope = _serviceProvider.CreateScope())
                 {
-                    byte[] body = @event.Body.ToArray();
-
-                    var categoryUpdatedEvent = JsonSerializer.Deserialize<CategoryUpdatedEvent>(body)!;
+                    var body = @event.Body.ToArray();
+                    var articleRemovedEvent = JsonSerializer.Deserialize<ArticleRemovedEvent>(body)!;
 
                     var elasticService = scope.ServiceProvider.GetRequiredService<IElasticSearchWriteRepository>();
 
-                    await elasticService.UpdateAsync(categoryUpdatedEvent.IndexName, categoryUpdatedEvent.CategoryId, JsonSerializer.Deserialize<Category>(categoryUpdatedEvent.Model));
+                    await elasticService.RemoveAsync<Article>(articleRemovedEvent.IndexName, articleRemovedEvent.ArticleId);
 
                     _channel.BasicAck(@event.DeliveryTag, false);
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError($"{nameof(CategoryUpdatedEventConsumer)} service error: {ex.Message}");
+                _logger.LogError("ArticleRemovedEventConsumer error: " + ex.Message);
                 // dead-letter-queue DLQ eklenmeli
                 _channel.BasicNack(@event.DeliveryTag, false, false);
             }
@@ -81,6 +77,7 @@ namespace Adapter.Services.MessageBrokers.Consumers
         {
             _channel?.Close();
             _connection?.Close();
+
             return base.StopAsync(cancellationToken);
         }
 

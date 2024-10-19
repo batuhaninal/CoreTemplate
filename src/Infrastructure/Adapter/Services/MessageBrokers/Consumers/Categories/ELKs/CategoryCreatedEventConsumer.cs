@@ -1,7 +1,7 @@
 ﻿using Application.Abstractions.Commons.MessageBrokers;
 using Application.Abstractions.Repositories.Commons;
 using Application.Models.Constants.MessageBrokers;
-using Application.Models.MessageBrokers.Events.Writers;
+using Application.Models.MessageBrokers.Events.Categories;
 using Domain.Entities;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -10,17 +10,17 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text.Json;
 
-namespace Adapter.Services.MessageBrokers.Consumers
+namespace Adapter.Services.MessageBrokers.Consumers.Categories.ELKs
 {
-    public class WriterRemovedEventConsumer : BackgroundService
+    public class CategoryCreatedEventConsumer : BackgroundService
     {
         private readonly IServiceProvider _serviceProvider;
-        private readonly ILogger<WriterRemovedEventConsumer> _logger;
+        private readonly ILogger<CategoryCreatedEventConsumer> _logger;
         private readonly IRabbitMQService _rabbitmqService;
-        private IModel _model;
+        private IModel _channel;
         private IConnection _connection;
 
-        public WriterRemovedEventConsumer(IServiceProvider serviceProvider, ILogger<WriterRemovedEventConsumer> logger, IRabbitMQService rabbitmqService)
+        public CategoryCreatedEventConsumer(IServiceProvider serviceProvider, ILogger<CategoryCreatedEventConsumer> logger, IRabbitMQService rabbitmqService)
         {
             _serviceProvider = serviceProvider;
             _logger = logger;
@@ -30,29 +30,29 @@ namespace Adapter.Services.MessageBrokers.Consumers
         public override Task StartAsync(CancellationToken cancellationToken)
         {
             _connection = _rabbitmqService.GetRabbitMQConnection();
+            _channel = _connection.CreateModel();
 
-            _model = _connection.CreateModel();
-            _model.ExchangeDeclare(ExchangeNames.Elastic, ExchangeType.Direct, true, false);
-            _model.QueueDeclare(QueueNames.RemoveWriterElastic, true, false, false);
-            _model.QueueBind(QueueNames.RemoveWriterElastic, ExchangeNames.Elastic, QueueNames.RemoveWriterElastic);
+            _channel.ExchangeDeclare(ExchangeNames.Elastic, ExchangeType.Direct, true, false);
+            _channel.QueueDeclare(QueueNames.CreateCategoryElastic, true, false, false);
+            _channel.QueueBind(QueueNames.CreateCategoryElastic, ExchangeNames.Elastic, QueueNames.CreateCategoryElastic);
+            _channel.BasicQos(0, 1, false);
 
-            _model.BasicQos(0, 1, false);
 
             return base.StartAsync(cancellationToken);
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var consumer = new AsyncEventingBasicConsumer(_model);
+            var consumer = new AsyncEventingBasicConsumer(_channel);
 
-            consumer.Received += Remove_Writer;
+            consumer.Received += Create_Category;
 
-            _model.BasicConsume(QueueNames.RemoveWriterElastic, false, consumer);
+            _channel.BasicConsume(QueueNames.CreateCategoryElastic, false, consumer);
 
             return Task.CompletedTask;
         }
 
-        private async Task Remove_Writer(object sender, BasicDeliverEventArgs @event)
+        private async Task Create_Category(object sender, BasicDeliverEventArgs @event)
         {
             try
             {
@@ -60,33 +60,34 @@ namespace Adapter.Services.MessageBrokers.Consumers
                 {
                     byte[] body = @event.Body.ToArray();
 
-                    var writerRemovedEvent = JsonSerializer.Deserialize<WriterRemovedEvent>(body)!;
+                    CategoryCreatedEvent categoryCreatedEvent = JsonSerializer.Deserialize<CategoryCreatedEvent>(body)!;
 
                     var elasticService = scope.ServiceProvider.GetRequiredService<IElasticSearchWriteRepository>();
 
-                    await elasticService.RemoveAsync<Writer>(writerRemovedEvent.IndexName, writerRemovedEvent.WriterId);
+                    await elasticService.CreateAsync(categoryCreatedEvent.IndexName, JsonSerializer.Deserialize<Category>(categoryCreatedEvent.Model));
 
-                    _model.BasicAck(@event.DeliveryTag, false);
+                    _channel.BasicAck(@event.DeliveryTag, false);
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError($"{nameof(WriterRemovedEventConsumer)} service error: {ex.Message}");
+                _logger.LogError($"{nameof(CategoryCreatedEventConsumer)} service error : {ex.Message}");
                 // dead-letter-queue DLQ eklenmeli
-                _model.BasicNack(@event.DeliveryTag, false, false);
+                _channel.BasicNack(@event.DeliveryTag, false, false);
             }
         }
 
         public override Task StopAsync(CancellationToken cancellationToken)
         {
-            _model?.Close();
+            _channel?.Close();
             _connection?.Close();
+
             return base.StopAsync(cancellationToken);
         }
 
         public override void Dispose()
         {
-            _model?.Dispose();
+            _channel?.Dispose();
             _connection?.Dispose();
             base.Dispose();
         }

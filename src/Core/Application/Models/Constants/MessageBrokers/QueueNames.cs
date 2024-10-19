@@ -4,7 +4,7 @@
     {
         public const string Default = "default-queue";
         public const string CacheRemove = "cache-remove-queue";
-        public const string ArticleLike = "article-like-queue";
+        public const string ArticleFavorite = "article-favorite-queue";
 
         public const string CreateArticleElastic = "create-article-elastic-queue";
         public const string UpdateArticleElastic = "update-article-elastic-queue";

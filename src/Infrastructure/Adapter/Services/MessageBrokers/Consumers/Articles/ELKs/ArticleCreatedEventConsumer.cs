@@ -10,16 +10,16 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text.Json;
 
-namespace Adapter.Services.MessageBrokers.Consumers
+namespace Adapter.Services.MessageBrokers.Consumers.Articles.ELKs
 {
-    public class ArticleRemovedEventConsumer : BackgroundService
+    public class ArticleCreatedEventConsumer : BackgroundService
     {
         private readonly IRabbitMQService _rabbitmqService;
         private readonly IServiceProvider _serviceProvider;
         private IModel _channel;
         private IConnection _connection;
-        private ILogger<ArticleRemovedEventConsumer> _logger;
-        public ArticleRemovedEventConsumer(IRabbitMQService rabbitmqService, IServiceProvider serviceProvider, ILogger<ArticleRemovedEventConsumer> logger)
+        private ILogger<ArticleCreatedEventConsumer> _logger;
+        public ArticleCreatedEventConsumer(IRabbitMQService rabbitmqService, IServiceProvider serviceProvider, ILogger<ArticleCreatedEventConsumer> logger)
         {
             _rabbitmqService = rabbitmqService;
             _serviceProvider = serviceProvider;
@@ -32,8 +32,8 @@ namespace Adapter.Services.MessageBrokers.Consumers
             _channel = _connection.CreateModel();
 
             _channel.ExchangeDeclare(ExchangeNames.Elastic, ExchangeType.Direct, true, false);
-            _channel.QueueDeclare(QueueNames.RemoveArticleElastic, true, false, false);
-            _channel.QueueBind(QueueNames.RemoveArticleElastic, ExchangeNames.Elastic, QueueNames.RemoveArticleElastic);
+            _channel.QueueDeclare(QueueNames.CreateArticleElastic, true, false, false);
+            _channel.QueueBind(QueueNames.CreateArticleElastic, ExchangeNames.Elastic, QueueNames.CreateArticleElastic);
             _channel.BasicQos(0, 1, false);
 
             return base.StartAsync(cancellationToken);
@@ -42,32 +42,32 @@ namespace Adapter.Services.MessageBrokers.Consumers
         {
             var consumer = new AsyncEventingBasicConsumer(_channel);
 
-            consumer.Received += Remove_Article;
+            consumer.Received += Create_Article;
 
-            _channel.BasicConsume(QueueNames.RemoveArticleElastic, false, consumer);
+            _channel.BasicConsume(QueueNames.CreateArticleElastic, false, consumer);
 
             return Task.CompletedTask;
         }
 
-        private async Task Remove_Article(object sender, BasicDeliverEventArgs @event)
+        private async Task Create_Article(object sender, BasicDeliverEventArgs @event)
         {
             try
             {
                 using (var scope = _serviceProvider.CreateScope())
                 {
                     var body = @event.Body.ToArray();
-                    var articleRemovedEvent = JsonSerializer.Deserialize<ArticleRemovedEvent>(body)!;
+                    var articleCreatedEvent = JsonSerializer.Deserialize<ArticleCreatedEvent>(body)!;
 
                     var elasticService = scope.ServiceProvider.GetRequiredService<IElasticSearchWriteRepository>();
 
-                    await elasticService.RemoveAsync<Article>(articleRemovedEvent.IndexName, articleRemovedEvent.ArticleId);
+                    await elasticService.CreateAsync(articleCreatedEvent.IndexName, JsonSerializer.Deserialize<Article>(articleCreatedEvent.Model));
 
                     _channel.BasicAck(@event.DeliveryTag, false);
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError("ArticleRemovedEventConsumer error: " + ex.Message);
+                _logger.LogError("ArticleCreatedEventConsumer error: " + ex.Message);
                 // dead-letter-queue DLQ eklenmeli
                 _channel.BasicNack(@event.DeliveryTag, false, false);
             }

@@ -10,17 +10,17 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text.Json;
 
-namespace Adapter.Services.MessageBrokers.Consumers
+namespace Adapter.Services.MessageBrokers.Consumers.Users.ELKs
 {
-    public class UserRemovedEventConsumer : BackgroundService
+    public class UserCreatedEventConsumer : BackgroundService
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly IRabbitMQService _rabbitmqService;
         private IModel _model;
         private IConnection _connection;
-        private readonly ILogger<UserRemovedEventConsumer> _logger;
+        private readonly ILogger<UserCreatedEventConsumer> _logger;
 
-        public UserRemovedEventConsumer(IServiceProvider serviceProvider, IRabbitMQService rabbitmqService, ILogger<UserRemovedEventConsumer> logger)
+        public UserCreatedEventConsumer(IServiceProvider serviceProvider, IRabbitMQService rabbitmqService, ILogger<UserCreatedEventConsumer> logger)
         {
             _serviceProvider = serviceProvider;
             _rabbitmqService = rabbitmqService;
@@ -33,8 +33,8 @@ namespace Adapter.Services.MessageBrokers.Consumers
 
             _model = _connection.CreateModel();
             _model.ExchangeDeclare(ExchangeNames.Elastic, ExchangeType.Direct, true, false);
-            _model.QueueDeclare(QueueNames.RemoveUserElastic, true, false, false);
-            _model.QueueBind(QueueNames.RemoveUserElastic, ExchangeNames.Elastic, QueueNames.RemoveUserElastic);
+            _model.QueueDeclare(QueueNames.CreateUserElastic, true, false, false);
+            _model.QueueBind(QueueNames.CreateUserElastic, ExchangeNames.Elastic, QueueNames.CreateUserElastic);
 
             _model.BasicQos(0, 1, false);
 
@@ -45,14 +45,14 @@ namespace Adapter.Services.MessageBrokers.Consumers
         {
             var consumer = new AsyncEventingBasicConsumer(_model);
 
-            consumer.Received += Remove_User;
+            consumer.Received += Create_User;
 
-            _model.BasicConsume(QueueNames.RemoveUserElastic, false, consumer);
+            _model.BasicConsume(QueueNames.CreateUserElastic, false, consumer);
 
             return Task.CompletedTask;
         }
 
-        private async Task Remove_User(object sender, BasicDeliverEventArgs @event)
+        private async Task Create_User(object sender, BasicDeliverEventArgs @event)
         {
             try
             {
@@ -62,15 +62,15 @@ namespace Adapter.Services.MessageBrokers.Consumers
 
                 byte[] body = @event.Body.ToArray();
 
-                var userRemovedEvent = JsonSerializer.Deserialize<UserRemovedEvent>(body)!;
+                var userCreatedEvent = JsonSerializer.Deserialize<UserCreatedEvent>(body)!;
 
-                await elasticService.RemoveAsync<SecuredUserDto>(userRemovedEvent.IndexName, userRemovedEvent.UserId);
+                await elasticService.CreateAsync(userCreatedEvent.IndexName, JsonSerializer.Deserialize<SecuredUserDto>(userCreatedEvent.Model));
 
                 _model.BasicAck(@event.DeliveryTag, false);
             }
             catch (Exception ex)
             {
-                _logger.LogError($"{nameof(UserRemovedEventConsumer)} service error: {ex.Message}");
+                _logger.LogError($"{nameof(UserCreatedEventConsumer)} service error: {ex.Message}");
                 // dead-letter-queue DLQ eklenmeli
                 _model.BasicNack(@event.DeliveryTag, false, false);
             }

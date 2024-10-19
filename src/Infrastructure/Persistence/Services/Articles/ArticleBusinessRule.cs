@@ -29,9 +29,9 @@ namespace Persistence.Services.Articles
                 throw new NotFoundException("Article");
         }
 
-        public async Task CheckArticleAlreadyFavorited(Guid articleId, string userId)
+        public async Task CheckArticleAlreadyFavorited(Guid articleId, Guid userId)
         {
-            bool result = await _favoriteReadRepository.AnyAsync(x=> x.ArticleId == articleId && x.UserId == Guid.Parse(userId));
+            bool result = await _favoriteReadRepository.AnyAsync(x=> x.ArticleId == articleId && x.UserId == userId);
 
             if (result)
                 throw new BusinessException("Article already favorited!");
