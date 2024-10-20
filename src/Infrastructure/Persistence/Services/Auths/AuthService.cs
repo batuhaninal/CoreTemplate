@@ -39,7 +39,7 @@ namespace Persistence.Services.Auths
             _hashingService = hashingService;
             _tokenService = tokenService;
             _userBusinessRules = new UserBusinessRules(unitOfWork.UserReadRepository);
-            _writerBusinessRules = new WriterBusinessRules(unitOfWork.WriterReadRepository);
+            _writerBusinessRules = new WriterBusinessRules(unitOfWork.WriterReadRepository, unitOfWork.UserWriterFavoriteReadRepository);
         }
 
         public async Task<JwtToken> LoginAsync(LoginDto loginDto)

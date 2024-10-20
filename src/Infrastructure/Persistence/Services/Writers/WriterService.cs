@@ -20,6 +20,7 @@ using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Repositories.Writers.Extensions;
 using Persistence.Services.Commons;
+using Persistence.Services.Users;
 using System.Text.Json;
 
 namespace Persistence.Services.Writers
@@ -27,10 +28,12 @@ namespace Persistence.Services.Writers
     public class WriterService : BaseService, IWriterService
     {
         private readonly WriterBusinessRules _writerBusinessRules;
+        private readonly UserBusinessRules _userBusinessRules;
         private readonly IELKWriterRepository _elkWriterRepository;
         public WriterService(IUnitOfWork unitOfWork, IMapper mapper, ICacheService cache, IRabbitMQPublisherService publisher, IELKWriterRepository elkWriterRepository, IUserTokenService userTokenService) : base(unitOfWork, mapper, cache, publisher, userTokenService)
         {
-            _writerBusinessRules = new WriterBusinessRules(unitOfWork.WriterReadRepository);
+            _writerBusinessRules = new WriterBusinessRules(unitOfWork.WriterReadRepository, unitOfWork.UserWriterFavoriteReadRepository);
+            _userBusinessRules = new(unitOfWork.UserReadRepository);
             _elkWriterRepository = elkWriterRepository;
         }
 
@@ -64,7 +67,11 @@ namespace Persistence.Services.Writers
             {
                 string? cache = await Cache.GetAsync(CachePrefix.Writer.CreatePaginationPrefix("GetAllAsync", pagination.PageIndex, pagination.PageSize));
                 if (!string.IsNullOrEmpty(cache))
-                    return JsonSerializer.Deserialize<PaginatedListDto<WriterItemDto>>(cache)!;
+                {
+                    var cacheData = JsonSerializer.Deserialize<PaginatedListDto<WriterItemDto>>(cache)!;
+                    return await ReturnCheckedFavoritedData(cacheData);
+                }
+                    
             }
 
             PaginatedListDto<WriterItemDto> data = await UnitOfWork.WriterReadRepository.Table
@@ -75,7 +82,7 @@ namespace Persistence.Services.Writers
             if (pagination.PageIndex <= 5 && (pagination.PageSize == 20 || pagination.PageSize == 50 || pagination.PageSize == 100) && data != null && data.TotalCount > 0)
                 await Cache.AddAsync(CachePrefix.Writer.CreatePaginationPrefix("GetAllAsync", pagination.PageIndex, pagination.PageSize), data);
 
-            return data!;
+            return await ReturnCheckedFavoritedData(data!);
         }
 
         public async Task<IPaginatedDataResult<WriterItemDto>> GetAllAsync(WriterRequestParameter parameter)
@@ -86,7 +93,7 @@ namespace Persistence.Services.Writers
                 .Select(x => Mapper.Map<WriterItemDto>(x))
                 .ToPaginatedListDtoAsync(parameter);
 
-            return data!;
+            return await ReturnCheckedFavoritedData(data);
         }
 
         public async Task<IDataResult<WriterInfoDto>> GetByIdAsync(Guid writerId)
@@ -98,6 +105,9 @@ namespace Persistence.Services.Writers
                 .Where(x => x.Id == writerId)
                 .Select(x => Mapper.Map<WriterInfoDto>(x))
                 .FirstOrDefaultAsync())!;
+
+            if (UserTokenService.IsAuthenticated)
+                writer.IsFavorited = await UnitOfWork.UserWriterFavoriteReadRepository.AnyAsync(x => x.WriterId == writerId && x.UserId == UserTokenService.UserId);
 
             return new SuccessDataResultDto<WriterInfoDto>(writer);
         }
@@ -135,6 +145,21 @@ namespace Persistence.Services.Writers
             }, [ OutputCacheTag.WriterTag ]));
         }
 
+        private void RemoveOnlyDistrubutedCachePrefixes()
+        {
+            Publisher.Publish(QueueNames.CacheRemove, ExchangeNames.Cache, new CacheRemovedEvent(new string[]
+            {
+                CachePrefix.Writer.Prefix,
+            }, []));
+        }
+
+        private void RemoveOnlyOutputCachePrefixes()
+        {
+            Publisher.Publish(QueueNames.CacheRemove, ExchangeNames.Cache, new CacheRemovedEvent(new string[]
+            {
+            }, [OutputCacheTag.WriterTag]));
+        }
+
         private async Task InsertOperationAsync(Writer writer)
         {
             await UnitOfWork.WriterWriteRepository.CreateAsync(writer);
@@ -162,6 +187,62 @@ namespace Persistence.Services.Writers
             });
 
             RemoveCachePrefixes();
+        }
+
+        public async Task<IBaseResult> AddToFavAsync(Guid writerId)
+        {
+            await _writerBusinessRules.CheckWriterExistById(writerId);
+            Guid userId = UserTokenService.UserId;
+            await _writerBusinessRules.CheckWriterAlreadyFavorited(writerId, userId);
+
+            Publisher.Publish(QueueNames.WriterFavorite, ExchangeNames.Writer, new WriterFavoritedEvent()
+            {
+                WriterId = writerId,
+                UserId = userId
+            });
+
+            return new SuccessResultDto(201);
+        }
+
+        public async Task<IBaseResult> CreateFavAsync(Guid writerId, Guid userId)
+        {
+            await _writerBusinessRules.CheckWriterExistById(writerId);
+            await _userBusinessRules.CheckExist(userId);
+            await _writerBusinessRules.CheckWriterAlreadyFavorited(writerId, userId);
+
+            UserWriterFavorite userWriterFavorite = new UserWriterFavorite
+            {
+                UserId = userId,
+                WriterId = writerId,
+            };
+
+            await UnitOfWork.UserWriterFavoriteWriteRepository.CreateAsync(userWriterFavorite);
+            await UnitOfWork.SaveChangesAsync();
+
+            RemoveOnlyOutputCachePrefixes();
+
+            return new SuccessResultDto(201);
+        }
+
+        private async Task<PaginatedListDto<WriterItemDto>> ReturnCheckedFavoritedData(PaginatedListDto<WriterItemDto> data)
+        {
+            if (!UserTokenService.IsAuthenticated || data.ItemsCount <= 0)
+                return data;
+
+            Guid userId = UserTokenService.UserId;
+
+            List<Guid> favoritedWriterIds = await UnitOfWork
+                .UserWriterFavoriteReadRepository
+                .Table
+                .AsNoTracking()
+                .Where(x=> x.UserId == userId)
+                .Select(x=> x.WriterId)
+                .ToListAsync();
+
+            foreach (WriterItemDto writer in data.Data)
+                writer.IsFavorited = favoritedWriterIds.Contains(writer.WriterId);
+
+            return data;
         }
     }
 }

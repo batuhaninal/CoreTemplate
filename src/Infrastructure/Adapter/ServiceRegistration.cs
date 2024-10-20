@@ -72,7 +72,7 @@ namespace Adapter
             services.AddHostedService<ArticleUpdatedEventConsumer>();
             services.AddHostedService<ArticleRemovedEventConsumer>();
 
-            services.AddHostedService<ArticleFavoritedEvenConsumer>();
+            services.AddHostedService<ArticleFavoritedEventConsumer>();
 
             services.AddHostedService<CategoryCreatedEventConsumer>();
             services.AddHostedService<CategoryUpdatedEventConsumer>();

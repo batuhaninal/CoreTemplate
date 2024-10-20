@@ -1,11 +1,11 @@
 ﻿using Application.Abstractions.Repositories.ArticleFavorites;
 using Application.Abstractions.Repositories.Articles;
-using Application.Abstractions.Repositories.Articles.Elasticsearch;
 using Application.Abstractions.Repositories.Categories;
 using Application.Abstractions.Repositories.Commons;
 using Application.Abstractions.Repositories.Roles;
 using Application.Abstractions.Repositories.UserRoles;
 using Application.Abstractions.Repositories.Users;
+using Application.Abstractions.Repositories.UserWriterFavorites;
 using Application.Abstractions.Repositories.Writers;
 using Persistence.Contexts;
 using Persistence.Repositories.ArticleFavorites;
@@ -14,6 +14,7 @@ using Persistence.Repositories.Categories;
 using Persistence.Repositories.Roles;
 using Persistence.Repositories.UserRoles;
 using Persistence.Repositories.Users;
+using Persistence.Repositories.UserWriterFavorites;
 using Persistence.Repositories.Writers;
 
 namespace Persistence.Repositories.Commons
@@ -35,6 +36,8 @@ namespace Persistence.Repositories.Commons
         private readonly WriterWriteRepository _writerWriteRepository;
         private readonly ArticleFavoriteReadRepository _articleFavoriteReadRepository;
         private readonly ArticleFavoriteWriteRepository _articleFavoriteWriteRepository;
+        private readonly UserWriterFavoriteReadRepository _userWriterFavoriteReadRepository;
+        private readonly UserWriterFavoriteWriteRepository _userWriterFavoriteWriteRepository;
         public UnitOfWork(TemplateContext templateContext)
         {
             _context = templateContext;
@@ -67,6 +70,10 @@ namespace Persistence.Repositories.Commons
         public IArticleFavoriteReadRepository ArticleFavoriteReadRepository => _articleFavoriteReadRepository ?? new ArticleFavoriteReadRepository(_context);
 
         public IArticleFavoriteWriteRepository ArticleFavoriteWriteRepository => _articleFavoriteWriteRepository ?? new ArticleFavoriteWriteRepository(_context);
+
+        public IUserWriterFavoriteReadRepository UserWriterFavoriteReadRepository => _userWriterFavoriteReadRepository ?? new UserWriterFavoriteReadRepository(_context);
+
+        public IUserWriterFavoriteWriteRepository UserWriterFavoriteWriteRepository => _userWriterFavoriteWriteRepository ?? new UserWriterFavoriteWriteRepository(_context);
 
         public IDatabaseTransaction BeginTransaction() => 
             new DatabaseTransaction(_context);

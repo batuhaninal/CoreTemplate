@@ -4,6 +4,7 @@ using Application.Abstractions.Repositories.Categories;
 using Application.Abstractions.Repositories.Roles;
 using Application.Abstractions.Repositories.UserRoles;
 using Application.Abstractions.Repositories.Users;
+using Application.Abstractions.Repositories.UserWriterFavorites;
 using Application.Abstractions.Repositories.Writers;
 
 namespace Application.Abstractions.Repositories.Commons
@@ -24,6 +25,8 @@ namespace Application.Abstractions.Repositories.Commons
         IWriterWriteRepository WriterWriteRepository { get; }
         IArticleFavoriteReadRepository ArticleFavoriteReadRepository { get; }
         IArticleFavoriteWriteRepository ArticleFavoriteWriteRepository { get; }
+        IUserWriterFavoriteReadRepository UserWriterFavoriteReadRepository { get; }
+        IUserWriterFavoriteWriteRepository UserWriterFavoriteWriteRepository { get; }
         IDatabaseTransaction BeginTransaction();
         Task<int> SaveChangesAsync();
     }

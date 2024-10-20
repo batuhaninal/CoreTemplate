@@ -11,15 +11,15 @@ using System.Text.Json;
 
 namespace Adapter.Services.MessageBrokers.Consumers.Articles.Postgres
 {
-    public class ArticleFavoritedEvenConsumer : BackgroundService
+    public class ArticleFavoritedEventConsumer : BackgroundService
     {
         private readonly IRabbitMQService _rabbitmqService;
         private readonly IServiceProvider _serviceProvider;
-        private ILogger<ArticleFavoritedEvenConsumer> _logger;
+        private ILogger<ArticleFavoritedEventConsumer> _logger;
         private IModel _channel;
         private IConnection _connection;
 
-        public ArticleFavoritedEvenConsumer(IRabbitMQService rabbitmqService, IServiceProvider serviceProvider, ILogger<ArticleFavoritedEvenConsumer> logger)
+        public ArticleFavoritedEventConsumer(IRabbitMQService rabbitmqService, IServiceProvider serviceProvider, ILogger<ArticleFavoritedEventConsumer> logger)
         {
             _rabbitmqService = rabbitmqService;
             _serviceProvider = serviceProvider;
@@ -70,7 +70,7 @@ namespace Adapter.Services.MessageBrokers.Consumers.Articles.Postgres
             }
             catch (Exception ex)
             {
-                _logger.LogError($"{nameof(ArticleFavoritedEvenConsumer)} background service unexpected error: {ex.Message}");
+                _logger.LogError($"{nameof(ArticleFavoritedEventConsumer)} background service unexpected error: {ex.Message}");
                 _channel.BasicNack(@event.DeliveryTag, false, false);
             }
         }

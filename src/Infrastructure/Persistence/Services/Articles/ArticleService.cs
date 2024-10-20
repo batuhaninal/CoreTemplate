@@ -179,7 +179,7 @@ namespace Persistence.Services.Articles
             Guid userId = UserTokenService.UserId;
             await _articleBusinessRule.CheckArticleAlreadyFavorited(articleId, userId);
             Publisher.Publish(QueueNames.ArticleFavorite, ExchangeNames.Article, new ArticleFavoritedEvent() { ArticleId = articleId, UserId = userId });
-            return new SuccessResultDto(204);
+            return new SuccessResultDto(201);
         }
 
         public async Task<IPaginatedDataResult<ArticleItemDto>> GetAllAsync(ArticleRequestParameter articleRequest)
@@ -287,30 +287,31 @@ namespace Persistence.Services.Articles
 
         private async Task<PaginatedListDto<ArticleItemDto>> ReturnCheckedFavoritedData(PaginatedListDto<ArticleItemDto> data)
         {
-            if (!UserTokenService.IsAuthenticated)
+            if (!UserTokenService.IsAuthenticated || data.ItemsCount <= 0)
                 return data;
 
-            List<ArticleFavoriteItemDto> usersArticleFavorites = await UnitOfWork
+            Guid userId = UserTokenService.UserId;
+
+            List<Guid> favoritedArticleIds = await UnitOfWork
                     .ArticleFavoriteReadRepository
                     .Table
                     .AsNoTracking()
-                    .Where(x => x.UserId == UserTokenService.UserId)
-                    .Select(x => new ArticleFavoriteItemDto
-                    {
-                        ArticleFavoriteId = x.Id,
-                        UserId = UserTokenService.UserId,
-                        ArticleId = x.ArticleId
-                    })
+                    .Where(x => x.UserId == userId)
+                    .Select(x=> x.ArticleId)
                     .ToListAsync();
 
             foreach (ArticleItemDto article in data.Data)
-                article.IsFavorited = usersArticleFavorites.Any(x=> x.ArticleId == article.ArticleId);
+                article.IsFavorited = favoritedArticleIds.Contains(article.ArticleId);
 
             return data;
         }
 
         public async Task<IBaseResult> CreateFavAsync(Guid articleId, Guid userId)
         {
+            await _articleBusinessRule.CheckArticleExist(articleId);
+            await _userBusinessRule.CheckExist(userId);
+            await _articleBusinessRule.CheckArticleAlreadyFavorited(articleId, userId);
+
             ArticleFavorite model = new ArticleFavorite()
             {
                 ArticleId = articleId,
