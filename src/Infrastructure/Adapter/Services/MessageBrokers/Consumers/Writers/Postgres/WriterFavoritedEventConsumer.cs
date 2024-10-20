@@ -1,8 +1,13 @@
 ﻿using Application.Abstractions.Commons.MessageBrokers;
+using Application.Abstractions.Services.Writers;
 using Application.Models.Constants.MessageBrokers;
+using Application.Models.MessageBrokers.Events.Writers;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
+using System.Text.Json;
 
 namespace Adapter.Services.MessageBrokers.Consumers.Writers.Postgres
 {
@@ -36,16 +41,52 @@ namespace Adapter.Services.MessageBrokers.Consumers.Writers.Postgres
         }
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            throw new NotImplementedException();
+            var consumer = new AsyncEventingBasicConsumer(_channel);
+
+            consumer.Received += Favorite_Writer;
+
+            _channel.BasicConsume(QueueNames.WriterFavorite, false, consumer);
+
+            return Task.CompletedTask;
+        }
+
+        private async Task Favorite_Writer(object sender, BasicDeliverEventArgs @event)
+        {
+            try
+            {
+                using (var scope = _serviceProvider.CreateScope())
+                {
+                    var body = @event.Body.ToArray();
+                    WriterFavoritedEvent writerFavoritedEvent = JsonSerializer.Deserialize<WriterFavoritedEvent>(body)!;
+
+                    if(writerFavoritedEvent is null)
+                        throw new ArgumentNullException(nameof(writerFavoritedEvent));
+
+                    IWriterService writerService = scope.ServiceProvider.GetRequiredService<IWriterService>();
+
+                    await writerService.CreateFavAsync(writerFavoritedEvent.WriterId, writerFavoritedEvent.UserId);
+
+                    _channel.BasicAck(@event.DeliveryTag, false);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"{nameof(WriterFavoritedEventConsumer)} background service unexpected error: {ex.Message}");
+                _channel.BasicNack(@event.DeliveryTag, false, false);
+            }
         }
 
         public override Task StopAsync(CancellationToken cancellationToken)
         {
+            _channel?.Close();
+            _connection?.Close();
             return base.StopAsync(cancellationToken);
         }
 
         public override void Dispose()
         {
+            _channel?.Dispose();
+            _connection?.Dispose();
             base.Dispose();
         }
     }

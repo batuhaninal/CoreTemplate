@@ -300,8 +300,19 @@ namespace Persistence.Services.Articles
                     .Select(x=> x.ArticleId)
                     .ToListAsync();
 
+            List<Guid> writerFavoriteIds = await UnitOfWork
+                .UserWriterFavoriteReadRepository
+                .Table
+                .AsNoTracking()
+                .Where(x=> x.UserId == userId)
+                .Select(x=> x.WriterId)
+                .ToListAsync();
+
             foreach (ArticleItemDto article in data.Data)
+            {
                 article.IsFavorited = favoritedArticleIds.Contains(article.ArticleId);
+                article.Writer.IsFavorited = writerFavoriteIds.Contains(article.Writer.WriterId);
+            }
 
             return data;
         }

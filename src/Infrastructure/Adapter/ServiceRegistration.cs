@@ -7,6 +7,7 @@ using Adapter.Services.MessageBrokers.Consumers.Caching;
 using Adapter.Services.MessageBrokers.Consumers.Categories.ELKs;
 using Adapter.Services.MessageBrokers.Consumers.Users.ELKs;
 using Adapter.Services.MessageBrokers.Consumers.Writers.ELKs;
+using Adapter.Services.MessageBrokers.Consumers.Writers.Postgres;
 using Adapter.Services.MessageBrokers.Publishers;
 using Adapter.Services.Security;
 using Adapter.Services.Tokens;
@@ -81,6 +82,8 @@ namespace Adapter
             services.AddHostedService<WriterCreatedEventConsumer>();
             services.AddHostedService<WriterUpdatedEventConsumer>();
             services.AddHostedService<WriterRemovedEventConsumer>();
+
+            services.AddHostedService<WriterFavoritedEventConsumer>();
 
             services.AddHostedService<UserCreatedEventConsumer>();
             services.AddHostedService<UserUpdatedEventConsumer>();
