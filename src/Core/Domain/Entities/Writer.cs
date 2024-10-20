@@ -9,5 +9,6 @@ namespace Domain.Entities
         public Guid UserId { get; set; }
         public virtual User? User { get; set; }
         public virtual ICollection<Article>? Articles { get; set; }
+        public virtual ICollection<UserWriterFavorite>? UserWriterFavorites { get; set; }
     }
 }

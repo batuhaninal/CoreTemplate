@@ -38,6 +38,12 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
 
                 p.HasOne(x => x.User);
 
+                p.HasMany(x=> x.UserWriterFavorites)
+                    .WithOne(uwf=> uwf.Writer)
+                    .HasForeignKey(w=> w.WriterId)
+                    .IsRequired()
+                    .OnDelete(DeleteBehavior.Cascade);
+
                 builder.Entity<Writer>().HasData(new Writer
                 {
                     Id = Guid.Parse("7e137c28-9868-4e00-b2bd-73ab46e43bc2"),

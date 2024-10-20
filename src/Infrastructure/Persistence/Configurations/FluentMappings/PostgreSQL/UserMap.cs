@@ -47,6 +47,12 @@ namespace Persistence.Configurations.FluentMappings.PostgreSQL
                 c.HasMany(x=> x.UserRoles);
 
                 c.HasMany(x=> x.ArticleFavorites);
+
+                c.HasMany(x => x.UserWriterFavorites)
+                    .WithOne(uwf=> uwf.User)
+                    .HasForeignKey(u=> u.UserId)
+                    .IsRequired()
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             byte[] passwordHash, passwordSalt;
