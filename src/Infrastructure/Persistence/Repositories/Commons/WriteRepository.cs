@@ -9,9 +9,9 @@ namespace Persistence.Repositories.Commons
     public class WriteRepository<T> : IWriteRepository<T>
         where T : BaseEntity, new()
     {
-        private readonly TemplateContext _context;
+        private readonly DbContext _context;
 
-        public WriteRepository(TemplateContext context)
+        public WriteRepository(DbContext context)
         {
             _context = context;
         }

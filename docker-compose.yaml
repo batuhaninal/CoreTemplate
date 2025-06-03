@@ -128,4 +128,4 @@ networks:
 volumes:
   postgres-template-data:
   rabbitmq-volume:  
-  elastic-volume:  
+  elastic-volume:

@@ -1,7 +1,6 @@
 ﻿using Application.Abstractions.Repositories.Commons;
 using Domain.Entities.Commons;
 using Microsoft.EntityFrameworkCore;
-using Persistence.Contexts;
 using System.Linq.Expressions;
 
 namespace Persistence.Repositories.Commons
@@ -9,9 +8,9 @@ namespace Persistence.Repositories.Commons
     public class ReadRepository<T> : IReadRepository<T>
         where T : BaseEntity, new()
     {
-        private readonly TemplateContext _context;
+        private readonly DbContext _context;
 
-        public ReadRepository(TemplateContext context)
+        public ReadRepository(DbContext context)
         {
             _context = context;
         }

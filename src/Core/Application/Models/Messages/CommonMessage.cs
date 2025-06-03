@@ -36,20 +36,20 @@ namespace Application.Models.Messages
             public static string BetweenLength() => "{PropertyName} field must be between {MinLength} and {MaxLength} characters long!";
 
             public static string GreaterThan(string fieldName, int minSize) => $"{fieldName} field must be greater than {minSize}!";
-            public static string GreaterThan(string fieldName) => $"{fieldName} field must be greater than {{MinLength}}!";
-            public static string GreaterThan() => "{PropertyName} field must be greater than {MinLength}!";
+            public static string GreaterThan(string fieldName) => $"{fieldName} field must be greater than {{ComparisonValue}}!";
+            public static string GreaterThan() => "{PropertyName} field must be greater than {ComparisonValue}!";
 
             public static string LessThan(string fieldName, int maxSize) => $"{fieldName} field must be less than {maxSize}!";
-            public static string LessThan(string fieldName) => $"{fieldName} field must be less than {{MaxLength}}!";
-            public static string LessThan() => "{PropertyName} field must be less than {MaxLength}!";
+            public static string LessThan(string fieldName) => $"{fieldName} field must be less than {{ComparisonValue}}!";
+            public static string LessThan() => "{PropertyName} field must be less than {ComparisonValue}!";
 
             public static string GreaterThanOrEqual(string fieldName, int minSize) => $"{fieldName} field must be greater than or equal to {minSize}!";
-            public static string GreaterThanOrEqual(string fieldName) => $"{fieldName} field must be greater than or equal to {{MinLength}}!";
-            public static string GreaterThanOrEqual() => "{PropertyName} field must be greater than or equal to {MinLength}!";
+            public static string GreaterThanOrEqual(string fieldName) => $"{fieldName} field must be greater than or equal to {{ComparisonValue}}!";
+            public static string GreaterThanOrEqual() => "{PropertyName} field must be greater than or equal to {ComparisonValue}!";
 
             public static string LessThanOrEqual(string fieldName, int maxSize) => $"{fieldName} field must be less than or equal to {maxSize}!";
-            public static string LessThanOrEqual(string fieldName) => $"{fieldName} field must be less than or equal to {{MaxLength}}!";
-            public static string LessThanOrEqual() => "{PropertyName} field must be less than or equal to {MaxLength}!";
+            public static string LessThanOrEqual(string fieldName) => $"{fieldName} field must be less than or equal to {{ComparisonValue}}!";
+            public static string LessThanOrEqual() => "{PropertyName} field must be less than or equal to {ComparisonValue}!";
 
             public const string Email = "Please enter a valid email!";
             public const string PasswordsNotMatches = "Passwords do not match!";

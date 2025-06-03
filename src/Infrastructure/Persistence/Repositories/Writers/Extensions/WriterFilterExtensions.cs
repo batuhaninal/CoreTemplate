@@ -20,8 +20,8 @@ namespace Persistence.Repositories.Writers.Extensions
             if (parameter.MaxDate is not null)
                 predicate = predicate.And(x => x.CreatedDate <= parameter.MaxDate);
 
-            if(parameter.Level.HasValue && parameter.Level.Value >= 0 && parameter.Level.Value <= 4)
-                predicate = predicate.And(x=> x.Level == parameter.Level.Value);
+            if(parameter.Levels is not null && parameter.Levels.Length > 0)
+                predicate = predicate.And(x=> parameter.Levels.Contains(x.Level));
 
             source = source.Where(predicate);
 
@@ -43,8 +43,8 @@ namespace Persistence.Repositories.Writers.Extensions
             if (parameter.MaxDate is not null)
                 predicate = predicate.And(x => x.CreatedDate <= parameter.MaxDate);
 
-            if (parameter.Level.HasValue && parameter.Level.Value >= 0 && parameter.Level.Value <= 4)
-                predicate = predicate.And(x => x.Level == parameter.Level.Value);
+            if (parameter.Levels is not null && parameter.Levels.Length > 0)
+                predicate = predicate.And(x => parameter.Levels.Contains(x.Level));
 
             return source.Where(predicate);
         }
